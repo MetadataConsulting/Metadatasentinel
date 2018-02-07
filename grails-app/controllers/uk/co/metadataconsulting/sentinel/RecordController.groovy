@@ -8,7 +8,7 @@ class RecordController implements ValidateableErrorsMessage {
 
     MessageSource messageSource
 
-    RecordGormService recordGormService
+    RecordService recordService
 
     static allowedMethods = [
             index: 'GET',
@@ -22,11 +22,15 @@ class RecordController implements ValidateableErrorsMessage {
         }
 
         PaginationQuery paginationQuery = cmd.toPaginationQuery()
-        List<RecordGormEntity> recordList = recordGormService.findAllByRecordCollectionId(cmd.recordCollectionId, paginationQuery)
+        List<RecordGormEntity> recordList = recordService.findAllByRecordCollectionId(cmd.recordCollectionId, cmd.correctness, paginationQuery)
 
+        Number recordTotal = recordService.countByRecordCollection(cmd.recordCollectionId, cmd.correctness)
         [
+                correctness: cmd.correctness,
+                recordCollectionId: cmd.recordCollectionId,
                 recordList: recordList,
                 paginationQuery: paginationQuery,
+                recordTotal: recordTotal,
         ]
     }
 }

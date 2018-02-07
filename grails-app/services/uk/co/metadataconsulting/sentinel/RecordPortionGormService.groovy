@@ -15,4 +15,14 @@ class RecordPortionGormService {
     DetachedCriteria<RecordPortionGormEntity> queryByRecord(RecordGormEntity recordParam) {
         RecordPortionGormEntity.where { record == recordParam }
     }
+
+    @ReadOnly
+    List<RecordPortionGormEntity> findAllByRecordId(Long recordId) {
+        queryByRecord(RecordGormEntity.load(recordId)).list()
+    }
+
+    @ReadOnly
+    Number countByRecordId(Long recordId) {
+        queryByRecord(RecordGormEntity.load(recordId)).count()
+    }
 }

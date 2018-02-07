@@ -25,7 +25,7 @@
                 </tbody>
             </table>
 
-            <g:paginate controller="recordCollection" action="index" total="${recordCollectionListTotal}" max="${paginationQuery?.max}" offset="${paginationQuery?.offset}" />
+            <g:paginate controller="recordCollection" action="index" total="${recordCollectionTotal}" max="${paginationQuery?.max}" offset="${paginationQuery?.offset}" />
 
         </g:if>
 

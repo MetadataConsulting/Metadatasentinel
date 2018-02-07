@@ -29,7 +29,7 @@ class RecordCollectionController implements ValidateableErrorsMessage {
         [
                 recordCollectionList: recordCollectionList,
                 paginationQuery: paginationQuery,
-                recordCollectionListTotal: recordCollectionListTotal,
+                recordCollectionTotal: recordCollectionListTotal,
         ]
     }
 
@@ -46,7 +46,7 @@ class RecordCollectionController implements ValidateableErrorsMessage {
 
         InputStream inputStream = cmd.csvFile.inputStream
         Integer batchSize = cmd.batchSize
-        csvImportService.save(cmd.recordCollectionId, cmd.mapping, inputStream, batchSize)
+        csvImportService.save(cmd.mapping, inputStream, batchSize)
 
         redirect controller: 'recordCollection', action: 'index'
     }

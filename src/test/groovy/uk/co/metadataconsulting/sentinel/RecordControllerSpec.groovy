@@ -19,9 +19,24 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
     }
 
 
-    def "RecordController.index model contains recordCollectionList"() {
+    def "RecordController.index model contains recordCollectionId"() {
         given:
-        controller.recordGormService = Mock(RecordGormService)
+        controller.recordService = Mock(RecordService)
+
+        when:
+        params.recordCollectionId = 1
+        request.method = 'GET'
+        Map model = controller.index()
+
+        then:
+        response.status == SC_OK
+        model
+        model.containsKey('recordCollectionId')
+    }
+
+    def "RecordController.index model contains recordList"() {
+        given:
+        controller.recordService = Mock(RecordService)
 
         when:
         params.recordCollectionId = 1
@@ -36,7 +51,7 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
 
     def "RecordController.index model contains paginationQuery"() {
         given:
-        controller.recordGormService = Mock(RecordGormService)
+        controller.recordService = Mock(RecordService)
 
         when:
         params.recordCollectionId = 1
@@ -48,4 +63,21 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
         model
         model.containsKey('paginationQuery')
     }
+
+    def "RecordController.recordTotal model contains paginationQuery"() {
+        given:
+        controller.recordService = Mock(RecordService)
+
+        when:
+        params.recordCollectionId = 1
+        request.method = 'GET'
+        Map model = controller.index()
+
+        then:
+        response.status == SC_OK
+        model
+        model.containsKey('recordTotal')
+    }
+
+
 }

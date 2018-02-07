@@ -10,15 +10,6 @@ class RecordCsvCommandConstraintsSpec extends Specification {
     @Shared
     RecordCsvCommand cmd = new RecordCsvCommand()
 
-    void 'test recordCollectionId cannot be null'() {
-        when:
-        cmd.recordCollectionId = null
-
-        then:
-        !cmd.validate(['recordCollectionId'])
-        cmd.errors['recordCollectionId'].code == 'nullable'
-    }
-
     void 'test mapping cannot be null'() {
         when:
         cmd.mapping = null

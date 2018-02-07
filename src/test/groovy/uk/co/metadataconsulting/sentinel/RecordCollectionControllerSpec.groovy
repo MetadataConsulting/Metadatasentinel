@@ -41,7 +41,7 @@ class RecordCollectionControllerSpec extends Specification implements Controller
 
         then:
         response.status == SC_OK
-        model.containsKey('recordCollectionListTotal')
+        model.containsKey('recordCollectionTotal')
     }
 
     def "RecordCollectionController.index model contains paginationQuery"() {

@@ -6,6 +6,7 @@ import groovy.transform.CompileStatic
 @Canonical
 @CompileStatic
 class RecordPortion {
+    String name
     String metadataDomainEntity
     String value
     Boolean valid

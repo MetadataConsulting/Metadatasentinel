@@ -6,7 +6,6 @@ import org.springframework.web.multipart.MultipartFile
 
 @GrailsCompileStatic
 class RecordCsvCommand implements Validateable {
-    Long recordCollectionId
     MultipartFile csvFile
     String mapping
     Integer batchSize = 100

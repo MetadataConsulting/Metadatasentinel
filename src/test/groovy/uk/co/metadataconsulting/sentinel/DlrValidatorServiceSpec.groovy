@@ -26,6 +26,7 @@ end
 
         where:
         dateOfBirth  || expected
+        '1987-01-40' || false
         '1987-01-11' || true
         '2011-09-10' || true
         '2011-09-32' || false
@@ -35,6 +36,7 @@ end
     @Unroll
     def "#diagnosticTestDate #dateOfBirth #description"(String diagnosticTestDate, String dateOfBirth, boolean expected, String description) {
         given:
+
         String rule = '''
 package uk.co.metadataconsulting.sentinel;
 

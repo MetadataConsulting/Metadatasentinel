@@ -26,6 +26,12 @@ class RecordGormService implements GormErrorsMessage {
         RecordGormEntity.where { recordCollection == recordCollectionParam }
     }
 
+    DetachedCriteria<RecordGormEntity> queryByRecordCollectionId(Long recordCollectionId) {
+        RecordCollectionGormEntity recordCollection = RecordCollectionGormEntity.load(recordCollectionId)
+        queryByRecordCollection(recordCollection)
+
+    }
+
     @Transactional
     RecordGormEntity save(RecordGormEntity recordGormEntity) {
         if ( !recordGormEntity ) {
@@ -44,6 +50,7 @@ class RecordGormService implements GormErrorsMessage {
         record.recordCollection = recordCollection
         for ( RecordPortion portion : portionList ) {
             RecordPortionGormEntity recordPortion = new RecordPortionGormEntity(
+                    name: portion.name,
                     metatadataDomainEntity: portion.metadataDomainEntity,
                     value: portion.value,
                     valid: portion.valid)
@@ -56,9 +63,14 @@ class RecordGormService implements GormErrorsMessage {
     }
 
     @ReadOnly
-    List<RecordGormEntity> findAllByRecordCollectionId(Long recordCollectionId, PaginationQuery paginationQuery) {
+    Number countByRecordCollection(Long recordCollectionId) {
         RecordCollectionGormEntity recordCollection = RecordCollectionGormEntity.load(recordCollectionId)
-        DetachedCriteria<RecordGormEntity> query = queryByRecordCollection(recordCollection)
+        queryByRecordCollection(recordCollection).count()
+    }
+
+    @ReadOnly
+    List<RecordGormEntity> findAllByRecordCollectionId(Long recordCollectionId, PaginationQuery paginationQuery) {
+        DetachedCriteria<RecordGormEntity> query = queryByRecordCollectionId(recordCollectionId)
         query.list(paginationQuery.toMap())
     }
 }

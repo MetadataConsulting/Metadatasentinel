@@ -18,6 +18,10 @@
                     <input type="file" name="csvFile" />
                 </li>
                 <li>
+                    <label for="mapping"><g:message code="recordCollection.csv.mapping" default="Mapping"/></label>
+                    <textarea name="mapping"></textarea>
+                </li>
+                <li>
                     <label for="batchSize"><g:message code="recordCollection.csv.import.batchSize" default="Batch Size"/></label>
                     <select name="batchSize">
                         <option value="10">10</option>

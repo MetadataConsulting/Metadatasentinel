@@ -9,11 +9,13 @@ class RecordIndexCommand implements Validateable {
     Integer offset
     Integer max
     Long recordCollectionId
+    RecordCorrectnessDropdown correctness = RecordCorrectnessDropdown.ALL
 
     static constraints = {
         offset min: 0, nullable: true
         max min: 0, nullable: true
         recordCollectionId nullable: false
+        correctness nullable: false
     }
 
     PaginationQuery toPaginationQuery() {
