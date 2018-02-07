@@ -63,6 +63,11 @@ dependencies {
     testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:3.6.0"
     testRuntime "org.seleniumhq.selenium:selenium-remote-driver:3.6.0"
     testRuntime "org.seleniumhq.selenium:selenium-api:3.6.0"
+
+    // DROOLS
+    compile "org.drools:drools-core:$droolsVersion"
+    compile "org.drools:drools-compiler:$droolsVersion"
+    compile 'com.sun.xml.bind:jaxb-xjc:2.3.0'
 }
 
 bootRun {
