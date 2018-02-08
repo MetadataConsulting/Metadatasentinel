@@ -7,6 +7,7 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class ValidationRule {
 
-    List<MetadataDomainEntity> elements
+    String name
+    List<String> gormUrls
     String rule
 }

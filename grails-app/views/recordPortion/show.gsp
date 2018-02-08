@@ -14,8 +14,9 @@
                 <thead>
                 <tr>
                     <th></th>
-                    <th></th>
+                    <th><g:message code="recordPortion.value" default="Value"/></th>
                     <th><g:message code="recordPortion.valid" default="Valid"/></th>
+                    <th><g:message code="recordPortion.failure.reason" default="Failure reason"/></th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -29,6 +30,7 @@
                         <td>${recordPortion.name}</td>
                         <td>${recordPortion.value}</td>
                         <td>${recordPortion.valid}</td>
+                        <td>${recordPortion.reason}</td>
                     </tr>
                 </g:each>
                 </tbody>

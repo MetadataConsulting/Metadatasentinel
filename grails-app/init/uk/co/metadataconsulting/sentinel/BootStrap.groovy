@@ -7,9 +7,11 @@ class BootStrap {
 
     CsvImportService csvImportService
 
+    RuleFetcherService ruleFetcherService
+
     def init = { servletContext ->
 
-        String mapping = 'NHSNumber,NHSNumberStatus,PersonBirthDate,PersonGenderCode,postalCode,GPCodeRegistration,PatientSourceSetting,ReferrerCode,ReferringOrgCode,DiagnosticTestReqDate,DiagnosticTestReqRecDate,ImagingCodeNICIP,ImagingCodeSNOMEDCT,DiagnosticTestDate,ImagingSiteCode,RadiologicalAccessionNumber'
+        List<String> mapping = ruleFetcherService.mappingGormUrl()
         File f = new File('src/test/resources/DIDS_XMLExample_01.csv')
         InputStream inputStream = f.newInputStream()
         csvImportService.save(mapping, inputStream, 100)
@@ -17,4 +19,6 @@ class BootStrap {
     }
     def destroy = {
     }
+
+
 }

@@ -46,7 +46,7 @@ class RecordCollectionController implements ValidateableErrorsMessage {
 
         InputStream inputStream = cmd.csvFile.inputStream
         Integer batchSize = cmd.batchSize
-        csvImportService.save(cmd.mapping, inputStream, batchSize)
+        csvImportService.save(cmd.mapping.split(',') as List<String>, inputStream, batchSize)
 
         redirect controller: 'recordCollection', action: 'index'
     }

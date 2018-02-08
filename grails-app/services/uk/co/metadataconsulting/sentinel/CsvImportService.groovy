@@ -7,6 +7,7 @@ import org.hibernate.SessionFactory
 import org.hibernate.Session
 import org.springframework.context.MessageSource
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRule
+import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 
 @Slf4j
 @CompileStatic
@@ -27,46 +28,73 @@ class CsvImportService implements CsvImport, Benchmark {
     SessionFactory sessionFactory
 
     @Override
-    @Transactional
-    void save(String mapping, InputStream inputStream, Integer batchSize) {
+    void save(List<String> gormUrls, InputStream inputStream, Integer batchSize) {
         RecordCollectionGormEntity recordCollection = recordCollectionGormService.save()
 
-        List<String> mappingList = mapping.split(',') as List<String>
-        Map<String, List<ValidationRule>> mappingRules = [:]
-        for ( String str : mappingList ) {
-            mappingRules[str] = ruleFetcherService.fetchValidationRules(str)
+
+        Map<String, ValidationRules> gormUrlsRules = [:]
+        for ( String gormUrl : gormUrls ) {
+            ValidationRules validationRules = ruleFetcherService.fetchValidationRules(gormUrl)
+            if ( validationRules ) {
+                gormUrlsRules[gormUrl] = validationRules
+            }
         }
 
         long duration = benchmark {
             csvImportProcessorService.processInputStream(inputStream, batchSize) { List<List<String>> valuesList ->
-                save(recordCollection, valuesList, mappingList, mappingRules)
+                save(recordCollection, valuesList, gormUrls, gormUrlsRules)
                 cleanUpGorm()
             }
         }
         log.info "execution batchSize: ${batchSize} took ${duration} ms"
     }
 
-    @Transactional
-    void save(RecordCollectionGormEntity recordCollection, List<List<String>> valuesList, List<String> mappingList, Map<String, List<ValidationRule>> mappingRules) {
+    int indexOfGormUrl(List<String> gormUrls, String gormUrl) {
+        for ( int i = 0; i < gormUrls.size(); i++ ) {
+            if ( gormUrls[i] == gormUrl ) {
+                return i
+            }
+        }
+        return -1
+    }
+
+    String[] valuesOfGormUrls(List<String> ruleGormUrls, List<String> gormUrls, List<String> values) {
+        List result = []
+        for ( String gormUrl : ruleGormUrls ) {
+            int index = indexOfGormUrl(gormUrls, gormUrl)
+            if ( index != -1 ) {
+                result << values[index]
+            }
+        }
+        result as String[]
+    }
+
+    void save(RecordCollectionGormEntity recordCollection, List<List<String>> valuesList, List<String> gormUrls, Map<String, ValidationRules> gormUrlsRules) {
 
         for ( List<String> values : valuesList ) {
             List<RecordPortion> recordPortionList = []
 
             for ( int i = 0; i < values.size(); i++ ) {
                 String value = values[i]
-                String mapping = mappingList[i]
-                List<ValidationRule> rules = mappingRules[mapping]
-                String metadataDomainEntity = 'XXX'
-
-                boolean isValid = true
-                for ( ValidationRule validationRule : rules ) {
-                    isValid = dlrValidatorService.validate([value] as String[], validationRule.rule)
-                    if ( !isValid ) {
-                        break
+                String gormUrl = gormUrls[i]
+                ValidationRules validationRules = gormUrlsRules[gormUrl]
+                if ( validationRules ) {
+                    String reason
+                    boolean isValid = true
+                    for ( ValidationRule validationRule : validationRules.rules ) {
+                        String[] ruleValues = valuesOfGormUrls(validationRule.gormUrls, gormUrls, values)
+                        isValid = dlrValidatorService.validate(ruleValues, validationRule.rule)
+                        if ( !isValid ) {
+                            reason = validationRule.name
+                            break
+                        }
                     }
+                    String name = validationRules.name
+                    recordPortionList << new RecordPortion(name: name, gormUrl: gormUrl, value: value, valid: isValid, reason: reason)
+                } else {
+                    recordPortionList << new RecordPortion(value: value, valid: true)
                 }
-                String name = mapping // TODO
-                recordPortionList << new RecordPortion(name: name, metadataDomainEntity: metadataDomainEntity, value: value, valid: isValid)
+
             }
             recordGormService.save(recordCollection, recordPortionList)
         }

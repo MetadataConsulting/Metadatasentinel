@@ -51,9 +51,10 @@ class RecordGormService implements GormErrorsMessage {
         for ( RecordPortion portion : portionList ) {
             RecordPortionGormEntity recordPortion = new RecordPortionGormEntity(
                     name: portion.name,
-                    metatadataDomainEntity: portion.metadataDomainEntity,
+                    gormUrl: portion.gormUrl,
                     value: portion.value,
-                    valid: portion.valid)
+                    valid: portion.valid,
+                    reason: portion.reason)
             record.addToPortions(recordPortion)
         }
         if ( !record.save() ) {

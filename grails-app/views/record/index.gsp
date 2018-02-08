@@ -25,7 +25,12 @@
                 </thead>
                 <tbody>
                 <g:each var="record" in="${recordList}">
-                    <tr>
+                    <g:if test="${record.valid}">
+                        <tr>
+                    </g:if>
+                    <g:else>
+                        <tr class="alert-danger">
+                    </g:else>
                         <td><g:link controller="recordPortion" action="show" params="[recordCollectionId: recordCollectionId, recordId: record.id]">${record.id}</g:link></td>
                     </tr>
                 </g:each>

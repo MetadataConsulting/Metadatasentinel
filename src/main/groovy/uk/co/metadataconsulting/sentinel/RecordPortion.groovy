@@ -7,7 +7,8 @@ import groovy.transform.CompileStatic
 @CompileStatic
 class RecordPortion {
     String name
-    String metadataDomainEntity
+    String gormUrl
     String value
     Boolean valid
+    String reason
 }

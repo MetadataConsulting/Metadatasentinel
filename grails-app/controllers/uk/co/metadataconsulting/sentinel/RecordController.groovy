@@ -22,7 +22,7 @@ class RecordController implements ValidateableErrorsMessage {
         }
 
         PaginationQuery paginationQuery = cmd.toPaginationQuery()
-        List<RecordGormEntity> recordList = recordService.findAllByRecordCollectionId(cmd.recordCollectionId, cmd.correctness, paginationQuery)
+        List<RecordViewModel> recordList = recordService.findAllByRecordCollectionId(cmd.recordCollectionId, cmd.correctness, paginationQuery)
 
         Number recordTotal = recordService.countByRecordCollection(cmd.recordCollectionId, cmd.correctness)
         [

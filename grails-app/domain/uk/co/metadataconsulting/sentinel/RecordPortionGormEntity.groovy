@@ -6,7 +6,7 @@ import grails.compiler.GrailsCompileStatic
 class RecordPortionGormEntity {
 
     String name
-    String metatadataDomainEntity
+    String gormUrl
     String value
     Boolean valid
     String reason
@@ -14,8 +14,8 @@ class RecordPortionGormEntity {
     static belongsTo = [record: RecordGormEntity]
 
     static constraints = {
-        metatadataDomainEntity nullable: false, blank: false
-        name nullable: false, blank: false
+        gormUrl nullable: true, blank: true
+        name nullable: true, blank: true
         value nullable: false, blank: false
         valid nullable: false, blank: false
         reason nullable: true

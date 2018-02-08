@@ -5,22 +5,20 @@ import spock.lang.Specification
 
 class RecordPortionGormEntityConstraintsSpec extends Specification implements DomainUnitTest<RecordPortionGormEntity> {
 
-    void 'test name cannot be null'() {
+    void 'test name can be null'() {
         when:
         domain.name = null
 
         then:
-        !domain.validate(['name'])
-        domain.errors['name'].code == 'nullable'
+        domain.validate(['name'])
     }
 
-    void 'test metatadataDomainEntity cannot be null'() {
+    void 'test gormUrl can be null'() {
         when:
-        domain.metatadataDomainEntity = null
+        domain.gormUrl = null
 
         then:
-        !domain.validate(['metatadataDomainEntity'])
-        domain.errors['metatadataDomainEntity'].code == 'nullable'
+        domain.validate(['gormUrl'])
     }
 
     void 'test value cannot be null'() {
