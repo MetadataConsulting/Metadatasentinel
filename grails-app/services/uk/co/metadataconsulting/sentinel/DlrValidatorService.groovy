@@ -8,10 +8,8 @@ import groovy.util.logging.Slf4j
 class DlrValidatorService implements RuleValidator {
 
     @Override
-    boolean validate(String[] input, String rule) {
-        RecordValidation validationResult = new RecordValidation(input: input)
-        new DlrValidator().validate(validationResult, rule)
-        validationResult.output
+    String validate(String name, String rule, Map<String, String> identifierToValue) {
+        new DlrValidator().validate(identifierToValue, rule)
     }
 }
 

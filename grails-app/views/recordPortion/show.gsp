@@ -13,7 +13,7 @@
             <table>
                 <thead>
                 <tr>
-                    <th></th>
+                    <th><g:message code="recordPortion.name" default="Name"/></th>
                     <th><g:message code="recordPortion.value" default="Value"/></th>
                     <th><g:message code="recordPortion.valid" default="Valid"/></th>
                     <th><g:message code="recordPortion.failure.reason" default="Failure reason"/></th></th>

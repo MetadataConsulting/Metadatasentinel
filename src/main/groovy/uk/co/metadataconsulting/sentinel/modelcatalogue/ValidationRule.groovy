@@ -6,8 +6,7 @@ import groovy.transform.CompileStatic
 @Canonical
 @CompileStatic
 class ValidationRule {
-
     String name
-    List<String> gormUrls
+    Map<String, String> identifiersToGormUrls
     String rule
 }

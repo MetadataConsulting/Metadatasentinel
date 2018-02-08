@@ -4,5 +4,5 @@ import groovy.transform.CompileStatic
 
 @CompileStatic
 interface RuleValidator {
-    boolean validate(String[] input, String rule)
+    String validate(String name, String rule, Map<String, String> identifierToValue)
 }

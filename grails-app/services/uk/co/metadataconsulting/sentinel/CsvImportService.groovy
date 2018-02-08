@@ -58,16 +58,14 @@ class CsvImportService implements CsvImport, Benchmark {
         return -1
     }
 
-    String[] valuesOfGormUrls(List<String> ruleGormUrls, List<String> gormUrls, List<String> values) {
-        List result = []
-        for ( String gormUrl : ruleGormUrls ) {
-            int index = indexOfGormUrl(gormUrls, gormUrl)
-            if ( index != -1 ) {
-                result << values[index]
-            }
+    String valuesOfGormUrl(String gormUrl,  List<String> gormUrls, List<String> values) {
+        int index = indexOfGormUrl(gormUrls, gormUrl)
+        if ( index != -1 ) {
+            return values[index]
         }
-        result as String[]
+        null
     }
+
 
     void save(RecordCollectionGormEntity recordCollection, List<List<String>> valuesList, List<String> gormUrls, Map<String, ValidationRules> gormUrlsRules) {
 
@@ -80,17 +78,20 @@ class CsvImportService implements CsvImport, Benchmark {
                 ValidationRules validationRules = gormUrlsRules[gormUrl]
                 if ( validationRules ) {
                     String reason
-                    boolean isValid = true
                     for ( ValidationRule validationRule : validationRules.rules ) {
-                        String[] ruleValues = valuesOfGormUrls(validationRule.gormUrls, gormUrls, values)
-                        isValid = dlrValidatorService.validate(ruleValues, validationRule.rule)
-                        if ( !isValid ) {
-                            reason = validationRule.name
+
+                        Map m = [:]
+                        for ( String identifier : validationRule.identifiersToGormUrls.keySet() ) {
+                            m[identifier] = valuesOfGormUrl(validationRule.identifiersToGormUrls[identifier], gormUrls, values)
+                        }
+
+                        reason = dlrValidatorService.validate(validationRule.name, validationRule.rule, m)
+                        if ( reason!=null ) {
                             break
                         }
                     }
                     String name = validationRules.name
-                    recordPortionList << new RecordPortion(name: name, gormUrl: gormUrl, value: value, valid: isValid, reason: reason)
+                    recordPortionList << new RecordPortion(name: name, gormUrl: gormUrl, value: value, valid: !(reason as boolean), reason: reason)
                 } else {
                     recordPortionList << new RecordPortion(value: value, valid: true)
                 }

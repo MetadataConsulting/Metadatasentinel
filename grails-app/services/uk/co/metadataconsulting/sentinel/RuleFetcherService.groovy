@@ -39,18 +39,35 @@ class RuleFetcherService {
         List<ValidationRule> rules = []
         if ( xmlTag?.contains('Date') ) {
             String rule = '''
-package uk.co.metadataconsulting.sentinel;
+package metadata;
 
-global uk.co.metadataconsulting.sentinel.RecordValidation record;
+global java.util.List output;
+global java.lang.String dateStr;
 
-rule "date as yyyy-MM-dd"
-   when
-      eval(java.util.regex.Pattern.compile("([12]\\\\d{3}-(0[1-9]|1[0-2])-(0[1-9]|[12]\\\\d|3[01]))").matcher(record.getInput()[0]).matches())
-   then
-      record.setOutput(true);
-end    
+rule "match yyyy-MM-dd"
+when
+    eval(!Validation.matchesDatePattern(dateStr, "yyyy-MM-dd"))
+then
+    output.add( "date does not match yyyy-MM-dd" );
+end
 '''
-            rules = [new ValidationRule(gormUrls: [gormUrl], name: 'Date must be yyyy-mm-dd', rule: rule)]
+            rules << new ValidationRule(identifiersToGormUrls: [dateStr: gormUrl], name: 'Date must be yyyy-mm-dd', rule: rule)
+        }
+        if ( xmlTag == 'DiagnosticTestReqDate' ) {
+            rules << new ValidationRule(identifiersToGormUrls: [diagnosticTestDate: gormUrl, dateOfBirth: 'gorm://org.modelcatalogue.core.DataElement:63'], name: 'Difference between diagnosticTestDate and dateOfBirth is larger than 18', rule: '''
+package metadata;
+
+global java.util.List output;
+global java.lang.String diagnosticTestDate;
+global java.lang.String dateOfBirth;
+
+rule "Difference between diagnosticTestDate and dateOfBirth is larger than 18"
+when
+    eval(Validation.yearsBetween(diagnosticTestDate, dateOfBirth, 'yyyy-MM-dd') < 18)
+then
+    output.add("Difference between diagnosticTestDate and dateOfBirth is larger than 18");
+end
+''')
         }
         new ValidationRules(name: name, gormUrl: gormUrl, rules: rules)
     }

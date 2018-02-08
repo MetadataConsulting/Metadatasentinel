@@ -12,14 +12,32 @@ import org.kie.internal.builder.KnowledgeBuilder;
 import org.kie.internal.builder.KnowledgeBuilderConfiguration;
 import org.kie.internal.builder.KnowledgeBuilderFactory;
 import org.kie.internal.io.ResourceFactory;
+import metadata.Validation;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 class DlrValidator {
 
-    public void validate(RecordValidation recordValidation, String rule) {
+    public String validate(Map<String, String> identiferToValue, String rule) {
         KieBase kbase = loadKnowledgeBaseFromString(rule);
         KieSession ksession = kbase.newKieSession();
-        ksession.setGlobal( "record", recordValidation);
+
+        List<String> list = new ArrayList();
+        ksession.setGlobal( "output", list );
+        if ( identiferToValue != null ) {
+            for ( String identifier : identiferToValue.keySet() ) {
+               ksession.setGlobal( identifier, identiferToValue.get(identifier));
+            }
+        }
         ksession.fireAllRules();
+
+        if ( list.isEmpty() ) {
+            return null;
+        }
+
+        return list.stream().reduce((a, b) -> a + ", " + b).get();
     }
 
     protected KieBase loadKnowledgeBaseFromString(String... drlContentStrings) {
