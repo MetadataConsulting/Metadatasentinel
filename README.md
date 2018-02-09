@@ -92,4 +92,17 @@ metadata:
 The app GORM for Hibernate implementation as an data access toolkit. It uses MySQL. You will 
 need to configure your database url, user, password at `grails-app/conf/application.yml`. 
 
- 
+
+## Running
+
+To run the app
+
+`./gradlew bootRun`
+
+To run the unit tests:
+
+`./gradlew test`
+
+To run the integration tests:
+
+`./gradlew iT`
