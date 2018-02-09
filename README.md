@@ -2,11 +2,13 @@
 
 Demonstration application to show use of MDX as validator source
 
-
-
 **Metadata Sentinel** consumes rules exposed by MDX at endpoint: 
 
-localhost:8080/api/modelCatalogue/core/validationRule/rules
+`/api/modelCatalogue/core/validationRule/rules`
+
+Note: that endpoint is only available at branch:  
+
+https://github.com/MetadataConsulting/ModelCataloguePlugin/tree/drools
 
 Currently that endpoint does not require authentication.
 
@@ -86,6 +88,8 @@ metadata:
     url: http://localhost:8080
 ```
 
+### Persistence
+The app GORM for Hibernate implementation as an data access toolkit. It uses MySQL. You will 
+need to configure your database url, user, password at `grails-app/conf/application.yml`. 
 
-
-https://github.com/MetadataConsulting/ModelCataloguePlugin/tree/drools 
+ 
