@@ -20,7 +20,7 @@ class RecordIndexCommand implements Validateable {
 
     PaginationQuery toPaginationQuery() {
         new PaginationQuery(
-                max: max ?: 25,
+                max: max ?: 10,
                 offset: offset ?: 0
         )
     }

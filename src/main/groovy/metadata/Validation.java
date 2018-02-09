@@ -40,6 +40,11 @@ public class Validation {
         return cal;
     }
 
+    public static boolean matchesRegex(String value, String pattern) {
+        String regex = pattern;
+        return Pattern.compile(regex).matcher(value).matches();
+    }
+
     public static boolean matchesDatePattern(String value, String pattern) {
         String regex = pattern;
         if ( pattern.equals("yyyy-MM-dd") ) {

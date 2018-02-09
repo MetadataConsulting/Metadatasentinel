@@ -1,174 +1,57 @@
 package uk.co.metadataconsulting.sentinel
 
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.Moshi
+import grails.config.Config
+import grails.core.support.GrailsConfigurationAware
 import groovy.transform.CompileStatic
-import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRule
+import groovy.util.logging.Slf4j
+import okhttp3.HttpUrl
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 
+@Slf4j
 @CompileStatic
-class RuleFetcherService {
+class RuleFetcherService implements GrailsConfigurationAware {
 
-    List<String> mappingGormUrl() {
-        MAPPING.collect { Map m ->
-            m.gormUrl
-        }
-    }
+    private final Moshi moshi = new Moshi.Builder().build()
+    private final OkHttpClient client = new OkHttpClient()
+    private final JsonAdapter<ValidationRules> validationRulesJsonAdapter = moshi.adapter(ValidationRules.class)
 
-    String xmlTagByGormUrl(String gormUrl) {
-        List<Map<String, String>> l = MAPPING.findAll { Map<String, String> m ->
-            m.gormUrl == gormUrl
-        }
-        if ( !l?.isEmpty() ) {
-            return l.first().xmlTag
-        }
-        null
-    }
-
-    String nameByGormUrl(String gormUrl) {
-        List<Map<String, String>> l = MAPPING.findAll { Map<String, String> m ->
-            m.gormUrl == gormUrl
-        }
-        if ( !l?.isEmpty() ) {
-            return l.first().name
-        }
-        null
-    }
+    String metadataUrl
 
     ValidationRules fetchValidationRules(String gormUrl) {
-        String xmlTag = xmlTagByGormUrl(gormUrl)
-        String name = nameByGormUrl(gormUrl) ?: xmlTag
-        List<ValidationRule> rules = []
-        if ( xmlTag?.contains('Date') ) {
-            String rule = '''
-package metadata;
 
-global java.util.List output;
-global java.lang.String dateStr;
+        final String url = "${metadataUrl}/api/modelCatalogue/core/validationRule/rules?gormUrl=${gormUrl}".toString()
+        HttpUrl.Builder httpBuider = HttpUrl.parse(url).newBuilder()
+        Request request = new Request.Builder()
+                .url(httpBuider.build())
+                .header("Accept", 'application/json')
+                .build()
+        ValidationRules validationRules
 
-rule "match yyyy-MM-dd"
-when
-    eval(!Validation.matchesDatePattern(dateStr, "yyyy-MM-dd"))
-then
-    output.add( "date does not match yyyy-MM-dd" );
-end
-'''
-            rules << new ValidationRule(identifiersToGormUrls: [dateStr: gormUrl], name: 'Date must be yyyy-mm-dd', rule: rule)
+        try {
+            Response response = client.newCall(request).execute()
+
+            if ( response.isSuccessful()  ) {
+                if ( response.code() == 200 ) {
+                    validationRules = validationRulesJsonAdapter.fromJson(response.body().source())
+                }
+            } else {
+                log.warn 'Response {}. Could not fetch github repository at {}', response.code(), url
+            }
+            response.close()
+        } catch (IOException ioexception) {
+            log.warn('unable to connect to server {}', metadataUrl)
         }
-        if ( xmlTag == 'DiagnosticTestReqDate' ) {
-            rules << new ValidationRule(identifiersToGormUrls: [diagnosticTestDate: gormUrl, dateOfBirth: 'gorm://org.modelcatalogue.core.DataElement:63'], name: 'Difference between diagnosticTestDate and dateOfBirth is larger than 18', rule: '''
-package metadata;
 
-global java.util.List output;
-global java.lang.String diagnosticTestDate;
-global java.lang.String dateOfBirth;
-
-rule "Difference between diagnosticTestDate and dateOfBirth is larger than 18"
-when
-    eval(Validation.yearsBetween(diagnosticTestDate, dateOfBirth, 'yyyy-MM-dd') < 18)
-then
-    output.add("Difference between diagnosticTestDate and dateOfBirth is larger than 18");
-end
-''')
-        }
-        new ValidationRules(name: name, gormUrl: gormUrl, rules: rules)
+        validationRules
     }
 
-
-    public static final List<Map<String, String>> MAPPING = [
-            [
-                    name: 'DIDS:0.0.1 - NHS Number',
-                    xmlTag: 'NHSNumber',
-                    url: 'http://localhost:8080/#/14/dataElement/53',
-                    gormUrl: 'gorm://org.modelcatalogue.core.DataElement:53',
-            ],
-            [
-                    name: 'DIDS:0.0.1 - NHS Number Status',
-                    xmlTag: 'NHSNumberStatus',
-                    url: 'http://localhost:8080/#/14/dataElement/57',
-                    gormUrl: 'gorm://org.modelcatalogue.core.DataElement:57',
-            ],
-            [
-                    name: 'DIDS:0.0.1 - Date of Birth',
-                    xmlTag: 'PersonBirthDate',
-                    url: 'http://localhost:8080/#/14/dataElement/63',
-                    gormUrl: 'gorm://org.modelcatalogue.core.DataElement:63',
-            ],
-            [
-                    name: 'DIDS:0.0.1 - Patient Gender',
-                    xmlTag: 'PersonGenderCode',
-                    url: 'http://localhost:8080/#/14/dataElement/71',
-                    gormUrl: 'gorm://org.modelcatalogue.core.DataElement:71',
-            ],
-            [
-                    name: '',
-                    xmlTag: 'postalCode',
-                    url: '',
-                    gormUrl: '',
-            ],
-            [
-                    name: 'DIDS:0.0.1 - Patient Registered GP Practice',
-                    xmlTag: 'GPCodeRegistration',
-                    url: 'http://localhost:8080/#/14/dataElement/44',
-                    gormUrl: 'gorm://org.modelcatalogue.core.DataElement:44',
-            ],
-            [
-                    name: '',
-                    xmlTag: 'PatientSourceSetting',
-                    url: '',
-                    gormUrl: '',
-            ],
-            [
-                    name: 'DIDS:0.0.1 - Referrer',
-                    xmlTag: 'ReferrerCode',
-                    url: 'http://localhost:8080/#/14/dataElement/80',
-                    gormUrl: 'gorm://org.modelcatalogue.core.DataElement:80',
-            ],
-            [
-                    name: 'DIDS:0.0.1 - Referring Organisation',
-                    xmlTag: 'ReferringOrgCode',
-                    url: 'http://localhost:8080/#/14/dataElement/93',
-                    gormUrl: 'gorm://org.modelcatalogue.core.DataElement:93',
-            ],
-            [
-                    name: 'DIDS:0.0.1 - Date of Test Request',
-                    xmlTag: 'DiagnosticTestReqDate',
-                    url: 'http://localhost:8080/#/14/dataElement/27',
-                    gormUrl: 'gorm://org.modelcatalogue.core.DataElement:27',
-            ],
-            [
-                    name: 'DIDS:0.0.1 - Date Test Request Received',
-                    xmlTag: 'DiagnosticTestReqRecDate',
-                    url: 'http://localhost:8080/#/14/dataElement/33',
-                    gormUrl: 'gorm://org.modelcatalogue.core.DataElement:33',
-            ],
-            [
-                    name: 'DIDS:0.0.1 - Imaging Code (NICIP)',
-                    xmlTag: 'ImagingCodeNICIP',
-                    url: 'http://localhost:8080/#/14/dataElement/49',
-                    gormUrl: 'gorm://org.modelcatalogue.core.DataElement:49',
-            ],
-            [
-                    name: 'DIDS:0.0.1 - Imaging Code (SNOMED CT)',
-                    xmlTag: 'ImagingCodeSNOMEDCT',
-                    url: 'http://localhost:8080/#/14/dataElement/51',
-                    gormUrl: 'gorm://org.modelcatalogue.core.DataElement:51',
-            ],
-            [
-                    name: 'DIDS:0.0.1 - Date of Test',
-                    xmlTag: 'DiagnosticTestDate',
-                    url: 'http://localhost:8080/#/14/dataElement/16',
-                    gormUrl: 'gorm://org.modelcatalogue.core.DataElement:16',
-            ],
-            [
-                    name: 'DIDS:0.0.1 - Provider Site Code',
-                    xmlTag: 'ImagingSiteCode',
-                    url: 'http://localhost:8080/#/14/dataElement/103',
-                    gormUrl: 'gorm://org.modelcatalogue.core.DataElement:103',
-            ],
-            [
-                    name: 'DIDS:0.0.1 -  RIS Accession Number',
-                    xmlTag: 'RadiologicalAccessionNumber',
-                    url: 'http://localhost:8080/#/14/dataElement/77',
-                    gormUrl: 'gorm://org.modelcatalogue.core.DataElement:77',
-            ],
-    ] as List<Map<String, String>>
+    @Override
+    void setConfiguration(Config co) {
+        metadataUrl = co.getProperty('metadata.url', String, 'http://localhost:8080')
+    }
 }

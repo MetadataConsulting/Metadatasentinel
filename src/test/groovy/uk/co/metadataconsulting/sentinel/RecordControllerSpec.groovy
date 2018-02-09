@@ -80,4 +80,49 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
     }
 
 
+    def "RecordController.show model contains recordPortionList"() {
+        given:
+        controller.recordPortionGormService = Mock(RecordPortionGormService)
+
+        when:
+        params.recordId = 1
+        request.method = 'GET'
+        Map model = controller.show()
+
+        then:
+        response.status == SC_OK
+        model
+        model.containsKey('recordPortionList')
+    }
+
+    def "RecordController.show model contains recordId"() {
+        given:
+        controller.recordPortionGormService = Mock(RecordPortionGormService)
+
+        when:
+        params.recordId = 1
+        request.method = 'GET'
+        Map model = controller.show()
+
+        then:
+        response.status == SC_OK
+        model
+        model.containsKey('recordId')
+    }
+
+    def "RecordController.show model contains recordPortionTotal"() {
+        given:
+        controller.recordPortionGormService = Mock(RecordPortionGormService)
+
+        when:
+        params.recordId = 1
+        request.method = 'GET'
+        Map model = controller.show()
+
+        then:
+        response.status == SC_OK
+        model
+        model.containsKey('recordPortionTotal')
+    }
+
 }

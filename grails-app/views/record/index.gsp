@@ -6,9 +6,15 @@
 </head>
 <body>
 <div id="content" role="main">
-    <article>
-        <g:render template="/templates/flashmessage"/>
+    <section class="row colset-2-its">
+        <article>
+            <g:render template="/templates/flashmessage"/>
         <g:render template="/templates/flasherror"/>
+
+            <g:form controller="recordCollection" action="validate" method="POST">
+                <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
+                <input type="submit" class="btn-primary btn" value="${g.message(code: 'record.validate', default: 'Validate')}"/>
+            </g:form>
 
         <g:form controller="record" action="index" method="GET">
             <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
@@ -31,22 +37,27 @@
                     <g:else>
                         <tr class="alert-danger">
                     </g:else>
-                        <td><g:link controller="recordPortion" action="show" params="[recordCollectionId: recordCollectionId, recordId: record.id]">${record.id}</g:link></td>
+                        <td><g:link controller="record" action="show" params="[recordCollectionId: recordCollectionId, recordId: record.id]">${record.id}</g:link></td>
                     </tr>
                 </g:each>
                 </tbody>
             </table>
 
-            <g:paginate controller="record"
-                        action="index"
-                        total="${recordTotal}"
-                        max="${paginationQuery?.max}"
-                        offset="${paginationQuery?.offset}"
-                        params="[recordCollectionId: recordCollectionId]" />
+            <div class="pagination">
+                <g:paginate controller="record"
+                            action="index"
+                            total="${recordTotal}"
+                            max="${paginationQuery?.max}"
+                            offset="${paginationQuery?.offset}"
+                            params="[correctness: correctness, recordCollectionId: recordCollectionId]" />
+            </div>
+
 
         </g:if>
         <p><span><g:message code="record.total" default="Number of records"/> ${recordTotal}</span></p>
-    </article>
+
+        </article>
+    </section>
 </div><!-- #content -->
 </body>
 </html>

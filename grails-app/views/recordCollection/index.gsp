@@ -5,11 +5,12 @@
 </head>
 <body>
 <div id="content" role="main">
-    <article>
-        <g:render template="/templates/flashmessage"/>
-        <g:render template="/templates/flasherror"/>
+    <section class="row colset-2-its">
+        <article>
+            <g:render template="/templates/flashmessage"/>
+            <g:render template="/templates/flasherror"/>
 
-        <g:if test="${recordCollectionList}">
+            <g:if test="${recordCollectionList}">
             <table>
                 <thead>
                 <tr>
@@ -25,15 +26,18 @@
                 </tbody>
             </table>
 
+            <div class="pagination">
             <g:paginate controller="recordCollection" action="index" total="${recordCollectionTotal}" max="${paginationQuery?.max}" offset="${paginationQuery?.offset}" />
-
+            </div>
         </g:if>
 
 
         <g:link controller="recordCollection" action="importCsv" class="btn-primary btn">
             <g:message code="recordCollection.csv.import" default="Import CSV"/>
         </g:link>
-    </article>
+
+        </article>
+    </section>
 </div><!-- #content -->
 </body>
 </html>

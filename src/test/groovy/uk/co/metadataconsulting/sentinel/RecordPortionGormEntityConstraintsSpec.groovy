@@ -38,4 +38,12 @@ class RecordPortionGormEntityConstraintsSpec extends Specification implements Do
         !domain.validate(['valid'])
         domain.errors['valid'].code == 'nullable'
     }
+
+    void 'test reason can be null'() {
+        when:
+        domain.reason = null
+
+        then:
+        domain.validate(['reason'])
+    }
 }

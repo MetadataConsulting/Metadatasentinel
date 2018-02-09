@@ -64,7 +64,7 @@ class RecordGormService implements GormErrorsMessage {
     }
 
     @ReadOnly
-    Number countByRecordCollection(Long recordCollectionId) {
+    Number countByRecordCollectionId(Long recordCollectionId) {
         RecordCollectionGormEntity recordCollection = RecordCollectionGormEntity.load(recordCollectionId)
         queryByRecordCollection(recordCollection).count()
     }
@@ -73,5 +73,10 @@ class RecordGormService implements GormErrorsMessage {
     List<RecordGormEntity> findAllByRecordCollectionId(Long recordCollectionId, PaginationQuery paginationQuery) {
         DetachedCriteria<RecordGormEntity> query = queryByRecordCollectionId(recordCollectionId)
         query.list(paginationQuery.toMap())
+    }
+
+    @ReadOnly
+    DetachedCriteria<RecordGormEntity> findById(Long recordId) {
+        RecordGormEntity.where { id == recordId }
     }
 }

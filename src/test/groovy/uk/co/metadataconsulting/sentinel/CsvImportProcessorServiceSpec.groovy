@@ -7,7 +7,7 @@ class CsvImportProcessorServiceSpec extends Specification implements ServiceUnit
 
     def "process DIDS_XMLExample_01.csvloinc returns every line"() {
         when:
-        File f = new File('src/test/resources/DIDS_XMLExample_01.csv')
+        File f = new File('src/test/resources/DIDS_XMLExample_50000.csv')
 
         then:
         f.exists()
@@ -15,12 +15,12 @@ class CsvImportProcessorServiceSpec extends Specification implements ServiceUnit
         when:
         InputStream inputStream = f.newInputStream()
         List<List<String>> result = []
-        service.processInputStream(inputStream, 100) {  List<List<String>> loincList ->
+        service.processInputStream(inputStream, 1000) {  List<List<String>> loincList ->
             result.addAll(loincList)
         }
 
         then:
         result
-        result.size() == 2
+        result.size() == 44002
     }
 }

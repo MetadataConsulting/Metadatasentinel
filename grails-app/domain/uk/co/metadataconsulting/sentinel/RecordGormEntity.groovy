@@ -5,6 +5,8 @@ import grails.compiler.GrailsCompileStatic
 @GrailsCompileStatic
 class RecordGormEntity {
 
+    Date dateCreated
+
     static belongsTo = [recordCollection: RecordCollectionGormEntity]
 
     static hasMany = [portions: RecordPortionGormEntity]

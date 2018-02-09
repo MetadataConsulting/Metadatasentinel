@@ -13,6 +13,7 @@ import org.kie.internal.builder.KnowledgeBuilderConfiguration;
 import org.kie.internal.builder.KnowledgeBuilderFactory;
 import org.kie.internal.io.ResourceFactory;
 import metadata.Validation;
+import org.omg.SendingContext.RunTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,23 +22,29 @@ import java.util.Map;
 class DlrValidator {
 
     public String validate(Map<String, String> identiferToValue, String rule) {
-        KieBase kbase = loadKnowledgeBaseFromString(rule);
-        KieSession ksession = kbase.newKieSession();
 
-        List<String> list = new ArrayList();
-        ksession.setGlobal( "output", list );
-        if ( identiferToValue != null ) {
-            for ( String identifier : identiferToValue.keySet() ) {
-               ksession.setGlobal( identifier, identiferToValue.get(identifier));
+        try {
+            KieBase kbase = loadKnowledgeBaseFromString(rule);
+            KieSession ksession = kbase.newKieSession();
+
+            List<String> list = new ArrayList();
+            ksession.setGlobal( "output", list );
+            if ( identiferToValue != null ) {
+                for ( String identifier : identiferToValue.keySet() ) {
+                    ksession.setGlobal( identifier, identiferToValue.get(identifier));
+                }
             }
-        }
-        ksession.fireAllRules();
+            ksession.fireAllRules();
 
-        if ( list.isEmpty() ) {
+            if ( list.isEmpty() ) {
+                return null;
+            }
+
+            return list.stream().reduce((a, b) -> a + ", " + b).get();
+
+        } catch (RuntimeException e) {
             return null;
         }
-
-        return list.stream().reduce((a, b) -> a + ", " + b).get();
     }
 
     protected KieBase loadKnowledgeBaseFromString(String... drlContentStrings) {

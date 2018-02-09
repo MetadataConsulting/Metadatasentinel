@@ -1,29 +1,84 @@
 package uk.co.metadataconsulting.sentinel
 
 import grails.gorm.DetachedCriteria
+import grails.gorm.transactions.ReadOnly
+import grails.gorm.transactions.Transactional
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
+import org.hibernate.Criteria
 
 @CompileStatic
 class RecordService {
     RecordGormService recordGormService
+    ValidateRecordPortionService validateRecordPortionService
+
+    @CompileDynamic
+    @ReadOnly
+    Set<Long> findAllInvalidRecordIds() {
+        DetachedCriteria<RecordPortionGormEntity> invalidQuery =  RecordPortionGormEntity.where {
+            def r = record
+            valid == false
+        }.projections {
+            property('r.id')
+        }
+        def results = invalidQuery.list()
+
+        results as Set<Long>
+    }
+
+    @CompileDynamic
+    @ReadOnly
+    Set<Long> findAllValidRecordIds() {
+        Set<Long> ids = findAllInvalidRecordIds()
+        def c = RecordGormEntity.createCriteria()
+         c.list {
+            not { 'in'('id', ids) }
+            projections {
+                property('id')
+            }
+        } as Set<Long>
+    }
+
+    @Transactional
+    void validate(Long recordId) {
+        DetachedCriteria<RecordGormEntity> query = recordGormService.findById(recordId)
+        query.join('portions')
+        RecordGormEntity recordGormEntity = query.get()
+        for ( RecordPortionGormEntity recordPortionGormEntity : recordGormEntity.portions ) {
+            String failure = validateRecordPortionService.failureReason(recordPortionGormEntity)
+            recordPortionGormEntity.reason = failure
+            recordPortionGormEntity.valid = !(failure as boolean)
+            recordPortionGormEntity.save()
+        }
+    }
 
     List<RecordViewModel> findAllByRecordCollectionId(Long recordCollectionId, RecordCorrectnessDropdown correctness, PaginationQuery paginationQuery) {
         // TODO Do this with a query
         DetachedCriteria<RecordGormEntity> query = recordGormService.queryByRecordCollectionId(recordCollectionId)
-        query.join('portions')
+        //query.join('portions')
 
         if ( correctness == RecordCorrectnessDropdown.ALL ) {
-            return query.list(paginationQuery.toMap()).collect { RecordGormEntity recordGormEntity ->
-                boolean valid = !recordGormEntity.portions.any { RecordPortionGormEntity recordPortionGormEntity -> !recordPortionGormEntity.valid }
-                new RecordViewModel(id: recordGormEntity.id, valid: valid)
+            Map args = paginationQuery.toMap()
+
+            List<RecordGormEntity> l = query.list(args)
+
+            List<Long> ids = query.id().list(args) as List<Long>
+            Set<Long> invalidRecordIds = findAllInvalidRecordIds()
+
+            return ids.collect { Long id ->
+                new RecordViewModel(id: id, valid: !invalidRecordIds.contains(id))
             }
         }
 
         boolean valid = validForCorrectnes(correctness)
-        List<RecordGormEntity> all = valid ? findAllValidRecords(recordCollectionId) : findAllInvalidRecords(recordCollectionId)
 
-        all.subList(paginationQuery.offset, Math.min(all.size(), paginationQuery.max)).collect { RecordGormEntity recordGormEntity ->
-            new RecordViewModel(id: recordGormEntity.id, valid: valid)
+        if ( valid ) {
+            return findAllValidRecords(recordCollectionId, paginationQuery).collect {
+                new RecordViewModel(id:it, valid: true)
+            }
+        }
+        return findAllInvalidRecords(recordCollectionId, paginationQuery).collect {
+            new RecordViewModel(id:it, valid: false)
         }
     }
 
@@ -36,27 +91,38 @@ class RecordService {
         false
     }
 
-    List<RecordGormEntity> findAllValidRecords(Long recordCollectionId) {
+    List<Long> findAllValidRecords(Long recordCollectionId, PaginationQuery paginationQuery) {
+        DetachedCriteria<RecordGormEntity> query = queryValidRecords(recordCollectionId)
+        query.id().list(paginationQuery.toMap()) as List<Long>
+    }
+
+    List<Long> findAllInvalidRecords(Long recordCollectionId, PaginationQuery paginationQuery) {
+        DetachedCriteria<RecordGormEntity> query = queryInvalidRecords(recordCollectionId)
+        query.id().list(paginationQuery.toMap()) as List<Long>
+    }
+
+    DetachedCriteria<RecordGormEntity> queryValidRecords(Long recordCollectionId) {
+        Set<Long> validRecordIds = findAllValidRecordIds()
+
         DetachedCriteria<RecordGormEntity> query = recordGormService.queryByRecordCollectionId(recordCollectionId)
-        query.join('portions')
-        query.list().findAll { RecordGormEntity gormEntity ->
-            gormEntity.portions.every { RecordPortionGormEntity portionGormEntity -> portionGormEntity.valid }
+        query.where {
+            (id in validRecordIds)
         }
     }
 
-    List<RecordGormEntity> findAllInvalidRecords(Long recordCollectionId) {
+    DetachedCriteria<RecordGormEntity> queryInvalidRecords(Long recordCollectionId) {
+        Set<Long> invalidRecordIds = findAllInvalidRecordIds()
         DetachedCriteria<RecordGormEntity> query = recordGormService.queryByRecordCollectionId(recordCollectionId)
-        query.join('portions')
-        query.list().findAll { RecordGormEntity gormEntity ->
-            gormEntity.portions.any { RecordPortionGormEntity portionGormEntity -> !portionGormEntity.valid }
+        query.where {
+            id in invalidRecordIds
         }
     }
 
-    Number countByRecordCollection(Long recordCollectionId, RecordCorrectnessDropdown correctness) {
+    Number countByRecordCollectionIdAndCorrectness(Long recordCollectionId, RecordCorrectnessDropdown correctness) {
         if ( correctness == RecordCorrectnessDropdown.ALL ) {
-            return recordGormService.countByRecordCollection(recordCollectionId)
+            return recordGormService.countByRecordCollectionId(recordCollectionId)
         }
         boolean valid = validForCorrectnes(correctness)
-        (valid ? findAllValidRecords(recordCollectionId).size() : findAllInvalidRecords(recordCollectionId).size()) as Number
+        valid ? queryValidRecords(recordCollectionId).count() : queryInvalidRecords(recordCollectionId).count()
     }
 }

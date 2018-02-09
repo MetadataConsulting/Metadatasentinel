@@ -9,7 +9,8 @@ class RecordCollectionController implements ValidateableErrorsMessage {
     static allowedMethods = [
             index: 'GET',
             importCsv: 'GET',
-            uploadCsv: 'POST'
+            uploadCsv: 'POST',
+            validate: 'POST',
     ]
 
     MessageSource messageSource
@@ -17,6 +18,8 @@ class RecordCollectionController implements ValidateableErrorsMessage {
     CsvImportService csvImportService
 
     RecordCollectionGormService recordCollectionGormService
+
+    RecordCollectionService recordCollectionService
 
     def index() {
 
@@ -35,6 +38,14 @@ class RecordCollectionController implements ValidateableErrorsMessage {
 
     def importCsv() {
         [:]
+    }
+
+    def validate(Long recordCollectionId) {
+        recordCollectionService.validate(recordCollectionId)
+
+        flash.message = messageSource.getMessage('record.validation', [] as Object[],'Record Collection validation triggered', request.locale)
+
+        redirect action: 'index', controller: 'record', params: [recordCollectionId: recordCollectionId]
     }
 
     def uploadCsv(RecordCsvCommand cmd) {

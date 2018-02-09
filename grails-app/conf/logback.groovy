@@ -34,3 +34,5 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
     logger("StackTrace", ERROR, ['FULL_STACKTRACE'], false)
 }
 root(ERROR, ['STDOUT'])
+logger('uk.co.metadataconsulting.sentinel', DEBUG, ['STDOUT'], false)
+logger('metadata', DEBUG, ['STDOUT'], false)

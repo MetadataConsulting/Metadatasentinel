@@ -7,20 +7,22 @@ class UrlMappingsSpec extends Specification implements UrlMappingsUnitTest<UrlMa
     void setup() {
         mockController(RecordCollectionController)
         mockController(RecordController)
-        mockController(RecordPortionController)
     }
 
     void "test forward mappings"() {
         expect:
         verifyForwardUrlMapping("/", controller: 'recordCollection', action: 'index')
+        verifyForwardUrlMapping("/recordCollection/validate", controller: 'recordCollection', action: 'validate')
         verifyForwardUrlMapping("/import", controller: 'recordCollection', action: 'importCsv')
         verifyForwardUrlMapping("/upload", controller: 'recordCollection', action: 'uploadCsv')
         verifyForwardUrlMapping("/records/1", controller: 'record', action: 'index') {
             recordCollectionId = '1'
         }
-        verifyForwardUrlMapping("/records/1/2", controller: 'recordPortion', action: 'show') {
+        verifyForwardUrlMapping("/records/1/2", controller: 'record', action: 'show') {
             recordCollectionId = '1'
             recordId = '2'
         }
+        verifyForwardUrlMapping("/record/validate", controller: 'record', action: 'validate')
+        verifyForwardUrlMapping("/record/show", controller: 'record', action: 'show')
     }
 }

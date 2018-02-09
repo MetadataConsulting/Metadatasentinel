@@ -10,8 +10,12 @@ class RecordController implements ValidateableErrorsMessage {
 
     RecordService recordService
 
+    RecordPortionGormService recordPortionGormService
+
     static allowedMethods = [
             index: 'GET',
+            validate: 'POST',
+            show: 'GET'
     ]
 
     def index(RecordIndexCommand cmd) {
@@ -24,13 +28,33 @@ class RecordController implements ValidateableErrorsMessage {
         PaginationQuery paginationQuery = cmd.toPaginationQuery()
         List<RecordViewModel> recordList = recordService.findAllByRecordCollectionId(cmd.recordCollectionId, cmd.correctness, paginationQuery)
 
-        Number recordTotal = recordService.countByRecordCollection(cmd.recordCollectionId, cmd.correctness)
+        Number recordTotal = recordService.countByRecordCollectionIdAndCorrectness(cmd.recordCollectionId, cmd.correctness)
         [
                 correctness: cmd.correctness,
                 recordCollectionId: cmd.recordCollectionId,
                 recordList: recordList,
                 paginationQuery: paginationQuery,
                 recordTotal: recordTotal,
+        ]
+    }
+
+    def validate(Long recordId) {
+
+        recordService.validate(recordId)
+
+        flash.message = messageSource.getMessage('record.validation', [] as Object[],'Record validated again', request.locale)
+
+        redirect action: 'show', controller: 'record', params: [recordId: recordId]
+    }
+
+    def show(Long recordId) {
+
+        List<RecordPortionGormEntity> recordPortionList = recordPortionGormService.findAllByRecordId(recordId)
+        Number recordPortionTotal = recordPortionGormService.countByRecordId(recordId)
+        [
+                recordId: recordId,
+                recordPortionList: recordPortionList,
+                recordPortionTotal: recordPortionTotal
         ]
     }
 }

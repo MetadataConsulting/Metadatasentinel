@@ -6,6 +6,7 @@ import spock.lang.Unroll
 
 import static javax.servlet.http.HttpServletResponse.SC_METHOD_NOT_ALLOWED
 import static javax.servlet.http.HttpServletResponse.SC_OK
+import static javax.servlet.http.HttpServletResponse.SC_MOVED_TEMPORARILY
 
 class RecordControllerAllowedMethodsSpec extends Specification implements ControllerUnitTest<RecordController> {
 
@@ -29,5 +30,54 @@ class RecordControllerAllowedMethodsSpec extends Specification implements Contro
 
         then:
         response.status == SC_OK
+    }
+
+    @Unroll
+    def "test RecordController.show does not accept #method requests"(String method) {
+        when:
+        request.method = method
+        controller.show()
+
+        then:
+        response.status == SC_METHOD_NOT_ALLOWED
+
+        where:
+        method << ['PATCH', 'DELETE', 'POST', 'PUT']
+    }
+
+    def "test RecordController.show accepts GET requests"() {
+        given:
+        controller.recordPortionGormService = Mock(RecordPortionGormService)
+        when:
+        request.method = 'GET'
+        controller.show()
+
+        then:
+        response.status == SC_OK
+    }
+
+    @Unroll
+    def "test RecordController.validate does not accept #method requests"(String method) {
+        when:
+        request.method = method
+        controller.validate()
+
+        then:
+        response.status == SC_METHOD_NOT_ALLOWED
+
+        where:
+        method << ['PATCH', 'DELETE', 'GET', 'PUT']
+    }
+
+    def "test RecordController.validate accepts POST requests"() {
+        given:
+        controller.recordService = Mock(RecordService)
+
+        when:
+        request.method = 'POST'
+        controller.validate()
+
+        then:
+        response.status == SC_MOVED_TEMPORARILY
     }
 }
