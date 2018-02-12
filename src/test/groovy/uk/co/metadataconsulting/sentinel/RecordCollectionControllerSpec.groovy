@@ -4,6 +4,7 @@ import grails.testing.web.controllers.ControllerUnitTest
 import spock.lang.Specification
 
 import static javax.servlet.http.HttpServletResponse.SC_OK
+import static javax.servlet.http.HttpServletResponse.SC_MOVED_TEMPORARILY
 
 class RecordCollectionControllerSpec extends Specification implements ControllerUnitTest<RecordCollectionController> {
 
@@ -55,5 +56,19 @@ class RecordCollectionControllerSpec extends Specification implements Controller
         then:
         response.status == SC_OK
         model.containsKey('paginationQuery')
+    }
+
+    def "RecordCollectionController.delete model triggers recordCollectionGormService.delete invocation"() {
+        given:
+        controller.recordCollectionGormService = Mock(RecordCollectionGormService)
+
+        when:
+        params.recordCollectionId = 1
+        request.method = 'POST'
+        controller.delete()
+
+        then:
+        response.status == SC_MOVED_TEMPORARILY
+        1 * controller.recordCollectionGormService.delete(1)
     }
 }

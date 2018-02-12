@@ -35,4 +35,9 @@ class RecordCollectionGormService implements GormErrorsMessage {
     Number count() {
         RecordCollectionGormEntity.count()
     }
+
+    @Transactional
+    void delete(Serializable id) {
+        RecordCollectionGormEntity.get(id).delete()
+    }
 }

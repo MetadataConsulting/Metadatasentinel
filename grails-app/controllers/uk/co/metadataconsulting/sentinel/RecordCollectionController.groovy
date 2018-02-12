@@ -11,6 +11,7 @@ class RecordCollectionController implements ValidateableErrorsMessage {
             importCsv: 'GET',
             uploadCsv: 'POST',
             validate: 'POST',
+            delete: 'POST',
     ]
 
     MessageSource messageSource
@@ -60,5 +61,19 @@ class RecordCollectionController implements ValidateableErrorsMessage {
         csvImportService.save(cmd.mapping.split(',') as List<String>, inputStream, batchSize)
 
         redirect controller: 'recordCollection', action: 'index'
+    }
+
+    def delete(Long recordCollectionId) {
+
+        if ( !recordCollectionId ) {
+            redirect controller: 'recordCollection', action: 'index'
+            return
+        }
+
+        recordCollectionGormService.delete(recordCollectionId)
+        flash.message = messageSource.getMessage('recordCollection.deleted', [] as Object[],'Record Collection deleted', request.locale)
+
+        redirect controller: 'recordCollection', action: 'index'
+
     }
 }

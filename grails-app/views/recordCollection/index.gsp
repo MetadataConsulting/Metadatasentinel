@@ -15,12 +15,19 @@
                 <thead>
                 <tr>
                     <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <g:each var="recordCollection" in="${recordCollectionList}">
                     <tr>
                         <td><g:link controller="record" action="index" params="[recordCollectionId: recordCollection?.id]">${recordCollection.lastUpdated}</g:link></td>
+                        <td>
+                            <g:form controller="recordCollection" action="delete">
+                                <g:hiddenField name="recordCollectionId" value="${recordCollection?.id}"/>
+                                <input type="submit" class="btn btn-danger" value="${g.message(code: 'recordCollection.delete', default: 'Delete')}"/>
+                            </g:form>
+                        </td>
                     </tr>
                 </g:each>
                 </tbody>

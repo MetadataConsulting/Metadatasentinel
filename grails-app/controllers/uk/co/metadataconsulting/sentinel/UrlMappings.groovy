@@ -5,6 +5,7 @@ class UrlMappings {
     static mappings = {
         "/"(controller: 'recordCollection', action: 'index')
         "/recordCollection/validate"(controller: 'recordCollection', action: 'validate')
+        "/recordCollection/delete"(controller: 'recordCollection', action: 'delete')
         "/import"(controller: 'recordCollection', action: 'importCsv')
         "/upload"(controller: 'recordCollection', action: 'uploadCsv')
         "/records/$recordCollectionId"(controller: 'record', action: 'index')

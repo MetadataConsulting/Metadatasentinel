@@ -5,6 +5,7 @@ import spock.lang.Specification
 import spock.lang.Unroll
 import static javax.servlet.http.HttpServletResponse.SC_OK
 import static javax.servlet.http.HttpServletResponse.SC_METHOD_NOT_ALLOWED
+import static javax.servlet.http.HttpServletResponse.SC_MOVED_TEMPORARILY
 
 class RecordCollectionControllerAllowedMethodsSpec extends Specification implements ControllerUnitTest<RecordCollectionController> {
 
@@ -75,5 +76,27 @@ class RecordCollectionControllerAllowedMethodsSpec extends Specification impleme
 
         then:
         response.status == SC_OK
+    }
+
+    @Unroll
+    def "test RecordCollectionController.delete does not accept #method requests"(String method) {
+        when:
+        request.method = method
+        controller.delete()
+
+        then:
+        response.status == SC_METHOD_NOT_ALLOWED
+
+        where:
+        method << ['PATCH', 'DELETE', 'GET', 'PUT']
+    }
+
+    def "test RecordCollectionController.delete accepts POST requests"() {
+        when:
+        request.method = 'POST'
+        controller.delete()
+
+        then:
+        response.status == SC_MOVED_TEMPORARILY
     }
 }
