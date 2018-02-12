@@ -45,6 +45,18 @@ public class Validation {
         return Pattern.compile(regex).matcher(value).matches();
     }
 
+    public static boolean blank(String value) {
+        if ( value == null ) {
+            return true;
+        }
+        value = value.trim();
+
+        if ( value.equals("") ) {
+            return true;
+        }
+        return false;
+    }
+
     public static boolean matchesDatePattern(String value, String pattern) {
         String regex = pattern;
         if ( pattern.equals("yyyy-MM-dd") ) {

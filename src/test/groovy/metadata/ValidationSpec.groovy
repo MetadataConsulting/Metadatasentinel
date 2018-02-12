@@ -29,4 +29,17 @@ class ValidationSpec extends Specification {
         '2011-10-09' | '1987-01-11' || 24
         '2011-10-09' | '1999-01-11' || 12
     }
+    @Unroll
+    def "Blank validation: #input #description"(String input, boolean expected, String description) {
+        expect:
+        expected == Validation.blank(input)
+
+        where:
+        input || expected
+        '123' || false
+        null  || true
+        ''    || true
+        '  '  || true
+        description = expected ? 'is blank' : 'is not blank'
+    }
 }
