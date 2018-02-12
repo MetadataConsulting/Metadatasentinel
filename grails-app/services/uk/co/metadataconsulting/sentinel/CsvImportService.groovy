@@ -1,13 +1,12 @@
 package uk.co.metadataconsulting.sentinel
 
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.hibernate.SessionFactory
 import org.hibernate.Session
 import org.springframework.context.MessageSource
-import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRule
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
-import static grails.async.Promises.task
 
 @Slf4j
 @CompileStatic
@@ -27,11 +26,14 @@ class CsvImportService implements CsvImport, Benchmark {
 
     SessionFactory sessionFactory
 
+    def executorService
+
+    @CompileDynamic
     @Override
     void save(List<String> gormUrls, InputStream inputStream, Integer batchSize) {
         RecordCollectionGormEntity recordCollection = recordCollectionGormService.save()
 
-        //task {
+        executorService.submit {
             log.info 'fetching validation rules'
             Map<String, ValidationRules> gormUrlsRules = fetchValidationRules(gormUrls)
             long duration = benchmark {
@@ -42,7 +44,7 @@ class CsvImportService implements CsvImport, Benchmark {
                 }
             }
             log.info "execution batchSize: ${batchSize} took ${duration} ms"
-        //}
+        }
     }
 
     Map<String, ValidationRules> fetchValidationRules(List<String> gormUrls) {
