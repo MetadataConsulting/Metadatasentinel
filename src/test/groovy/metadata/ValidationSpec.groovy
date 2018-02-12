@@ -29,6 +29,30 @@ class ValidationSpec extends Specification {
         '2011-10-09' | '1987-01-11' || 24
         '2011-10-09' | '1999-01-11' || 12
     }
+
+
+    @Unroll
+    def "#input #description"(String input, boolean expected, String description) {
+        expect:
+        expected == !Validation.matchesRegex(input, '1234567890|0123456789|00000000001|00000000002|00000000003|00000000004|00000000005|00000000006|00000000007|00000000008|00000000009')
+
+        where:
+        input         || expected
+        '1234000000'  || true
+        '1234567890'  || false
+        '0123456789'  || false
+        '00000000001' || false
+        '00000000002' || false
+        '00000000003' || false
+        '00000000004' || false
+        '00000000005' || false
+        '00000000006' || false
+        '00000000007' || false
+        '00000000008' || false
+        '00000000009' || false
+        description = expected ? 'is valid' : 'is not valid'
+    }
+
     @Unroll
     def "Blank validation: #input #description"(String input, boolean expected, String description) {
         expect:
