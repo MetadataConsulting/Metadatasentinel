@@ -97,7 +97,7 @@ need to configure your database url, user, password at `grails-app/conf/applicat
 
 To run the app
 
-`./gradlew bootRun`
+`./gradlew -DJDBC_CONNECTION_STRING=jdbc:mysql://127.0.0.1:8889/metadatasentinel_dev -DJDBC_USERNAME=root -DJDBC_PASSWORD=root bootRun`
 
 To run the unit tests:
 
@@ -105,4 +105,4 @@ To run the unit tests:
 
 To run the integration tests:
 
-`./gradlew iT`
+`./gradlew -DJDBC_CONNECTION_STRING=jdbc:mysql://127.0.0.1:8889/metadatasentinel_dev -DJDBC_USERNAME=root -DJDBC_PASSWORD=root iT`
