@@ -79,4 +79,9 @@ class RecordGormService implements GormErrorsMessage {
     DetachedCriteria<RecordGormEntity> findById(Long recordId) {
         RecordGormEntity.where { id == recordId }
     }
+
+    @ReadOnly
+    Number count() {
+        RecordGormEntity.count()
+    }
 }

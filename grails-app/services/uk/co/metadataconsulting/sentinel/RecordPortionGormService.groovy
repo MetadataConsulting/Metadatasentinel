@@ -25,4 +25,9 @@ class RecordPortionGormService {
     Number countByRecordId(Long recordId) {
         queryByRecord(RecordGormEntity.load(recordId)).count()
     }
+
+    @ReadOnly
+    Number count() {
+        RecordPortionGormEntity.count()
+    }
 }

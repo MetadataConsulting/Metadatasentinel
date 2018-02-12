@@ -22,6 +22,17 @@ class RuleFetcherService implements GrailsConfigurationAware {
 
     String metadataUrl
 
+    Map<String, ValidationRules> fetchValidationRules(List<String> gormUrls) {
+        Map<String, ValidationRules> gormUrlsRules = [:]
+        for ( String gormUrl : gormUrls ) {
+            ValidationRules validationRules = fetchValidationRules(gormUrl)
+            if ( validationRules ) {
+                gormUrlsRules[gormUrl] = validationRules
+            }
+        }
+        gormUrlsRules
+    }
+
     ValidationRules fetchValidationRules(String gormUrl) {
 
         final String url = "${metadataUrl}/api/modelCatalogue/core/validationRule/rules?gormUrl=${gormUrl}".toString()

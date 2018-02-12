@@ -22,8 +22,6 @@ class CsvImportService implements CsvImport, Benchmark {
 
     RecordCollectionGormService recordCollectionGormService
 
-    MessageSource messageSource
-
     SessionFactory sessionFactory
 
     def executorService
@@ -35,7 +33,7 @@ class CsvImportService implements CsvImport, Benchmark {
 
         executorService.submit {
             log.info 'fetching validation rules'
-            Map<String, ValidationRules> gormUrlsRules = fetchValidationRules(gormUrls)
+            Map<String, ValidationRules> gormUrlsRules = ruleFetcherService.fetchValidationRules(gormUrls)
             long duration = benchmark {
                 log.info 'processing input stream'
                 csvImportProcessorService.processInputStream(inputStream, batchSize) { List<List<String>> valuesList ->
@@ -47,29 +45,22 @@ class CsvImportService implements CsvImport, Benchmark {
         }
     }
 
-    Map<String, ValidationRules> fetchValidationRules(List<String> gormUrls) {
-        Map<String, ValidationRules> gormUrlsRules = [:]
-        for ( String gormUrl : gormUrls ) {
-            ValidationRules validationRules = ruleFetcherService.fetchValidationRules(gormUrl)
-            if ( validationRules ) {
-                gormUrlsRules[gormUrl] = validationRules
-            }
-        }
-        gormUrlsRules
-    }
-
     void save(RecordCollectionGormEntity recordCollection, List<List<String>> valuesList, List<String> gormUrls, Map<String, ValidationRules> gormUrlsRules) {
-
         for ( List<String> values : valuesList ) {
-            List<RecordPortion> recordPortionList = []
-
-            for ( int i = 0; i < values.size(); i++ ) {
-                String value = values[i]
-                String gormUrl = gormUrls[i]
-                recordPortionList << recordPortionFromValue(gormUrl, value, gormUrls, values, gormUrlsRules)
-            }
+            List<RecordPortion> recordPortionList = recordPortionListOfValue(values, gormUrls, gormUrlsRules)
             recordGormService.save(recordCollection, recordPortionList)
         }
+    }
+
+    List<RecordPortion> recordPortionListOfValue(List<String> values, List<String> gormUrls, Map<String, ValidationRules> gormUrlsRules) {
+        List<RecordPortion> recordPortionList = []
+
+        for ( int i = 0; i < values.size(); i++ ) {
+            String value = values[i]
+            String gormUrl = gormUrls[i]
+            recordPortionList << recordPortionFromValue(gormUrl, value, gormUrls, values, gormUrlsRules)
+        }
+        recordPortionList
     }
 
     RecordPortion recordPortionFromValue(String gormUrl, String value, List<String> gormUrls, List<String> values, Map<String, ValidationRules> gormUrlsRules) {
