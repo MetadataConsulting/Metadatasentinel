@@ -13,16 +13,6 @@ import static java.util.Calendar.YEAR;
 
 public class Validation {
 
-    String reason;
-
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
-
-    public String toReason() {
-        return this.reason;
-    }
-
     public static int yearsBetween(Date last, Date first) {
         Calendar a = getCalendar(first);
         Calendar b = getCalendar(last);
