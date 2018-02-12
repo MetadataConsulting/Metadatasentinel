@@ -5,10 +5,10 @@ buildscript {
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
-        classpath "gradle.plugin.com.energizedwork.webdriver-binaries:webdriver-binaries-gradle-plugin:1.4"
-        classpath "gradle.plugin.com.energizedwork:idea-gradle-plugins:1.4"
+        classpath "gradle.plugin.com.energizedwork.webdriver-binaries:webdriver-binaries-gradle-plugin:$webdriverBinariesGradleVersion"
+        classpath "gradle.plugin.com.energizedwork:idea-gradle-plugins:$ideaGradleVersion"
         classpath "org.grails.plugins:hibernate5:${gormVersion-".RELEASE"}"
-        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:2.14.6"
+        classpath "com.bertramlabs.plugins:asset-pipeline-gradle:$assetPipelineVersion"
     }
 }
 
@@ -54,14 +54,14 @@ dependencies {
     profile "org.grails.profiles:web"
     runtime "org.glassfish.web:el-impl:2.1.2-b03"
     runtime "org.apache.tomcat:tomcat-jdbc"
-    runtime "com.bertramlabs.plugins:asset-pipeline-grails:2.14.6"
+    runtime "com.bertramlabs.plugins:asset-pipeline-grails:$assetPipelineVersion"
     testCompile "org.grails:grails-gorm-testing-support"
     testCompile "org.grails:grails-web-testing-support"
     testCompile "org.grails.plugins:geb"
-    testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:3.6.0"
-    testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:3.6.0"
-    testRuntime "org.seleniumhq.selenium:selenium-remote-driver:3.6.0"
-    testRuntime "org.seleniumhq.selenium:selenium-api:3.6.0"
+    testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
+    testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
+    testRuntime "org.seleniumhq.selenium:selenium-remote-driver:$seleniumVersion"
+    testRuntime "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
 
     runtime "mysql:mysql-connector-java:$mysqlVersion"
 
