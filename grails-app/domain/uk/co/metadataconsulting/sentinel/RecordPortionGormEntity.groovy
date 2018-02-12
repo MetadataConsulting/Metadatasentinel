@@ -11,6 +11,7 @@ class RecordPortionGormEntity {
     Boolean valid
     String reason
     Integer numberOfRulesValidatedAgainst
+    Date lastUpdated
 
     static belongsTo = [record: RecordGormEntity]
 

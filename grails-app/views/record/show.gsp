@@ -26,6 +26,7 @@
                     <th><g:message code="recordPortion.numberOfRulesValidatedAgainst" default="# Rules Validated Against"/></th>
                     <th><g:message code="recordPortion.valid" default="Valid"/></th>
                     <th><g:message code="recordPortion.failure.reason" default="Failure reason"/></th></th>
+                    <th><g:message code="recordPortion.lastUpdated" default="Last Updated"/></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -42,6 +43,7 @@
                         <td>${recordPortion.numberOfRulesValidatedAgainst}</td>
                         <td>${recordPortion.valid}</td>
                         <td>${recordPortion.reason}</td>
+                        <td>${recordPortion.lastUpdated}</td>
                     </tr>
                 </g:each>
                 </tbody>
