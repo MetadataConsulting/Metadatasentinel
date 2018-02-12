@@ -101,22 +101,22 @@ dataSource:
     jmxExport: true
     driverClassName: com.mysql.cj.jdbc.Driver
     dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-    username: root
-    password: root
+    username: '${JDBC_USERNAME}'
+    password: '${JDBC_PASSWORD}'
 
 environments:
     development:
         dataSource:
             dbCreate: create-drop
-            url: jdbc:mysql://127.0.0.1:8889/metadatasentinel_dev
+            url: '${JDBC_CONNECTION_STRING}'
     test:
         dataSource:
             dbCreate: create-drop
-            url: jdbc:mysql://127.0.0.1:8889/metadatasentinel_test
+            url: '${JDBC_CONNECTION_STRING}'
     production:
         dataSource:
             dbCreate: none
-            url: jdbc:mysql://127.0.0.1:8889/metadatasentinel_prod
+            url: '${JDBC_CONNECTION_STRING}'
             properties:
                 jmxEnabled: true
                 initialSize: 5
