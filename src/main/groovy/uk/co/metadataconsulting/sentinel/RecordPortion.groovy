@@ -11,4 +11,5 @@ class RecordPortion {
     String value
     Boolean valid
     String reason
+    Integer numberOfRulesValidatedAgainst
 }

@@ -69,9 +69,14 @@ class CsvImportService implements CsvImport, Benchmark {
         if ( validationRules ) {
             String reason = validateRecordPortionService.failureReason(validationRules, gormUrls, values)
             String name = validationRules.name
-            return new RecordPortion(name: name, gormUrl: gormUrl, value: value, valid: !(reason as boolean), reason: reason)
+            return new RecordPortion(name: name,
+                    gormUrl: gormUrl,
+                    value: value,
+                    valid: !(reason as boolean),
+                    reason: reason,
+                    numberOfRulesValidatedAgainst: validationRules.rules?.size() ?: 0)
         }
-        new RecordPortion(gormUrl: gormUrl, value: value, valid: true)
+        new RecordPortion(gormUrl: gormUrl, value: value, valid: true, numberOfRulesValidatedAgainst: 0)
     }
 
     def cleanUpGorm() {

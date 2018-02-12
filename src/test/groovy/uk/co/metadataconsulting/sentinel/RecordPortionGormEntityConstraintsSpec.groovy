@@ -39,6 +39,24 @@ class RecordPortionGormEntityConstraintsSpec extends Specification implements Do
         domain.errors['valid'].code == 'nullable'
     }
 
+    void 'test numberOfRulesValidatedAgainst cannot be null'() {
+        when:
+        domain.numberOfRulesValidatedAgainst = null
+
+        then:
+        !domain.validate(['numberOfRulesValidatedAgainst'])
+        domain.errors['numberOfRulesValidatedAgainst'].code == 'nullable'
+    }
+
+    void 'test numberOfRulesValidatedAgainst min is 0'() {
+        when:
+        domain.numberOfRulesValidatedAgainst = -1
+
+        then:
+        !domain.validate(['numberOfRulesValidatedAgainst'])
+        domain.errors['numberOfRulesValidatedAgainst'].code == 'min.notmet'
+    }
+
     void 'test reason can be null'() {
         when:
         domain.reason = null

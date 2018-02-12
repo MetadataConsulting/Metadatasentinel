@@ -10,10 +10,12 @@ class RecordPortionGormEntity {
     String value
     Boolean valid
     String reason
+    Integer numberOfRulesValidatedAgainst
 
     static belongsTo = [record: RecordGormEntity]
 
     static constraints = {
+        numberOfRulesValidatedAgainst min: 0, nullable: false
         gormUrl nullable: true, blank: true
         name nullable: true, blank: true
         value nullable: false, blank: false

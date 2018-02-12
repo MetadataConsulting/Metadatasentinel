@@ -54,7 +54,8 @@ class RecordGormService implements GormErrorsMessage {
                     gormUrl: portion.gormUrl,
                     value: portion.value,
                     valid: portion.valid,
-                    reason: portion.reason)
+                    reason: portion.reason,
+                    numberOfRulesValidatedAgainst: portion.numberOfRulesValidatedAgainst)
             record.addToPortions(recordPortion)
         }
         if ( !record.save() ) {
