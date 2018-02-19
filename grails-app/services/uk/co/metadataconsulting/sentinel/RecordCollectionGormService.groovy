@@ -25,7 +25,7 @@ class RecordCollectionGormService implements GormErrorsMessage {
     @Transactional
     RecordCollectionGormEntity save() {
         RecordCollectionGormEntity recordCollection = new RecordCollectionGormEntity()
-        if ( recordCollection.save() ) {
+        if ( !recordCollection.save() ) {
             log.warn '{}', errorsMsg(recordCollection, messageSource)
         }
         recordCollection
