@@ -12,9 +12,6 @@ class ValidateRecordPortionService {
     RuleFetcherService ruleFetcherService
     RecordGormService recordGormService
 
-
-
-
     String failureReason(RecordPortionGormEntity recordPortion) {
         ValidationRules validationRules = ruleFetcherService.fetchValidationRules(recordPortion.gormUrl)
         List<String> gormUrls = []
