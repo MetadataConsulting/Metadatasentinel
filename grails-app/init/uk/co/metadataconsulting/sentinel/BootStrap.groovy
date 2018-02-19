@@ -16,7 +16,6 @@ class BootStrap {
 
     void loadOnStartup () {
         List<String> mapping = mappingGormUrl()
-        println mapping.join(',')
         File f = new File('src/test/resources/DIDS_XMLExample_50000.csv')
         InputStream inputStream = f.newInputStream()
         csvImportService.save(mapping, inputStream, 100)
