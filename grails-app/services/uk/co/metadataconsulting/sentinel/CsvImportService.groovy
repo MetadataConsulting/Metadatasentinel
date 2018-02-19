@@ -26,6 +26,7 @@ class CsvImportService implements CsvImport, Benchmark {
 
     def executorService
 
+
     @CompileDynamic
     @Override
     void save(List<String> gormUrls, InputStream inputStream, Integer batchSize) {
@@ -34,41 +35,43 @@ class CsvImportService implements CsvImport, Benchmark {
         executorService.submit {
             log.info 'fetching validation rules'
             Map<String, ValidationRules> gormUrlsRules = ruleFetcherService.fetchValidationRules(gormUrls)
-            long duration = benchmark {
-                log.info 'processing input stream'
-                csvImportProcessorService.processInputStream(inputStream, batchSize) { List<List<String>> valuesList ->
-                    save(recordCollection, valuesList, gormUrls, gormUrlsRules)
-                    cleanUpGorm()
-                }
+            MappingMetadata metadata = new MappingMetadata(gormUrls: gormUrls, gormUrlsRules: gormUrlsRules)
+            Closure headerListClosure = { List<String> l ->
+                metadata.setHeaderLineList(l)
             }
-            log.info "execution batchSize: ${batchSize} took ${duration} ms"
+            log.info 'processing input stream'
+            csvImportProcessorService.processInputStream(inputStream, batchSize, headerListClosure) { List<List<String>> valuesList ->
+                save(recordCollection, valuesList, metadata)
+                cleanUpGorm()
+            }
         }
     }
 
-    void save(RecordCollectionGormEntity recordCollection, List<List<String>> valuesList, List<String> gormUrls, Map<String, ValidationRules> gormUrlsRules) {
+    void save(RecordCollectionGormEntity recordCollection, List<List<String>> valuesList, MappingMetadata metadata) {
         for ( List<String> values : valuesList ) {
-            List<RecordPortion> recordPortionList = recordPortionListOfValue(values, gormUrls, gormUrlsRules)
+            List<RecordPortion> recordPortionList = recordPortionListOfValue(values, metadata)
             recordGormService.save(recordCollection, recordPortionList)
         }
     }
 
-    List<RecordPortion> recordPortionListOfValue(List<String> values, List<String> gormUrls, Map<String, ValidationRules> gormUrlsRules) {
+    List<RecordPortion> recordPortionListOfValue(List<String> values, MappingMetadata metadata) {
         List<RecordPortion> recordPortionList = []
 
         for ( int i = 0; i < values.size(); i++ ) {
             String value = values[i]
-            String gormUrl = gormUrls[i]
-            recordPortionList << recordPortionFromValue(gormUrl, value, gormUrls, values, gormUrlsRules)
+            String header = metadata.headerLineList[i]
+            String gormUrl = metadata.gormUrls[i]
+            recordPortionList << recordPortionFromValue(gormUrl, value, header, values, metadata)
         }
         recordPortionList
     }
 
-    RecordPortion recordPortionFromValue(String gormUrl, String value, List<String> gormUrls, List<String> values, Map<String, ValidationRules> gormUrlsRules) {
-        ValidationRules validationRules = gormUrlsRules[gormUrl]
+    RecordPortion recordPortionFromValue(String gormUrl, String value, String header, List<String> values, MappingMetadata metadata) {
+        ValidationRules validationRules = metadata.gormUrlsRules[gormUrl]
 
         if ( validationRules ) {
-            String reason = validateRecordPortionService.failureReason(validationRules, gormUrls, values)
-            String name = validationRules.name
+            String reason = validateRecordPortionService.failureReason(validationRules, metadata.gormUrls, values)
+            String name = validationRules.name ?: header
             return new RecordPortion(name: name,
                     gormUrl: gormUrl,
                     value: value,
@@ -76,7 +79,7 @@ class CsvImportService implements CsvImport, Benchmark {
                     reason: reason,
                     numberOfRulesValidatedAgainst: validationRules.rules?.size() ?: 0)
         }
-        new RecordPortion(gormUrl: gormUrl, value: value, valid: true, numberOfRulesValidatedAgainst: 0)
+        new RecordPortion(name: header, gormUrl: gormUrl, value: value, valid: true, numberOfRulesValidatedAgainst: 0)
     }
 
     def cleanUpGorm() {
@@ -84,4 +87,10 @@ class CsvImportService implements CsvImport, Benchmark {
         session.flush()
         session.clear()
     }
+}
+
+class MappingMetadata {
+    List<String> headerLineList
+    List<String> gormUrls
+    Map<String, ValidationRules> gormUrlsRules
 }

@@ -40,15 +40,17 @@ class CsvImportProcessorService implements GrailsConfigurationAware, CsvImportPr
     }
 
     @Override
-    int processInputStream(InputStream inputStream, Integer batchSize, Closure cls) {
+    int processInputStream(InputStream inputStream, Integer batchSize, Closure headerListClosure, Closure cls) {
         int processed = 0
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))
-        List<String> headerPropertyList
         List<String> lines = []
         String line
         for ( int ln = 0; (line = br.readLine()) != null; ln++ ) {
             if ( ln == 0 ) {
-                headerPropertyList = headerLineToPropertiesList(line)
+                List<String> headerPropertyList = headerLineToPropertiesList(line)
+                if ( headerListClosure != null ) {
+                    headerListClosure(headerPropertyList)
+                }
             } else {
                 if ( line?.trim() ) {
                     lines << line
@@ -103,5 +105,4 @@ class CsvImportProcessorService implements GrailsConfigurationAware, CsvImportPr
     List<String> lineValues(String line) {
         processLineWithTransformers(line, valueTransformers)
     }
-
 }
