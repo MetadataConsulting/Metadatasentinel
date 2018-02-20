@@ -15,7 +15,8 @@ class CsvImportProcessorServiceSpec extends Specification implements ServiceUnit
         when:
         InputStream inputStream = f.newInputStream()
         List<List<String>> result = []
-        service.processInputStream(inputStream, 1000) {  List<List<String>> loincList ->
+        Closure cls = { List<String> l -> }
+        service.processInputStream(inputStream, 1000, cls) { List<List<String>> loincList ->
             result.addAll(loincList)
         }
 

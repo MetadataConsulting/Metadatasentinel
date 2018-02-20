@@ -23,7 +23,7 @@
                     <th><g:message code="recordPortion.name" default="Name"/></th>
                     <th></th>
                     <th><g:message code="recordPortion.value" default="Value"/></th>
-                    <th><g:message code="recordPortion.numberOfRulesValidatedAgainst" default="# Rules Validated Against"/></th>
+                    <th><g:message code="recordPortion.numberOfRulesValidatedAgainst" default="# Rules"/></th>
                     <th><g:message code="recordPortion.valid" default="Valid"/></th>
                     <th><g:message code="recordPortion.failure.reason" default="Failure reason"/></th></th>
                     <th><g:message code="recordPortion.lastUpdated" default="Last Updated"/></th>
@@ -38,7 +38,7 @@
                         <tr class="alert-danger">
                     </g:else>
                         <td>${recordPortion.name}</td>
-                        <td>${recordPortion.gormUrl}</td>
+                        <td><small>${recordPortion.gormUrl}</small></td>
                         <td>${recordPortion.value}</td>
                         <td>${recordPortion.numberOfRulesValidatedAgainst}</td>
                         <td>${recordPortion.valid}</td>

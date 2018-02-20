@@ -8,7 +8,6 @@ class BootStrap {
     CsvImportService csvImportService
 
     def init = { servletContext ->
-
         //loadOnStartup()
     }
     def destroy = {
@@ -16,7 +15,7 @@ class BootStrap {
 
     void loadOnStartup () {
         List<String> mapping = mappingGormUrl()
-        File f = new File('src/test/resources/DIDS_XMLExample_50000.csv')
+        File f = new File('src/test/resources/DIDS_XMLExample_01.csv')
         InputStream inputStream = f.newInputStream()
         csvImportService.save(mapping, inputStream, 100)
     }

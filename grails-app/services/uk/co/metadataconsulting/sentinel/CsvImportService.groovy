@@ -5,6 +5,8 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.hibernate.SessionFactory
 import org.hibernate.Session
+import org.modelcatalogue.core.scripting.Validating
+import org.modelcatalogue.core.scripting.ValueValidator
 import org.springframework.context.MessageSource
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 
@@ -25,8 +27,7 @@ class CsvImportService implements CsvImport, Benchmark {
     SessionFactory sessionFactory
 
     def executorService
-
-
+    
     @CompileDynamic
     @Override
     void save(List<String> gormUrls, InputStream inputStream, Integer batchSize) {
@@ -69,17 +70,29 @@ class CsvImportService implements CsvImport, Benchmark {
     RecordPortion recordPortionFromValue(String gormUrl, String value, String header, List<String> values, MappingMetadata metadata) {
         ValidationRules validationRules = metadata.gormUrlsRules[gormUrl]
 
+        String reason
+        String name = header
+        int numberOfRulesValidatedAgainst = 0
+
         if ( validationRules ) {
-            String reason = validateRecordPortionService.failureReason(validationRules, metadata.gormUrls, values)
-            String name = validationRules.name ?: header
-            return new RecordPortion(name: name,
-                    gormUrl: gormUrl,
-                    value: value,
-                    valid: !(reason as boolean),
-                    reason: reason,
-                    numberOfRulesValidatedAgainst: validationRules.rules?.size() ?: 0)
+            reason = validateRecordPortionService.failureReason(validationRules, metadata.gormUrls, values)
+            name = validationRules.name ?: header
+            numberOfRulesValidatedAgainst = validationRules.rules?.size() ?: 0
+
+            if ( validationRules.validating ) {
+                if ( !ValueValidator.validateRule(validationRules.validating, value) ) {
+                    reason = reason ?: validationRules.validating.toString()
+                }
+                numberOfRulesValidatedAgainst++
+            }
         }
-        new RecordPortion(name: header, gormUrl: gormUrl, value: value, valid: true, numberOfRulesValidatedAgainst: 0)
+
+        new RecordPortion(name: name,
+                gormUrl: gormUrl,
+                value: value,
+                valid: !(reason as boolean),
+                reason: reason,
+                numberOfRulesValidatedAgainst: numberOfRulesValidatedAgainst)
     }
 
     def cleanUpGorm() {
