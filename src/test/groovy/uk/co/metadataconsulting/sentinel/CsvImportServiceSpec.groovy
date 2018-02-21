@@ -11,7 +11,7 @@ class CsvImportServiceSpec extends Specification implements ServiceUnitTest<CsvI
         given:
         service.validateRecordPortionService = Mock(ValidateRecordPortionService)
         String gormUrl = 'gorm://org.modelcatalogue.core.EnumeratedType:250'
-        String value = 'x'
+        String value = 'yellow'
         String header = 'Color'
         List<String> values = ["RW6A06647291","yellow"]
         ValidationRules validationRules = new ValidationRules(validating: new ValidatingImpl(explicitRule: "x == null || x in ['red', 'blue']"))
