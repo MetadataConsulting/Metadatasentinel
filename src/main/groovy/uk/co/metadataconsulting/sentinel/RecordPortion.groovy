@@ -6,6 +6,7 @@ import groovy.transform.CompileStatic
 @Canonical
 @CompileStatic
 class RecordPortion {
+    String header
     String name
     String gormUrl
     String value

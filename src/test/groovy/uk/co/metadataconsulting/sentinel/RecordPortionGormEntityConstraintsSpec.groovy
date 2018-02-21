@@ -5,6 +5,14 @@ import spock.lang.Specification
 
 class RecordPortionGormEntityConstraintsSpec extends Specification implements DomainUnitTest<RecordPortionGormEntity> {
 
+    void 'test header can be null'() {
+        when:
+        domain.header = null
+
+        then:
+        domain.validate(['header'])
+    }
+
     void 'test name can be null'() {
         when:
         domain.name = null

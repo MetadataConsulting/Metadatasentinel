@@ -50,6 +50,7 @@ class RecordGormService implements GormErrorsMessage {
         record.recordCollection = recordCollection
         for ( RecordPortion portion : portionList ) {
             RecordPortionGormEntity recordPortion = new RecordPortionGormEntity(
+                    header: portion.header,
                     name: portion.name,
                     gormUrl: portion.gormUrl,
                     value: portion.value,

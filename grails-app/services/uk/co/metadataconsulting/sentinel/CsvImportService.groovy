@@ -71,12 +71,12 @@ class CsvImportService implements CsvImport, Benchmark {
         ValidationRules validationRules = metadata.gormUrlsRules[gormUrl]
 
         String reason
-        String name = header
+        String name
         int numberOfRulesValidatedAgainst = 0
 
         if ( validationRules ) {
             reason = validateRecordPortionService.failureReason(validationRules, metadata.gormUrls, values)
-            name = validationRules.name ?: header
+            name = validationRules.name
             numberOfRulesValidatedAgainst = validationRules.rules?.size() ?: 0
 
             if ( validationRules.validating ) {
@@ -87,7 +87,8 @@ class CsvImportService implements CsvImport, Benchmark {
             }
         }
 
-        new RecordPortion(name: name,
+        new RecordPortion(header: header,
+                name: name,
                 gormUrl: gormUrl,
                 value: value,
                 valid: !(reason as boolean),

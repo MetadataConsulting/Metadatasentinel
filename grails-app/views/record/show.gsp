@@ -20,6 +20,7 @@
             <table>
                 <thead>
                 <tr>
+                    <th><g:message code="recordPortion.header" default="Header"/></th>
                     <th><g:message code="recordPortion.name" default="Name"/></th>
                     <th></th>
                     <th><g:message code="recordPortion.value" default="Value"/></th>
@@ -37,6 +38,7 @@
                     <g:else>
                         <tr class="alert-danger">
                     </g:else>
+                        <td>${recordPortion.header}</td>
                         <td>${recordPortion.name}</td>
                         <td><small>${recordPortion.gormUrl}</small></td>
                         <td>${recordPortion.value}</td>

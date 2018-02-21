@@ -5,6 +5,7 @@ import grails.compiler.GrailsCompileStatic
 @GrailsCompileStatic
 class RecordPortionGormEntity {
 
+    String header
     String name
     String gormUrl
     String value
@@ -18,6 +19,7 @@ class RecordPortionGormEntity {
     static constraints = {
         numberOfRulesValidatedAgainst min: 0, nullable: false
         gormUrl nullable: true, blank: true
+        header nullable: true, blank: true
         name nullable: true, blank: true
         value nullable: false, blank: false
         valid nullable: false, blank: false
