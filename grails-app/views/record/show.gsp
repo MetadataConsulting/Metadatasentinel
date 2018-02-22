@@ -40,7 +40,11 @@
                     </g:else>
                         <td>${recordPortion.header}</td>
                         <td>${recordPortion.name}</td>
-                        <td><small>${recordPortion.gormUrl}</small></td>
+                        <td>
+                            <g:if test="${recordPortion.url}"><a href="${recordPortion.url}"></g:if>
+                            <small>${recordPortion.gormUrl}</small>
+                            <g:if test="${recordPortion.url}"></a></g:if>
+                        </td>
                         <td>${recordPortion.value}</td>
                         <td>${recordPortion.numberOfRulesValidatedAgainst}</td>
                         <td>${recordPortion.valid}</td>
