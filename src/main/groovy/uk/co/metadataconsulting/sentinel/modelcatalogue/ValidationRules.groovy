@@ -7,6 +7,7 @@ import org.modelcatalogue.core.scripting.ValidatingImpl
 @CompileStatic
 class ValidationRules {
 
+    String url
     String gormUrl
     String name
     List<ValidationRule> rules = []
