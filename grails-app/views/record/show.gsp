@@ -38,7 +38,17 @@
                     <g:else>
                         <tr class="alert-danger">
                     </g:else>
-                        <td>${recordPortion.header}</td>
+                        <td>
+                            <g:if test="${recordPortion.header}">
+                                <g:if test="${recordPortion.header.size() > 30}">
+                                    <g:set var="headertooltip" value="${recordPortion.header.substring(0, Math.min(30, recordPortion.header.length()))}..."/>
+                                </g:if>
+                                <g:else>
+                                    <g:set var="headertooltip" value="${recordPortion.header}"/>
+                                </g:else>
+                            </g:if>
+                            <span data-toggle="tooltip" title="${recordPortion.header}">${headertooltip}</span>
+                        </td>
                         <td>${recordPortion.name}</td>
                         <td>
                             <g:if test="${recordPortion.url}"><a href="${recordPortion.url}"></g:if>
