@@ -14,12 +14,15 @@ import org.kie.internal.builder.KnowledgeBuilderFactory;
 import org.kie.internal.io.ResourceFactory;
 import metadata.Validation;
 import org.omg.SendingContext.RunTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 class DlrValidator {
+    private static final Logger log = LoggerFactory.getLogger(DlrValidator.class);
 
     public String validate(Map<String, String> identiferToValue, String rule) {
 
@@ -43,6 +46,7 @@ class DlrValidator {
             return list.stream().reduce((a, b) -> a + ", " + b).get();
 
         } catch (RuntimeException e) {
+            log.error("Run time exception validating rule {}", e.getMessage());
             return null;
         }
     }
