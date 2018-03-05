@@ -39,7 +39,7 @@
                     </g:else>
                         <td>
                             <g:link controller="record" action="show" params="[recordCollectionId: recordCollectionId, recordId: record.id]">
-                                <g:message code="record.row" args="${i + 1}" default="Row {0}"/>
+                                <g:message code="record.row" args="${(paginationQuery?.offset ?: 0) + i + 1}" default="Row {0}"/>
                             </g:link>
                         </td>
                     </tr>
