@@ -4,7 +4,7 @@
     <meta name="layout" content="main" />
 </head>
 <body>
-<div id="content" role="main">
+<div id="content" role="main" style="overflow: auto;" >
     <section class="row colset-2-its">
         <article>
 
