@@ -21,8 +21,13 @@
             <g:select name="correctness" from="${RecordCorrectnessDropdown.values()}" value="${correctness}"/>
             <input type="submit" value="${g.message(code: 'record.filter', default: 'Filter')}"/>
         </g:form>
-
         <g:if test="${recordList}">
+            <g:render template="/record/paginationinfo" model="[
+                    correctness: correctness,
+                    recordTotal: recordTotal,
+                    invalidRecordTotal: invalidRecordTotal,
+                    allRecordTotal: allRecordTotal]"
+            />
             <table>
                 <thead>
                 <tr>
@@ -30,14 +35,18 @@
                 </tr>
                 </thead>
                 <tbody>
-                <g:each var="record" in="${recordList}">
+                <g:each var="record" in="${recordList}" status="i">
                     <g:if test="${record.valid}">
                         <tr>
                     </g:if>
                     <g:else>
                         <tr class="alert-danger">
                     </g:else>
-                        <td><g:link controller="record" action="show" params="[recordCollectionId: recordCollectionId, recordId: record.id]">${record.id}</g:link></td>
+                        <td>
+                            <g:link controller="record" action="show" params="[recordCollectionId: recordCollectionId, recordId: record.id]">
+                                <g:message code="record.row" args="${(paginationQuery?.offset ?: 0) + i + 1}" default="Row {0}"/>
+                            </g:link>
+                        </td>
                     </tr>
                 </g:each>
                 </tbody>
@@ -51,11 +60,8 @@
                             offset="${paginationQuery?.offset}"
                             params="[correctness: correctness, recordCollectionId: recordCollectionId]" />
             </div>
-
-
         </g:if>
-        <p><span><g:message code="record.total" default="Number of records"/> ${recordTotal}</span></p>
-
+            <g:render template="/record/paginationinfo"/>
         </article>
     </section>
 </div><!-- #content -->

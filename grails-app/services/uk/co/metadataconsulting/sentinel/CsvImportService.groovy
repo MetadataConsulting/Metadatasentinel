@@ -89,6 +89,7 @@ class CsvImportService implements CsvImport, Benchmark {
 
         new RecordPortion(header: header,
                 name: name,
+                url: validationRules?.url,
                 gormUrl: gormUrl,
                 value: value,
                 valid: !(reason as boolean),

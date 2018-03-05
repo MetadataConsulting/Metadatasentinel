@@ -34,6 +34,36 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
         model.containsKey('recordCollectionId')
     }
 
+    def "RecordController.index model contains invalidRecordTotal"() {
+        given:
+        controller.recordService = Mock(RecordService)
+
+        when:
+        params.recordCollectionId = 1
+        request.method = 'GET'
+        Map model = controller.index()
+
+        then:
+        response.status == SC_OK
+        model
+        model.containsKey('invalidRecordTotal')
+    }
+
+    def "RecordController.index model contains allRecordTotal"() {
+        given:
+        controller.recordService = Mock(RecordService)
+
+        when:
+        params.recordCollectionId = 1
+        request.method = 'GET'
+        Map model = controller.index()
+
+        then:
+        response.status == SC_OK
+        model
+        model.containsKey('allRecordTotal')
+    }
+
     def "RecordController.index model contains recordList"() {
         given:
         controller.recordService = Mock(RecordService)
