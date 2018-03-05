@@ -26,15 +26,19 @@ class RecordController implements ValidateableErrorsMessage {
         }
 
         PaginationQuery paginationQuery = cmd.toPaginationQuery()
-        List<RecordViewModel> recordList = recordService.findAllByRecordCollectionId(cmd.recordCollectionId, cmd.correctness, paginationQuery)
-
-        Number recordTotal = recordService.countByRecordCollectionIdAndCorrectness(cmd.recordCollectionId, cmd.correctness)
+        final Long recordCollectionId = cmd.recordCollectionId
+        List<RecordViewModel> recordList = recordService.findAllByRecordCollectionId(recordCollectionId, cmd.correctness, paginationQuery)
+        Number allRecordTotal = recordService.countByRecordCollectionIdAndCorrectness(recordCollectionId, RecordCorrectnessDropdown.ALL)
+        Number invalidRecordTotal = recordService.countByRecordCollectionIdAndCorrectness(recordCollectionId, RecordCorrectnessDropdown.INVALID)
+        Number recordTotal = recordService.countByRecordCollectionIdAndCorrectness(recordCollectionId, cmd.correctness)
         [
                 correctness: cmd.correctness,
                 recordCollectionId: cmd.recordCollectionId,
                 recordList: recordList,
                 paginationQuery: paginationQuery,
                 recordTotal: recordTotal,
+                allRecordTotal: allRecordTotal,
+                invalidRecordTotal: invalidRecordTotal,
         ]
     }
 

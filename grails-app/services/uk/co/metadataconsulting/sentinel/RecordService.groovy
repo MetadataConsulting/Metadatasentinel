@@ -21,9 +21,7 @@ class RecordService {
         }.projections {
             property('r.id')
         }
-        def results = invalidQuery.list()
-
-        results as Set<Long>
+        invalidQuery.list()  as Set<Long>
     }
 
     @CompileDynamic
@@ -32,10 +30,12 @@ class RecordService {
         Set<Long> ids = findAllInvalidRecordIds()
         def c = RecordGormEntity.createCriteria()
          c.list {
-            not { 'in'('id', ids) }
-            projections {
+             if ( ids ) {
+                 not { 'in'('id', ids) }
+             }
+             projections {
                 property('id')
-            }
+             }
         } as Set<Long>
     }
 
@@ -92,30 +92,53 @@ class RecordService {
     }
 
     List<Long> findAllValidRecords(Long recordCollectionId, PaginationQuery paginationQuery) {
-        DetachedCriteria<RecordGormEntity> query = queryValidRecords(recordCollectionId)
+        Set<Long> validRecordIds = findAllValidRecordIds()
+        if ( !validRecordIds ) {
+            return [] as List<Long>
+        }
+        DetachedCriteria<RecordGormEntity> query = queryValidRecords(recordCollectionId, validRecordIds)
         query.id().list(paginationQuery.toMap()) as List<Long>
     }
 
     List<Long> findAllInvalidRecords(Long recordCollectionId, PaginationQuery paginationQuery) {
-        DetachedCriteria<RecordGormEntity> query = queryInvalidRecords(recordCollectionId)
+        Set<Long> invalidRecordIds = findAllInvalidRecordIds()
+        if ( !invalidRecordIds ) {
+            return [] as List<Long>
+        }
+        DetachedCriteria<RecordGormEntity> query = queryInvalidRecords(recordCollectionId, invalidRecordIds)
         query.id().list(paginationQuery.toMap()) as List<Long>
     }
 
-    DetachedCriteria<RecordGormEntity> queryValidRecords(Long recordCollectionId) {
+    Number countValidRecords(Long recordCollectionId) {
         Set<Long> validRecordIds = findAllValidRecordIds()
+        if ( !validRecordIds ) {
+            return 0 as Number
+        }
+        DetachedCriteria<RecordGormEntity> q = queryValidRecords(recordCollectionId, validRecordIds)
+        q.count()
+    }
 
+    DetachedCriteria<RecordGormEntity> queryValidRecords(Long recordCollectionId, Set<Long> validRecordIds) {
         DetachedCriteria<RecordGormEntity> query = recordGormService.queryByRecordCollectionId(recordCollectionId)
         query.where {
             (id in validRecordIds)
         }
     }
 
-    DetachedCriteria<RecordGormEntity> queryInvalidRecords(Long recordCollectionId) {
-        Set<Long> invalidRecordIds = findAllInvalidRecordIds()
+    DetachedCriteria<RecordGormEntity> queryInvalidRecords(Long recordCollectionId, Set<Long> invalidRecordIds) {
         DetachedCriteria<RecordGormEntity> query = recordGormService.queryByRecordCollectionId(recordCollectionId)
         query.where {
             id in invalidRecordIds
         }
+    }
+
+    Number countInvalidRecords(Long recordCollectionId) {
+        Set<Long> invalidRecordIds = findAllInvalidRecordIds()
+        if ( !invalidRecordIds ) {
+            return 0 as Number
+        }
+        DetachedCriteria<RecordGormEntity> query = queryInvalidRecords(recordCollectionId, invalidRecordIds)
+        query.count()
     }
 
     Number countByRecordCollectionIdAndCorrectness(Long recordCollectionId, RecordCorrectnessDropdown correctness) {
@@ -123,6 +146,6 @@ class RecordService {
             return recordGormService.countByRecordCollectionId(recordCollectionId)
         }
         boolean valid = validForCorrectnes(correctness)
-        valid ? queryValidRecords(recordCollectionId).count() : queryInvalidRecords(recordCollectionId).count()
+        valid ? countValidRecords(recordCollectionId) : countInvalidRecords(recordCollectionId)
     }
 }

@@ -21,8 +21,13 @@
             <g:select name="correctness" from="${RecordCorrectnessDropdown.values()}" value="${correctness}"/>
             <input type="submit" value="${g.message(code: 'record.filter', default: 'Filter')}"/>
         </g:form>
-
         <g:if test="${recordList}">
+            <g:render template="/record/paginationinfo" model="[
+                    correctness: correctness,
+                    recordTotal: recordTotal,
+                    invalidRecordTotal: invalidRecordTotal,
+                    allRecordTotal: allRecordTotal]"
+            />
             <table>
                 <thead>
                 <tr>
@@ -55,11 +60,8 @@
                             offset="${paginationQuery?.offset}"
                             params="[correctness: correctness, recordCollectionId: recordCollectionId]" />
             </div>
-
-
         </g:if>
-        <p><span><g:message code="record.total" default="Number of records"/> ${recordTotal}</span></p>
-
+            <g:render template="/record/paginationinfo"/>
         </article>
     </section>
 </div><!-- #content -->
