@@ -86,7 +86,7 @@ class RecordCollectionController implements ValidateableErrorsMessage {
         if ( contentType == ImportContentType.XSLX ) {
             return excelImportService
         }
-        if ( contentType == ImportContentType.XSLX ) {
+        if ( contentType == ImportContentType.CSV ) {
             return csvImportService
         }
         null

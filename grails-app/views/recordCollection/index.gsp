@@ -4,18 +4,21 @@
     <meta name="layout" content="main" />
 </head>
 <body>
-<div id="content" role="main">
-    <section class="row colset-2-its">
-        <article>
+<nav class="navbar navbar-light bg-light">
+    <g:render template="/templates/navbarBrand"/>
+            <g:link controller="recordCollection" action="importCsv" class="btn btn-primary">
+                <g:message code="recordCollection.import" default="Import File"/>
+            </g:link>
+</nav>
             <g:render template="/templates/flashmessage"/>
             <g:render template="/templates/flasherror"/>
 
             <g:if test="${recordCollectionList}">
-            <table>
-                <thead>
+                <table class="table table-striped">
+                <thead class="thead-dark">
                 <tr>
-                    <th></th>
-                    <th></th>
+                    <th><g:message code="recordCollection.th.lastUpdated" default="Record Collection Creation Date"/></th>
+                    <th><g:message code="recordCollection.th.actions" default="Actions"/></th></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -32,19 +35,13 @@
                 </g:each>
                 </tbody>
             </table>
+            <g:if test="${recordCollectionTotal > paginationQuery?.max}">
+                <div class="pagination">
+                    <g:paginate controller="recordCollection" action="index" total="${recordCollectionTotal}" max="${paginationQuery?.max}" offset="${paginationQuery?.offset}" />
+                </div>
+            </g:if>
 
-            <div class="pagination">
-            <g:paginate controller="recordCollection" action="index" total="${recordCollectionTotal}" max="${paginationQuery?.max}" offset="${paginationQuery?.offset}" />
-            </div>
         </g:if>
 
-
-        <g:link controller="recordCollection" action="importCsv" class="btn-primary btn">
-            <g:message code="recordCollection.import" default="Import File"/>
-        </g:link>
-
-        </article>
-    </section>
-</div><!-- #content -->
 </body>
 </html>
