@@ -30,14 +30,18 @@
                 </tr>
                 </thead>
                 <tbody>
-                <g:each var="record" in="${recordList}">
+                <g:each var="record" in="${recordList}" status="i">
                     <g:if test="${record.valid}">
                         <tr>
                     </g:if>
                     <g:else>
                         <tr class="alert-danger">
                     </g:else>
-                        <td><g:link controller="record" action="show" params="[recordCollectionId: recordCollectionId, recordId: record.id]">${record.id}</g:link></td>
+                        <td>
+                            <g:link controller="record" action="show" params="[recordCollectionId: recordCollectionId, recordId: record.id]">
+                                <g:message code="record.row" args="${i + 1}" default="Row {0}"/>
+                            </g:link>
+                        </td>
                     </tr>
                 </g:each>
                 </tbody>
