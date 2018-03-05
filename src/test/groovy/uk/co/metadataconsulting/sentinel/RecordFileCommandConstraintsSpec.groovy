@@ -4,11 +4,11 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 
-class RecordCsvCommandConstraintsSpec extends Specification {
+class RecordFileCommandConstraintsSpec extends Specification {
 
     @Subject
     @Shared
-    RecordCsvCommand cmd = new RecordCsvCommand()
+    RecordFileCommand cmd = new RecordFileCommand()
 
     void 'test mapping cannot be null'() {
         when:

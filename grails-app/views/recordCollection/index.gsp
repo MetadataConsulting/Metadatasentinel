@@ -40,7 +40,7 @@
 
 
         <g:link controller="recordCollection" action="importCsv" class="btn-primary btn">
-            <g:message code="recordCollection.csv.import" default="Import CSV"/>
+            <g:message code="recordCollection.import" default="Import File"/>
         </g:link>
 
         </article>

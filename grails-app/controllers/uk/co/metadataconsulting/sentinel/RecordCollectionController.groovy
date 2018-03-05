@@ -1,8 +1,10 @@
 package uk.co.metadataconsulting.sentinel
 
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
 import org.springframework.context.MessageSource
 
+@Slf4j
 @CompileStatic
 class RecordCollectionController implements ValidateableErrorsMessage {
 
@@ -21,6 +23,8 @@ class RecordCollectionController implements ValidateableErrorsMessage {
     RecordCollectionGormService recordCollectionGormService
 
     RecordCollectionService recordCollectionService
+
+    ExcelImportService excelImportService
 
     def index() {
 
@@ -49,16 +53,18 @@ class RecordCollectionController implements ValidateableErrorsMessage {
         redirect action: 'index', controller: 'record', params: [recordCollectionId: recordCollectionId]
     }
 
-    def uploadCsv(RecordCsvCommand cmd) {
+    def uploadCsv(RecordFileCommand cmd) {
         if ( cmd.hasErrors() ) {
             flash.error = errorsMsg(cmd, messageSource)
             render view: 'importCsv'
             return
         }
 
+        log.debug 'Content Type {}', cmd.csvFile.contentType
         InputStream inputStream = cmd.csvFile.inputStream
         Integer batchSize = cmd.batchSize
-        csvImportService.save(cmd.mapping.split(',') as List<String>, inputStream, batchSize)
+        CsvImport importService = csvImportByContentType (ImportContentType.of(cmd.csvFile.contentType))
+        importService.save(cmd.mapping.split(',') as List<String>, inputStream, batchSize)
 
         redirect controller: 'recordCollection', action: 'index'
     }
@@ -74,6 +80,15 @@ class RecordCollectionController implements ValidateableErrorsMessage {
         flash.message = messageSource.getMessage('recordCollection.deleted', [] as Object[],'Record Collection deleted', request.locale)
 
         redirect controller: 'recordCollection', action: 'index'
+    }
 
+    protected CsvImport csvImportByContentType(ImportContentType contentType) {
+        if ( contentType == ImportContentType.XSLX ) {
+            return excelImportService
+        }
+        if ( contentType == ImportContentType.XSLX ) {
+            return csvImportService
+        }
+        null
     }
 }
