@@ -5,7 +5,7 @@ import grails.validation.Validateable
 import org.springframework.web.multipart.MultipartFile
 
 @GrailsCompileStatic
-class RecordCsvCommand implements Validateable {
+class RecordFileCommand implements Validateable {
     MultipartFile csvFile
     String mapping
     Integer batchSize = 100
@@ -13,14 +13,21 @@ class RecordCsvCommand implements Validateable {
     static constraints = {
         batchSize nullable: false
         mapping nullable: false, blank: false
-        csvFile  validator: { MultipartFile val, RecordCsvCommand obj ->
+        csvFile  validator: { MultipartFile val, RecordFileCommand obj ->
             if ( val == null ) {
                 return false
             }
             if ( val.empty ) {
                 return false
             }
-            val.originalFilename?.toLowerCase()?.endsWith('csv')
+            allowedExtensions().any { String extension ->
+                val.originalFilename?.toLowerCase()?.endsWith(extension)
+            }
         }
     }
+
+    static List<String> allowedExtensions() {
+        ['csv', 'xlsx']
+    }
+
 }

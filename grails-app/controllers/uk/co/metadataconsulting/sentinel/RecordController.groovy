@@ -51,14 +51,15 @@ class RecordController implements ValidateableErrorsMessage {
         redirect action: 'show', controller: 'record', params: [recordId: recordId]
     }
 
-    def show(Long recordId) {
+    def show(Long recordId, Long recordCollectionId) {
 
         List<RecordPortionGormEntity> recordPortionList = recordPortionGormService.findAllByRecordId(recordId)
         Number recordPortionTotal = recordPortionGormService.countByRecordId(recordId)
         [
                 recordId: recordId,
                 recordPortionList: recordPortionList,
-                recordPortionTotal: recordPortionTotal
+                recordPortionTotal: recordPortionTotal,
+                recordCollectionId: recordCollectionId
         ]
     }
 }

@@ -3,9 +3,10 @@ package uk.co.metadataconsulting.sentinel
 import grails.testing.services.ServiceUnitTest
 import org.modelcatalogue.core.scripting.ValidatingImpl
 import spock.lang.Specification
+import spock.lang.Unroll
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 
-class CsvImportServiceSpec extends Specification implements ServiceUnitTest<CsvImportService> {
+class ImportServiceSpec extends Specification implements ServiceUnitTest<ImportService> {
 
     def "validating rule is processed"() {
         given:
@@ -30,5 +31,19 @@ class CsvImportServiceSpec extends Specification implements ServiceUnitTest<CsvI
         portion.numberOfRulesValidatedAgainst == 1
         portion.reason != null
         !portion.valid
+    }
+
+    @Unroll
+    def "headerAtIndex with values ( #headerLineList  #index ) does not throw exception"(List<String> headerLineList, int index) {
+        when:
+        MappingMetadata metadata = new MappingMetadata(headerLineList: headerLineList)
+        service.headerAtIndex(metadata, index)
+
+        then:
+        noExceptionThrown()
+
+        where:
+        headerLineList | index
+        null           | 0
     }
 }

@@ -6,7 +6,6 @@ buildscript {
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
         classpath "gradle.plugin.com.energizedwork.webdriver-binaries:webdriver-binaries-gradle-plugin:$webdriverBinariesGradleVersion"
-        classpath "gradle.plugin.com.energizedwork:idea-gradle-plugins:$ideaGradleVersion"
         classpath "org.grails.plugins:hibernate5:${gormVersion-".RELEASE"}"
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:$assetPipelineVersion"
     }
@@ -20,7 +19,6 @@ apply plugin:"idea"
 apply plugin:"war"
 apply plugin:"org.grails.grails-web"
 apply plugin:"com.energizedwork.webdriver-binaries"
-apply plugin:"com.energizedwork.idea-project-components"
 apply plugin:"asset-pipeline"
 apply plugin:"org.grails.grails-gsp"
 
@@ -75,6 +73,10 @@ dependencies {
     compile "com.squareup.moshi:moshi:$moshiVersion"
 
     compile "org.grails.plugins:grails-executor:$grailsExecutorVersion"
+
+    // Excel
+    compile "org.apache.poi:poi:$poiVersion"
+    compile "org.apache.poi:poi-ooxml:$poiVersion"
 }
 
 bootRun {
