@@ -6,6 +6,7 @@ import grails.config.Config
 import grails.core.support.GrailsConfigurationAware
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import okhttp3.Credentials
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -21,6 +22,8 @@ class RuleFetcherService implements GrailsConfigurationAware {
     private final JsonAdapter<ValidationRules> validationRulesJsonAdapter = moshi.adapter(ValidationRules.class)
 
     String metadataUrl
+    String metadataUsername
+    String metadataApiKey
 
     Map<String, ValidationRules> fetchValidationRules(List<String> gormUrls) {
         Map<String, ValidationRules> gormUrlsRules = [:]
@@ -36,9 +39,12 @@ class RuleFetcherService implements GrailsConfigurationAware {
     ValidationRules fetchValidationRules(String gormUrl) {
 
         final String url = "${metadataUrl}/api/modelCatalogue/core/validationRule/rules?gormUrl=${gormUrl}".toString()
+
+        String credential = Credentials.basic(metadataUsername, metadataApiKey)
         HttpUrl.Builder httpBuider = HttpUrl.parse(url).newBuilder()
         Request request = new Request.Builder()
                 .url(httpBuider.build())
+                .header("Authorization", credential)
                 .header("Accept", 'application/json')
                 .build()
         ValidationRules validationRules
@@ -49,6 +55,8 @@ class RuleFetcherService implements GrailsConfigurationAware {
             if ( response.isSuccessful()  ) {
                 if ( response.code() == 200 ) {
                     validationRules = validationRulesJsonAdapter.fromJson(response.body().source())
+                } else {
+                    log.warn 'Response {}. no rules for gormUrl: {}', response.code(), gormUrl
                 }
             } else {
                 log.warn 'Response {}. Could not fetch github repository at {}', response.code(), url
@@ -64,5 +72,7 @@ class RuleFetcherService implements GrailsConfigurationAware {
     @Override
     void setConfiguration(Config co) {
         metadataUrl = co.getProperty('metadata.url', String, 'http://localhost:8080')
+        metadataUsername = co.getRequiredProperty('metadata.username', String)
+        metadataApiKey = co.getRequiredProperty('metadata.apiKey', String)
     }
 }

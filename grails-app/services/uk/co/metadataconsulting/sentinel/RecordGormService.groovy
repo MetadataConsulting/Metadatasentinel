@@ -49,21 +49,25 @@ class RecordGormService implements GormErrorsMessage {
         RecordGormEntity record = new RecordGormEntity()
         record.recordCollection = recordCollection
         for ( RecordPortion portion : portionList ) {
-            RecordPortionGormEntity recordPortion = new RecordPortionGormEntity(
-                    header: portion.header,
-                    name: portion.name,
-                    url: portion.url,
-                    gormUrl: portion.gormUrl,
-                    value: portion.value,
-                    valid: portion.valid,
-                    reason: portion.reason,
-                    numberOfRulesValidatedAgainst: portion.numberOfRulesValidatedAgainst)
+            RecordPortionGormEntity recordPortion = recordPortionGormEntityOfRecordPortion(portion)
             record.addToPortions(recordPortion)
         }
         if ( !record.save() ) {
             log.warn '{}', errorsMsg(record, messageSource)
         }
         record
+    }
+
+    RecordPortionGormEntity recordPortionGormEntityOfRecordPortion(RecordPortion portion) {
+        new RecordPortionGormEntity(
+                header: portion.header,
+                name: portion.name,
+                url: portion.url,
+                gormUrl: portion.gormUrl,
+                value: portion.value,
+                valid: portion.valid,
+                reason: portion.reason,
+                numberOfRulesValidatedAgainst: portion.numberOfRulesValidatedAgainst)
     }
 
     @ReadOnly
