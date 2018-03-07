@@ -22,6 +22,13 @@ public class Validation {
             diff--;
         }
         return diff;
+
+    }
+
+    public static boolean beforeDate(Date last, Date first) {
+        Calendar a = getCalendar(first);
+        Calendar b = getCalendar(last);
+        return a.before(b);
     }
 
     public static Calendar getCalendar(Date date) {
@@ -59,4 +66,11 @@ public class Validation {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
         return yearsBetween(simpleDateFormat.parse(last), simpleDateFormat.parse(first));
     }
+
+    public static boolean beforeDate(String last, String first, String format) throws ParseException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(format);
+        return beforeDate(simpleDateFormat.parse(last), simpleDateFormat.parse(first));
+    }
+
+
 }
