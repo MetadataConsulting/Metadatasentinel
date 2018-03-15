@@ -24,11 +24,7 @@
     <g:uploadForm action="uploadCsv" controller="recordCollection">
         <div class="form-group">
             <label for="csvFile"><g:message code="recordCollection.import.file" args="${[RecordFileCommand.allowedExtensions().join(',')]}" default="File ({0})"/></label>
-            <input type="file" name="csvFile" />
-        </div>
-        <div class="form-group">
-            <label for="mapping"><g:message code="recordCollection.csv.mapping" default="Mapping"/></label>
-            <textarea name="mapping"></textarea>
+            <input type="file" class="btn btn-default" name="csvFile" />
         </div>
         <div class="form-group">
             <label for="batchSize"><g:message code="recordCollection.csv.import.batchSize" default="Batch Size"/></label>

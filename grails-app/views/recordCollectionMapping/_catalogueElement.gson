@@ -1,0 +1,10 @@
+import uk.co.metadataconsulting.sentinel.modelcatalogue.CatalogueElement
+
+model {
+    CatalogueElement catalogueElement
+}
+
+json {
+    id catalogueElement.id
+    name catalogueElement.name
+}

@@ -3,6 +3,8 @@ package uk.co.metadataconsulting.sentinel
 import groovy.transform.CompileStatic
 
 @CompileStatic
-interface CsvImport {
-    void save(InputStream inputStream, Integer batchSize)
+class RecordPortionMapping {
+    Long id
+    String header
+    String gormUrl
 }

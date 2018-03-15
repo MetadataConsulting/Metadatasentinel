@@ -10,15 +10,6 @@ class RecordFileCommandConstraintsSpec extends Specification {
     @Shared
     RecordFileCommand cmd = new RecordFileCommand()
 
-    void 'test mapping cannot be null'() {
-        when:
-        cmd.mapping = null
-
-        then:
-        !cmd.validate(['mapping'])
-        cmd.errors['mapping'].code == 'nullable'
-    }
-
     void 'test batchSize cannot be null'() {
         when:
         cmd.batchSize = null

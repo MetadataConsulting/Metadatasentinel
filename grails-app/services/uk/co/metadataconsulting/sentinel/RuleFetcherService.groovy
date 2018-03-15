@@ -11,6 +11,10 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import uk.co.metadataconsulting.sentinel.modelcatalogue.CatalogueElement
+import uk.co.metadataconsulting.sentinel.modelcatalogue.CatalogueElements
+import uk.co.metadataconsulting.sentinel.modelcatalogue.DataModel
+import uk.co.metadataconsulting.sentinel.modelcatalogue.DataModels
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 
 @Slf4j
@@ -20,6 +24,8 @@ class RuleFetcherService implements GrailsConfigurationAware {
     private final Moshi moshi = new Moshi.Builder().build()
     private final OkHttpClient client = new OkHttpClient()
     private final JsonAdapter<ValidationRules> validationRulesJsonAdapter = moshi.adapter(ValidationRules.class)
+    private final JsonAdapter<CatalogueElements> catalogueElementsJsonAdapter = moshi.adapter(CatalogueElements.class)
+    private final JsonAdapter<DataModels> dataModelsJsonAdapter = moshi.adapter(DataModels.class)
 
     String metadataUrl
     String metadataUsername
@@ -34,6 +40,56 @@ class RuleFetcherService implements GrailsConfigurationAware {
             }
         }
         gormUrlsRules
+    }
+
+    DataModels fetchDataModels() {
+        final String url = "${metadataUrl}/api/dashboard/dataModels".toString()
+        String credential = Credentials.basic(metadataUsername, metadataApiKey)
+        HttpUrl.Builder httpBuider = HttpUrl.parse(url).newBuilder()
+        Request request = new Request.Builder()
+                .url(httpBuider.build())
+                .header("Authorization", credential)
+                .header("Accept", 'application/json')
+                .build()
+        DataModels dataModels
+        try {
+            Response response = client.newCall(request).execute()
+
+            if ( response.isSuccessful()  ) {
+                dataModels = dataModelsJsonAdapter.fromJson(response.body().source())
+            } else {
+                log.warn 'Response {}. Could not fetch Data Models at {}', response.code(), url
+            }
+            response.close()
+        } catch (IOException ioexception) {
+            log.warn('unable to connect to server {}', metadataUrl)
+        }
+        dataModels
+    }
+
+    CatalogueElements fetchCatalogueElements(Long dataModelId) {
+        final String url = "${metadataUrl}/api/dashboard/${dataModelId}/catalogueElements".toString()
+        String credential = Credentials.basic(metadataUsername, metadataApiKey)
+        HttpUrl.Builder httpBuider = HttpUrl.parse(url).newBuilder()
+        Request request = new Request.Builder()
+                .url(httpBuider.build())
+                .header("Authorization", credential)
+                .header("Accept", 'application/json')
+                .build()
+        CatalogueElements catalogueElements
+        try {
+            Response response = client.newCall(request).execute()
+
+            if ( response.isSuccessful()  ) {
+                catalogueElements = catalogueElementsJsonAdapter.fromJson(response.body().source())
+            } else {
+                log.warn 'Response {}. Could not fetch at {}', response.code(), url
+            }
+            response.close()
+        } catch (IOException ioexception) {
+            log.warn('unable to connect to server {}', metadataUrl)
+        }
+        catalogueElements
     }
 
     ValidationRules fetchValidationRules(String gormUrl) {
@@ -59,7 +115,7 @@ class RuleFetcherService implements GrailsConfigurationAware {
                     log.warn 'Response {}. no rules for gormUrl: {}', response.code(), gormUrl
                 }
             } else {
-                log.warn 'Response {}. Could not fetch github repository at {}', response.code(), url
+                log.warn 'Response {}. Could not fetch at {}', response.code(), url
             }
             response.close()
         } catch (IOException ioexception) {

@@ -14,6 +14,7 @@ class RecordCollectionController implements ValidateableErrorsMessage {
             uploadCsv: 'POST',
             validate: 'POST',
             delete: 'POST',
+            headersMapping: 'GET'
     ]
 
     MessageSource messageSource
@@ -25,6 +26,10 @@ class RecordCollectionController implements ValidateableErrorsMessage {
     RecordCollectionService recordCollectionService
 
     ExcelImportService excelImportService
+
+    RecordPortionMappingGormService recordPortionMappingGormService
+
+    RuleFetcherService ruleFetcherService
 
     def index() {
 
@@ -64,7 +69,7 @@ class RecordCollectionController implements ValidateableErrorsMessage {
         InputStream inputStream = cmd.csvFile.inputStream
         Integer batchSize = cmd.batchSize
         CsvImport importService = csvImportByContentType (ImportContentType.of(cmd.csvFile.contentType))
-        importService.save(cmd.mapping.split(',') as List<String>, inputStream, batchSize)
+        importService.save(inputStream, batchSize)
 
         redirect controller: 'recordCollection', action: 'index'
     }
@@ -80,6 +85,14 @@ class RecordCollectionController implements ValidateableErrorsMessage {
         flash.message = messageSource.getMessage('recordCollection.deleted', [] as Object[],'Record Collection deleted', request.locale)
 
         redirect controller: 'recordCollection', action: 'index'
+    }
+
+    def headersMapping(Long recordCollectionId) {
+        [
+                dataModelList: ruleFetcherService.fetchDataModels()?.dataModels,
+                recordCollectionId: recordCollectionId,
+                recordPortionMappingList: recordPortionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
+        ]
     }
 
     protected CsvImport csvImportByContentType(ImportContentType contentType) {

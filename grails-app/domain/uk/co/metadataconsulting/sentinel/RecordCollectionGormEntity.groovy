@@ -9,10 +9,13 @@ class RecordCollectionGormEntity {
 
     Date lastUpdated
 
+    static hasOne = [recordCollectionMapping: RecordCollectionMappingGormEntity]
+
     static hasMany = [records: RecordGormEntity]
 
     static constraints = {
         records nullable: true
+        recordCollectionMapping unique: true
     }
 
     static mapping = {

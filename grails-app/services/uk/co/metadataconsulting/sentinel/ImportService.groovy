@@ -32,7 +32,7 @@ class ImportService {
         for ( int i = 0; i < values.size(); i++ ) {
             String value = values[i]
             String header = headerAtIndex(metadata, i)
-            String gormUrl = metadata.gormUrls[i]
+            String gormUrl = (metadata.gormUrls && metadata.gormUrls.size() > i) ? metadata.gormUrls[i] : null
             recordPortionList << recordPortionFromValue(gormUrl, value, header, values, metadata)
         }
         recordPortionList

@@ -16,6 +16,8 @@ class CsvImportService implements CsvImport, Benchmark {
 
     CsvImportProcessorService csvImportProcessorService
 
+    RecordCollectionMappingGormService recordCollectionMappingGormService
+
     RecordCollectionGormService recordCollectionGormService
 
     ImportService importService
@@ -26,15 +28,17 @@ class CsvImportService implements CsvImport, Benchmark {
     
     @CompileDynamic
     @Override
-    void save(List<String> gormUrls, InputStream inputStream, Integer batchSize) {
+    void save(InputStream inputStream, Integer batchSize) {
         RecordCollectionGormEntity recordCollection = recordCollectionGormService.save()
 
         executorService.submit {
             log.info 'fetching validation rules'
-            MappingMetadata metadata = importService.mappingMetadata(gormUrls)
+            MappingMetadata metadata = new MappingMetadata()
             Closure headerListClosure = { List<String> l ->
                 metadata.setHeaderLineList(l)
+                recordCollectionMappingGormService.saveRecordCollectionMappingWithHeaders(recordCollection, l)
             }
+
             log.info 'processing input stream'
             csvImportProcessorService.processInputStream(inputStream, batchSize, headerListClosure) { List<List<String>> valuesList ->
                 importService.saveListOfValues(recordCollection, valuesList, metadata)

@@ -11,6 +11,7 @@ import org.hibernate.SessionFactory
 class ExcelImportService implements CsvImport, Benchmark {
 
     RecordCollectionGormService recordCollectionGormService
+    RecordCollectionMappingGormService recordCollectionMappingGormService
 
     ImportService importService
 
@@ -20,14 +21,15 @@ class ExcelImportService implements CsvImport, Benchmark {
     
     @CompileDynamic
     @Override
-    void save(List<String> gormUrls, InputStream inputStream, Integer batchSize) {
+    void save(InputStream inputStream, Integer batchSize) {
         RecordCollectionGormEntity recordCollection = recordCollectionGormService.save()
 
 //        executorService.submit {
             log.info 'fetching validation rules'
-            MappingMetadata metadata = importService.mappingMetadata(gormUrls)
+            MappingMetadata metadata = new MappingMetadata()
             Closure headerListClosure = { List<String> l ->
                 metadata.setHeaderLineList(l)
+                recordCollectionMappingGormService.saveRecordCollectionMappingWithHeaders(recordCollection, l)
             }
             log.info 'processing input stream'
             ExcelReader.read(inputStream, 0, true, headerListClosure) { List<String> values ->

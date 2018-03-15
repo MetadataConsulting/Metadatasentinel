@@ -14,6 +14,9 @@ class UrlMappingsSpec extends Specification implements UrlMappingsUnitTest<UrlMa
         verifyForwardUrlMapping("/", controller: 'recordCollection', action: 'index')
         verifyForwardUrlMapping("/recordCollection/validate", controller: 'recordCollection', action: 'validate')
         verifyForwardUrlMapping("/recordCollection/delete", controller: 'recordCollection', action: 'delete')
+        verifyForwardUrlMapping("/recordCollection/1/mapping", controller: 'recordCollection', action: 'headersMapping') {
+            recordCollectionId = '1'
+        }
         verifyForwardUrlMapping("/import", controller: 'recordCollection', action: 'importCsv')
         verifyForwardUrlMapping("/upload", controller: 'recordCollection', action: 'uploadCsv')
         verifyForwardUrlMapping("/records/1", controller: 'record', action: 'index') {

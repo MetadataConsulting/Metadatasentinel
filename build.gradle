@@ -8,6 +8,7 @@ buildscript {
         classpath "gradle.plugin.com.energizedwork.webdriver-binaries:webdriver-binaries-gradle-plugin:$webdriverBinariesGradleVersion"
         classpath "org.grails.plugins:hibernate5:${gormVersion-".RELEASE"}"
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:$assetPipelineVersion"
+        classpath "org.grails.plugins:views-gradle:$jsonViewsVersion"
     }
 }
 
@@ -21,6 +22,7 @@ apply plugin:"org.grails.grails-web"
 apply plugin:"com.energizedwork.webdriver-binaries"
 apply plugin:"asset-pipeline"
 apply plugin:"org.grails.grails-gsp"
+apply plugin: "org.grails.plugins.views-json"
 
 repositories {
     mavenLocal()
@@ -77,6 +79,9 @@ dependencies {
     // Excel
     compile "org.apache.poi:poi:$poiVersion"
     compile "org.apache.poi:poi-ooxml:$poiVersion"
+
+    compile "org.grails.plugins:views-json:$jsonViewsVersion"
+
 }
 
 bootRun {

@@ -99,4 +99,30 @@ class RecordCollectionControllerAllowedMethodsSpec extends Specification impleme
         then:
         response.status == SC_MOVED_TEMPORARILY
     }
+
+
+    @Unroll
+    def "test RecordCollectionController.headersMapping does not accept #method requests"(String method) {
+        when:
+        request.method = method
+        controller.headersMapping()
+
+        then:
+        response.status == SC_METHOD_NOT_ALLOWED
+
+        where:
+        method << ['PATCH', 'DELETE', 'POST', 'PUT']
+    }
+
+    def "test RecordCollectionController.headersMapping accepts GET requests"() {
+        given:
+        controller.recordPortionMappingGormService = Mock(RecordPortionMappingGormService)
+
+        when:
+        request.method = 'GET'
+        controller.headersMapping()
+
+        then:
+        response.status == SC_OK
+    }
 }

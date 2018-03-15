@@ -5,8 +5,8 @@ import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 
 @CompileStatic
 class MappingMetadata {
-    List<String> headerLineList
-    List<String> gormUrls
-    Map<String, ValidationRules> gormUrlsRules
+    List<String> headerLineList = []
+    List<String> gormUrls = []
+    Map<String, ValidationRules> gormUrlsRules = [:]
 }
 

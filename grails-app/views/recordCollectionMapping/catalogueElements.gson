@@ -1,0 +1,10 @@
+import uk.co.metadataconsulting.sentinel.modelcatalogue.CatalogueElement
+
+model {
+    Iterable<CatalogueElement> catalogueElements
+}
+json tmpl.catalogueElement(catalogueElements)
+
+
+
+

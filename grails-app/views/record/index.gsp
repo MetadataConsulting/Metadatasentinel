@@ -12,6 +12,9 @@
         <g:select name="correctness" from="${RecordCorrectnessDropdown.values()}" value="${correctness}"/>
         <input type="submit" class="btn-primary btn" value="${g.message(code: 'record.filter', default: 'Filter')}"/>
     </g:form>
+    <g:link class="btn-primary btn" controller="recordCollection" action="headersMapping" params="[recordCollectionId: recordCollectionId]">
+        <g:message code="recordCollection.headersMapping" default="Mappings"/>
+    </g:link>
     <g:form controller="recordCollection" action="validate" method="POST"  class="form-inline">
         <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
         <input type="submit" class="btn-primary btn" value="${g.message(code: 'record.validate', default: 'Validate')}"/>

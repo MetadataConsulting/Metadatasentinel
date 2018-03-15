@@ -58,6 +58,34 @@ class RecordCollectionControllerSpec extends Specification implements Controller
         model.containsKey('paginationQuery')
     }
 
+    def "test RecordCollectionController.headersMapping model contains recordPortionMappingList"() {
+        given:
+        controller.recordPortionMappingGormService = Mock(RecordPortionMappingGormService)
+
+        when:
+        request.method = 'GET'
+        params.recordCollectionId = 1
+        Map model = controller.headersMapping()
+
+        then:
+        response.status == SC_OK
+        model.containsKey('recordPortionMappingList')
+    }
+
+    def "test RecordCollectionController.headersMapping model contains recordCollectionId"() {
+        given:
+        controller.recordPortionMappingGormService = Mock(RecordPortionMappingGormService)
+
+        when:
+        request.method = 'GET'
+        params.recordCollectionId = 1
+        Map model = controller.headersMapping()
+
+        then:
+        response.status == SC_OK
+        model.containsKey('recordCollectionId')
+    }
+
     def "RecordCollectionController.delete model triggers recordCollectionGormService.delete invocation"() {
         given:
         controller.recordCollectionGormService = Mock(RecordCollectionGormService)
