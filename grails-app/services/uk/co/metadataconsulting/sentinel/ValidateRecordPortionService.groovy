@@ -12,15 +12,22 @@ class ValidateRecordPortionService {
     RuleFetcherService ruleFetcherService
     RecordGormService recordGormService
 
-    String failureReason(RecordPortionGormEntity recordPortion) {
-        ValidationRules validationRules = ruleFetcherService.fetchValidationRules(recordPortion.gormUrl)
+    String failureReason(RecordPortionGormEntity recordPortion, List<RecordPortionMapping> recordPortionMappingList) {
+        String recordPortionGormUrl = gormUrlByRecordPortionGormEntity(recordPortionMappingList, recordPortion)
+        ValidationRules validationRules = ruleFetcherService.fetchValidationRules(recordPortionGormUrl)
         List<String> gormUrls = []
         List<String> values = []
         recordPortion.record.portions.each { RecordPortionGormEntity recordPortionGormEntity ->
             values << recordPortionGormEntity.value
-            gormUrls << recordPortionGormEntity.gormUrl
+            gormUrls << gormUrlByRecordPortionGormEntity(recordPortionMappingList, recordPortionGormEntity)
         }
         failureReason(validationRules, gormUrls, values)
+    }
+
+    String gormUrlByRecordPortionGormEntity(List<RecordPortionMapping> recordPortionMappingList, RecordPortionGormEntity recordPortionGormEntity) {
+        recordPortionMappingList.find { RecordPortionMapping recordPortionMapping ->
+            recordPortionMapping.header == recordPortionGormEntity.header
+        }?.gormUrl
     }
 
     String failureReason(ValidationRules validationRules, List<String> gormUrls, List<String> values) {

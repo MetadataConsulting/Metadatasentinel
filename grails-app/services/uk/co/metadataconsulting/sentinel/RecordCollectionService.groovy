@@ -11,15 +11,18 @@ class RecordCollectionService implements GrailsConfigurationAware {
 
     RecordService recordService
 
+    RecordPortionMappingGormService recordPortionMappingGormService
+
     int pageSize
 
     void validate(Long recordCollectionId) {
         int total = recordGormService.countByRecordCollectionId(recordCollectionId) as int
+        List<RecordPortionMapping> recordPortionMappingList = recordPortionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
         for (int offset = 0; offset < total; offset = (offset + pageSize)) {
             PaginationQuery paginationQuery = new PaginationQuery(max: pageSize, offset: offset)
             List<RecordGormEntity> recordGormEntityList = recordGormService.findAllByRecordCollectionId(recordCollectionId, paginationQuery)
             for ( RecordGormEntity recordGormEntity : recordGormEntityList ) {
-                recordService.validate(recordGormEntity.id)
+                recordService.validate(recordGormEntity.id, recordPortionMappingList)
             }
         }
     }

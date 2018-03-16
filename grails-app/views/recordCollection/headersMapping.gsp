@@ -28,6 +28,7 @@
             <th><g:message code="recordPortionMapping.header" default="Header"/></th>
             <th><g:message code="recordPortionMapping.dataModel" default="Data Model"/></th>
             <th><g:message code="recordPortionMapping.catalogueElement" default="Catalogue Element"/></th>
+            <th><g:message code="recordPortionMapping.gormUrl" default="GORM Url"/></th>
         </tr>
         </thead>
         <tbody>
@@ -45,7 +46,11 @@
             <td><g:select
                     name="catalogueElement${recordPortionMapping.id}"
                     noSelection="${['null':'Select One...']}"
-                    from="${[]}"/>
+                    from="${[]}"
+                    onChange="onCatalogueElementChanged(${recordPortionMapping.id});"/>
+            </td>
+            <td>
+                <input type="text" disabled="disabled" id="gormUrl${recordPortionMapping.id}" name="gormUrl${recordPortionMapping.id}" value="${recordPortionMapping.gormUrl}" />
             </td>
             </tr>
         </g:each>
@@ -76,32 +81,48 @@ function replaceWith(id, html) {
    document.getElementById(id).innerHTML = html;
 }
 function onDataModelChanged(recordPortionMappingId) {
-    var dataModelId = getSelectValue('dataModel'+recordPortionMappingId)
-    console.log('fetching catalogue elements of ' + dataModelId);
-    getJSON('/recordCollectionMapping/catalogueElements/'+dataModelId, function(err, data) {
-        if (err != null) {
-            console.log('Something went wrong');
+    var dataModelId = getSelectValue('dataModel'+recordPortionMappingId);
+    var targetId = 'catalogueElement'+recordPortionMappingId;
+    if ( dataModelId == 'null') {
+        replaceWith(targetId, selectOneOption());
 
-        } else {
-            if ( data.length == 0 ) {
-                console.log('No data returned');
+    } else {
+        console.log('fetching catalogue elements of ' + dataModelId);
+        getJSON('/recordCollectionMapping/catalogueElements/'+dataModelId, function(err, data) {
+
+            if (err != null) {
+                console.log('Something went wrong');
 
             } else {
-                var html = generateHtmlOptions(data, null);
-                console.log(html);
-                replaceWith('catalogueElement'+recordPortionMappingId, html)
+                if ( data.length == 0 ) {
+                    console.log('No data returned');
+                    replaceWith(targetId, selectOneOption());
+
+                } else {
+                    var gormUrl = document.getElementById('gormUrl'+recordPortionMappingId).getAttribute('value');
+                    var html = generateHtmlOptions(data, gormUrl);
+                    console.log(html);
+                    replaceWith(targetId, html);
+                }
             }
-        }
-    });
+        });
+    }
 }
-function generateHtmlOptions(idNameValues, id) {
-    var html = '';
-    for (var i = 0; i < idNameValues.length; i++ ) {
-        var idName = idNameValues[i];
-        if ( idName.id === id ) {
-            html += '<option value="' + idName.id + '" selected="selected">' + idName.name.substring(0, 30) +'</option>'
+function onCatalogueElementChanged(recordPortionMappingId) {
+    var value = getSelectValue('catalogueElement'+recordPortionMappingId);
+    document.getElementById('gormUrl' + recordPortionMappingId).setAttribute('value', value);
+}
+function selectOneOption() {
+    return '<option value="null">Select One...</option>';
+}
+function generateHtmlOptions(gormUrlNameValues, gormUrl) {
+    var html = selectOneOption();
+    for (var i = 0; i < gormUrlNameValues.length; i++ ) {
+        var idName = gormUrlNameValues[i];
+        if ( idName.gormUrl === gormUrl) {
+            html += '<option value="' + idName.gormUrl + '" selected="selected">' + idName.name.substring(0, 30) +'</option>'
         } else {
-            html += '<option value="' + idName.id + '">'+idName.name.substring(0, 30)+'</option>'
+            html += '<option value="' + idName.gormUrl + '">'+idName.name.substring(0, 30)+'</option>'
         }
     }
     return html;

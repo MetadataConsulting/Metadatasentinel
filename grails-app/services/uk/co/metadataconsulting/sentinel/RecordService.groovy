@@ -11,6 +11,7 @@ import org.hibernate.Criteria
 class RecordService {
     RecordGormService recordGormService
     ValidateRecordPortionService validateRecordPortionService
+    RecordPortionMappingGormService recordPortionMappingGormService
 
     @CompileDynamic
     @ReadOnly
@@ -40,12 +41,16 @@ class RecordService {
     }
 
     @Transactional
-    void validate(Long recordId) {
+    void validate(Long recordId, List<RecordPortionMapping> recordPortionMappingList = null) {
         DetachedCriteria<RecordGormEntity> query = recordGormService.findById(recordId)
         query.join('portions')
         RecordGormEntity recordGormEntity = query.get()
+        Long recordCollectionId = recordGormEntity.recordCollectionId as Long
+        if ( !recordPortionMappingList ) {
+            recordPortionMappingList = recordPortionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
+        }
         for ( RecordPortionGormEntity recordPortionGormEntity : recordGormEntity.portions ) {
-            String failure = validateRecordPortionService.failureReason(recordPortionGormEntity)
+            String failure = validateRecordPortionService.failureReason(recordPortionGormEntity, recordPortionMappingList)
             recordPortionGormEntity.reason = failure
             recordPortionGormEntity.valid = !(failure as boolean)
             recordPortionGormEntity.save()

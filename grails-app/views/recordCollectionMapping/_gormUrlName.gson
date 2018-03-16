@@ -1,0 +1,10 @@
+import uk.co.metadataconsulting.sentinel.modelcatalogue.GormUrlName
+
+model {
+    GormUrlName gormUrlName
+}
+
+json {
+    gormUrl gormUrlName.gormUrl
+    name gormUrlName.name
+}

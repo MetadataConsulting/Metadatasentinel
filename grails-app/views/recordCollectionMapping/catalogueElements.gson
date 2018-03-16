@@ -1,9 +1,9 @@
-import uk.co.metadataconsulting.sentinel.modelcatalogue.CatalogueElement
+import uk.co.metadataconsulting.sentinel.modelcatalogue.GormUrlName
 
 model {
-    Iterable<CatalogueElement> catalogueElements
+    Iterable<GormUrlName> catalogueElements
 }
-json tmpl.catalogueElement(catalogueElements)
+json tmpl.gormUrlName(catalogueElements.sort { a, b -> a.name <=> b.name })
 
 
 

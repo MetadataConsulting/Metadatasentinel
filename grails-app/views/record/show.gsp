@@ -58,9 +58,9 @@
             </td>
             <td>${recordPortion.name}</td>
             <td>
-                <g:if test="${recordPortion.url}"><a href="${recordPortion.url}"></g:if>
-                <small>${recordPortion.gormUrl}</small>
-                <g:if test="${recordPortion.url}"></a></g:if>
+                %{--<g:if test="${recordPortion.url}"><a href="${recordPortion.url}"></g:if>--}%
+                %{--<small>${recordPortion.gormUrl}</small>--}%
+                %{--<g:if test="${recordPortion.url}"></a></g:if>--}%
             </td>
             <td>${recordPortion.value}</td>
             <td>${recordPortion.numberOfRulesValidatedAgainst}</td>
