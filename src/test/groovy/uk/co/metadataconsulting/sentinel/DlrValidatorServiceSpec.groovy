@@ -61,4 +61,33 @@ end
         '2011-10-09'       | '1999-01-11'  || 'Difference between diagnosticTestDate and dateOfBirth is larger than 18'
         description = expected ? 'is an adult' : 'is a minor'
     }
+
+
+    @Unroll
+    def "date before test ( #dateOfBirth < #diagnosticTestDate) #description"(String diagnosticTestDate, String dateOfBirth, String expected, String description) {
+        given:
+        String rule = '''
+package metadata;
+
+global java.util.List output;
+global java.lang.String diagnosticTestDate;
+global java.lang.String dateOfBirth;
+
+rule "DateOfBirth should be before diagnosticTestDate"
+when
+    eval(Validation.beforeDate(dateOfBirth, diagnosticTestDate, 'yyyy-MM-dd'))
+then
+    output.add("dateOfBirth should be before diagnosticTestDate");
+end
+'''
+        expect:
+        expected == service.validate('"DateOfBirth should be before diagnosticTestDate', rule, [diagnosticTestDate: diagnosticTestDate, dateOfBirth: dateOfBirth] )
+
+        where:
+        diagnosticTestDate | dateOfBirth   || expected
+        '2011-10-09'       | '1987-01-11'  || null
+        '2011-10-09'       | '2013-01-11'  || 'dateOfBirth should be before diagnosticTestDate'
+        description = expected ? 'is valid test date' : 'is not a valid test date'
+    }
+
 }
