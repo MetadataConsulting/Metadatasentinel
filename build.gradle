@@ -82,6 +82,7 @@ dependencies {
 
     compile "org.grails.plugins:views-json:$jsonViewsVersion"
 
+    testRuntime "com.h2database:h2"
 }
 
 bootRun {

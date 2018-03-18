@@ -99,8 +99,8 @@ hibernate:
 dataSource:
     pooled: true
     jmxExport: true
-    driverClassName: com.mysql.jdbc.Driver
-    dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    driverClassName: '${JDBC_DRIVER}'
+    dialect: '${JDBC_DIALECT}'
     username: '${JDBC_USERNAME}'
     password: '${JDBC_PASSWORD}'
 
