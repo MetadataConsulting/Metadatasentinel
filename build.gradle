@@ -94,11 +94,8 @@ webdriverBinaries {
     chromedriver '2.36'
     geckodriver '0.18.0'
 }
-
 tasks.withType(Test) {
-    systemProperty "JDBC_USERNAME", System.getProperty('JDBC_USERNAME')
-    systemProperty "JDBC_PASSWORD", System.getProperty('JDBC_PASSWORD')
-    systemProperty "JDBC_CONNECTION_STRING", System.getProperty('JDBC_CONNECTION_STRING')
+    systemProperties System.properties
     systemProperty "geb.env", System.getProperty('geb.env')
     systemProperty "geb.build.reportsDir", reporting.file("geb/integrationTest")
     beforeTest { descriptor -> logger.quiet " -- $descriptor" }
