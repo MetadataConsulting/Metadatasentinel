@@ -116,8 +116,9 @@ class RecordCollectionControllerAllowedMethodsSpec extends Specification impleme
 
     def "test RecordCollectionController.headersMapping accepts GET requests"() {
         given:
-        controller.recordPortionMappingGormService = Mock(RecordPortionMappingGormService)
-
+        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.ruleFetcherService = Mock(RuleFetcherService)
+        
         when:
         request.method = 'GET'
         controller.headersMapping()

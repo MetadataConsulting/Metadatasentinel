@@ -60,7 +60,8 @@ class RecordCollectionControllerSpec extends Specification implements Controller
 
     def "test RecordCollectionController.headersMapping model contains recordPortionMappingList"() {
         given:
-        controller.recordPortionMappingGormService = Mock(RecordPortionMappingGormService)
+        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.ruleFetcherService = Mock(RuleFetcherService)
 
         when:
         request.method = 'GET'
@@ -74,7 +75,8 @@ class RecordCollectionControllerSpec extends Specification implements Controller
 
     def "test RecordCollectionController.headersMapping model contains recordCollectionId"() {
         given:
-        controller.recordPortionMappingGormService = Mock(RecordPortionMappingGormService)
+        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.ruleFetcherService = Mock(RuleFetcherService)
 
         when:
         request.method = 'GET'

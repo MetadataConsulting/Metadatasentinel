@@ -16,7 +16,7 @@ class CsvImportServiceIntegrationSpec extends Specification {
     def "save processes an CSV file and imports a record collection"() {
         when:
         String filename = 'src/test/resources/DIDS_XMLExample_20.csv'
-        File f = new File('src/test/resources/DIDS_XMLExample_20.csv')
+        File f = new File(filename)
 
         then:
         f.exists()
@@ -32,16 +32,23 @@ class CsvImportServiceIntegrationSpec extends Specification {
         expectedNumberOfRows
 
         when:
-        String mapping = 'gorm://org.modelcatalogue.core.DataElement:53,gorm://org.modelcatalogue.core.DataElement:57,gorm://org.modelcatalogue.core.DataElement:63,gorm://org.modelcatalogue.core.DataElement:71,,gorm://org.modelcatalogue.core.DataElement:44,,gorm://org.modelcatalogue.core.DataElement:80,gorm://org.modelcatalogue.core.DataElement:93,gorm://org.modelcatalogue.core.DataElement:27,gorm://org.modelcatalogue.core.DataElement:33,gorm://org.modelcatalogue.core.DataElement:49,gorm://org.modelcatalogue.core.DataElement:51,gorm://org.modelcatalogue.core.DataElement:16,gorm://org.modelcatalogue.core.DataElement:103,gorm://org.modelcatalogue.core.DataElement:77'
-        List<String> mappingList = mapping.split(',')  as List<String>
-        csvImportService.save(mappingList, f.newInputStream(), 10)
+        csvImportService.save(f.newInputStream(), 50)
 
         then:
         recordCollectionGormService.count() == old(recordCollectionGormService.count()) + 1
+
         conditions.eventually {
             assert recordGormService.count() == old(recordGormService.count()) + expectedNumberOfRows
-            assert recordPortionGormService.count() == old(recordPortionGormService.count()) + (expectedNumberOfRows * mappingList.size())
+            assert recordPortionGormService.count() == old(recordPortionGormService.count()) + (expectedNumberOfRows * numberOfItemsPerLine(filename))
         }
+    }
+
+    int numberOfItemsPerLine(String filename) {
+        BufferedReader reader = new BufferedReader(new FileReader(filename))
+        String line = reader.readLine()
+        int result = line.split(',').size()
+        reader.close()
+        result
     }
 
     int numberOfLines(String filename) {

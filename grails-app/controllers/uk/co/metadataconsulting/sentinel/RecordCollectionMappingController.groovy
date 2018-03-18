@@ -1,6 +1,7 @@
 package uk.co.metadataconsulting.sentinel
 
 import groovy.transform.CompileStatic
+import org.springframework.context.MessageSource
 import uk.co.metadataconsulting.sentinel.modelcatalogue.CatalogueElements
 import uk.co.metadataconsulting.sentinel.modelcatalogue.GormUrlName
 
@@ -12,21 +13,25 @@ class RecordCollectionMappingController {
             catalogueElements: 'GET'
     ]
 
+    MessageSource messageSource
     RuleFetcherService ruleFetcherService
-    RecordPortionMappingGormService recordPortionMappingGormService
+    RecordCollectionMappingGormService recordCollectionMappingGormService
 
     def update() {
         Long recordCollectionId = params.long('recordCollectionId')
-        List<Long> recordPortionMappingIds = recordPortionMappingGormService.findIdsByRecordCollectionId(recordCollectionId)
-        List<UpdateGormUrlCommand> cmds = []
-        for ( Long id : recordPortionMappingIds ) {
-            String gormUrl = params["catalogueElement${id}"]
-            if ( gormUrl ) {
-                cmds << new UpdateGormUrlCommand(id: id, gormUrl: gormUrl)
+        List<Long> recordPortionMappingIds = recordCollectionMappingGormService.findIdsByRecordCollectionId(recordCollectionId)
+        if ( recordPortionMappingIds ) {
+            List<UpdateGormUrlRequest> cmds = []
+            for ( Long id : recordPortionMappingIds ) {
+                String gormUrl = params.getProperty("catalogueElement${id}")
+                Long dataModelId = params.long("dataModel${id}")
+                if ( gormUrl && gormUrl != 'null' && dataModelId ) {
+                    cmds << new UpdateGormUrlRequest(id: id, gormUrl: gormUrl, dataModelId: dataModelId)
+                }
             }
+            recordCollectionMappingGormService.updateGormUrls(cmds)
+            flash.message = messageSource.getMessage('recordCollection.mapping.updated', [] as Object[],'Record Collection Mapping updated', request.locale)
         }
-        recordPortionMappingGormService.updateGormUrls(cmds)
-
         redirect uri: "/recordCollection/$recordCollectionId/mapping".toString()
     }
 

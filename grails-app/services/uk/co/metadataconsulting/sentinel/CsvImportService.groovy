@@ -16,8 +16,6 @@ class CsvImportService implements CsvImport, Benchmark {
 
     CsvImportProcessorService csvImportProcessorService
 
-    RecordCollectionMappingGormService recordCollectionMappingGormService
-
     RecordCollectionGormService recordCollectionGormService
 
     ImportService importService
@@ -36,11 +34,12 @@ class CsvImportService implements CsvImport, Benchmark {
             MappingMetadata metadata = new MappingMetadata()
             Closure headerListClosure = { List<String> l ->
                 metadata.setHeaderLineList(l)
-                recordCollectionMappingGormService.saveRecordCollectionMappingWithHeaders(recordCollection, l)
+                recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollection, l)
             }
 
             log.info 'processing input stream'
             csvImportProcessorService.processInputStream(inputStream, batchSize, headerListClosure) { List<List<String>> valuesList ->
+                log.info ('inside closure block')
                 importService.saveListOfValues(recordCollection, valuesList, metadata)
                 cleanUpGorm()
             }

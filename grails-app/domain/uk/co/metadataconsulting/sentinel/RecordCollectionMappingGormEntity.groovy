@@ -4,14 +4,18 @@ import grails.compiler.GrailsCompileStatic
 
 @GrailsCompileStatic
 class RecordCollectionMappingGormEntity {
+    String header
+    String gormUrl
+    Long dataModelId
     Date dateCreated
     Date lastUpdated
 
     static belongsTo = [recordCollection: RecordCollectionGormEntity]
-    static hasMany = [recordPortionMappings: RecordPortionMappingGormEntity]
 
     static constraints = {
-        recordPortionMappings nullable: false, minSize: 1
+        header nullable: false
+        gormUrl nullable: true
+        dataModelId nullable: true
     }
 
     static mapping = {

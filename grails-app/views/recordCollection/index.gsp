@@ -6,7 +6,7 @@
 <body>
 <nav class="navbar navbar-light bg-light">
     <g:render template="/templates/navbarBrand"/>
-            <g:link controller="recordCollection" action="importCsv" class="btn btn-primary">
+            <g:link id="importfile-link" controller="recordCollection" action="importCsv" class="btn btn-primary">
                 <g:message code="recordCollection.import" default="Import File"/>
             </g:link>
 </nav>

@@ -3,8 +3,8 @@ package uk.co.metadataconsulting.sentinel
 import grails.testing.gorm.DomainUnitTest
 import spock.lang.Specification
 
-class RecordPortionMappingGormEntityConstraintsSpec extends Specification
-        implements DomainUnitTest<RecordPortionMappingGormEntity> {
+class RecordCollectionMappingGormEntityConstraintsSpec extends Specification
+        implements DomainUnitTest<RecordCollectionMappingGormEntity> {
 
     void 'test header cannot be null'() {
         when:
@@ -20,5 +20,13 @@ class RecordPortionMappingGormEntityConstraintsSpec extends Specification
 
         then:
         domain.validate(['gormUrl'])
+    }
+
+    void 'test dataModelId can be null'() {
+        when:
+        domain.dataModelId = null
+
+        then:
+        domain.validate(['dataModelId'])
     }
 }

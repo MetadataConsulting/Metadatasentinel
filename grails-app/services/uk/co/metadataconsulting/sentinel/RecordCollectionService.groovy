@@ -3,6 +3,7 @@ package uk.co.metadataconsulting.sentinel
 import grails.config.Config
 import grails.core.support.GrailsConfigurationAware
 import groovy.transform.CompileStatic
+import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 
 @CompileStatic
 class RecordCollectionService implements GrailsConfigurationAware {
@@ -11,18 +12,15 @@ class RecordCollectionService implements GrailsConfigurationAware {
 
     RecordService recordService
 
-    RecordPortionMappingGormService recordPortionMappingGormService
-
     int pageSize
 
-    void validate(Long recordCollectionId) {
+    void validate(Long recordCollectionId, List<RecordPortionMapping> recordPortionMappingList, Map<String, ValidationRules> validationRulesMap) {
         int total = recordGormService.countByRecordCollectionId(recordCollectionId) as int
-        List<RecordPortionMapping> recordPortionMappingList = recordPortionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
         for (int offset = 0; offset < total; offset = (offset + pageSize)) {
             PaginationQuery paginationQuery = new PaginationQuery(max: pageSize, offset: offset)
             List<RecordGormEntity> recordGormEntityList = recordGormService.findAllByRecordCollectionId(recordCollectionId, paginationQuery)
             for ( RecordGormEntity recordGormEntity : recordGormEntityList ) {
-                recordService.validate(recordGormEntity.id, recordPortionMappingList)
+                recordService.validate(recordGormEntity.id, recordPortionMappingList, validationRulesMap)
             }
         }
     }

@@ -9,12 +9,10 @@ import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 class ValidateRecordPortionService {
 
     DlrValidatorService dlrValidatorService
-    RuleFetcherService ruleFetcherService
-    RecordGormService recordGormService
 
-    String failureReason(RecordPortionGormEntity recordPortion, List<RecordPortionMapping> recordPortionMappingList) {
+    String failureReason(RecordPortionGormEntity recordPortion, List<RecordPortionMapping> recordPortionMappingList, Map<String, ValidationRules> validationRulesMap) {
         String recordPortionGormUrl = gormUrlByRecordPortionGormEntity(recordPortionMappingList, recordPortion)
-        ValidationRules validationRules = ruleFetcherService.fetchValidationRules(recordPortionGormUrl)
+        ValidationRules validationRules = validationRulesMap.get(recordPortionGormUrl)
         List<String> gormUrls = []
         List<String> values = []
         recordPortion.record.portions.each { RecordPortionGormEntity recordPortionGormEntity ->

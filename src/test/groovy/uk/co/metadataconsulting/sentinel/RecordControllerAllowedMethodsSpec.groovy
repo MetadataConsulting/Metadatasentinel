@@ -72,8 +72,12 @@ class RecordControllerAllowedMethodsSpec extends Specification implements Contro
     def "test RecordController.validate accepts POST requests"() {
         given:
         controller.recordService = Mock(RecordService)
+        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.ruleFetcherService = Mock(RuleFetcherService)
 
         when:
+        params.recordId = 1
+        params.recordCollectionId = 5
         request.method = 'POST'
         controller.validate()
 

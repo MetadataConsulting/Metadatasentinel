@@ -60,11 +60,11 @@ dependencies {
     testCompile "org.grails.plugins:geb"
     testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:$seleniumVersion"
     testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:$seleniumVersion"
-    testRuntime "org.seleniumhq.selenium:selenium-remote-driver:$seleniumVersion"
-    testRuntime "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
+    testCompile "org.seleniumhq.selenium:selenium-remote-driver:$seleniumVersion"
+    testCompile "org.seleniumhq.selenium:selenium-api:$seleniumVersion"
+    testCompile "org.seleniumhq.selenium:selenium-support:$seleniumVersion"
 
     runtime "mysql:mysql-connector-java:$mysqlVersion"
-
 
     // DROOLS
     compile "org.drools:drools-core:$droolsVersion"
@@ -91,12 +91,14 @@ bootRun {
 }
 
 webdriverBinaries {
-    chromedriver '2.32'
+    chromedriver '2.36'
     geckodriver '0.18.0'
 }
 
 tasks.withType(Test) {
-    systemProperties System.properties
+    systemProperty "JDBC_USERNAME", System.getProperty('JDBC_USERNAME')
+    systemProperty "JDBC_PASSWORD", System.getProperty('JDBC_PASSWORD')
+    systemProperty "JDBC_CONNECTION_STRING", System.getProperty('JDBC_CONNECTION_STRING')
     systemProperty "geb.env", System.getProperty('geb.env')
     systemProperty "geb.build.reportsDir", reporting.file("geb/integrationTest")
     beforeTest { descriptor -> logger.quiet " -- $descriptor" }

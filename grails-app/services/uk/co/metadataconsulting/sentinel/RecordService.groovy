@@ -5,13 +5,14 @@ import grails.gorm.transactions.ReadOnly
 import grails.gorm.transactions.Transactional
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
-import org.hibernate.Criteria
+import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 
 @CompileStatic
 class RecordService {
     RecordGormService recordGormService
     ValidateRecordPortionService validateRecordPortionService
-    RecordPortionMappingGormService recordPortionMappingGormService
+    RecordCollectionMappingGormService recordCollectionMappingGormService
+    RuleFetcherService ruleFetcherService
 
     @CompileDynamic
     @ReadOnly
@@ -41,16 +42,12 @@ class RecordService {
     }
 
     @Transactional
-    void validate(Long recordId, List<RecordPortionMapping> recordPortionMappingList = null) {
+    void validate(Long recordId, List<RecordPortionMapping> recordPortionMappingList, Map<String, ValidationRules> validationRulesMap) {
         DetachedCriteria<RecordGormEntity> query = recordGormService.findById(recordId)
         query.join('portions')
         RecordGormEntity recordGormEntity = query.get()
-        Long recordCollectionId = recordGormEntity.recordCollectionId as Long
-        if ( !recordPortionMappingList ) {
-            recordPortionMappingList = recordPortionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
-        }
         for ( RecordPortionGormEntity recordPortionGormEntity : recordGormEntity.portions ) {
-            String failure = validateRecordPortionService.failureReason(recordPortionGormEntity, recordPortionMappingList)
+            String failure = validateRecordPortionService.failureReason(recordPortionGormEntity, recordPortionMappingList, validationRulesMap)
             recordPortionGormEntity.reason = failure
             recordPortionGormEntity.valid = !(failure as boolean)
             recordPortionGormEntity.save()

@@ -8,7 +8,7 @@ class UrlMappings {
         "/recordCollection/delete"(controller: 'recordCollection', action: 'delete')
         "/recordCollection/$recordCollectionId/mapping"(controller: 'recordCollection', action: 'headersMapping')
         "/recordCollectionMapping/catalogueElements/$dataModelId"(controller: 'recordCollectionMapping', action: 'catalogueElements')
-        "/recordCollectionMapping/$recordCollectionId"(controller: 'recordCollectionMapping', action: 'update', httpMethod: 'POST')
+        "/recordCollectionMapping/update"(controller: 'recordCollectionMapping', action: 'update', httpMethod: 'POST')
         "/import"(controller: 'recordCollection', action: 'importCsv')
         "/upload"(controller: 'recordCollection', action: 'uploadCsv')
         "/records/$recordCollectionId"(controller: 'record', action: 'index')

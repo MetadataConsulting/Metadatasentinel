@@ -3,7 +3,8 @@ package uk.co.metadataconsulting.sentinel
 import groovy.transform.CompileStatic
 
 @CompileStatic
-class UpdateGormUrlCommand {
+class UpdateGormUrlRequest {
     Long id
     String gormUrl
+    Long dataModelId
 }

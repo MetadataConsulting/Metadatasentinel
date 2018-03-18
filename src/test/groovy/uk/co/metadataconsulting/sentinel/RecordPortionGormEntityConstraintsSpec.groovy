@@ -29,14 +29,6 @@ class RecordPortionGormEntityConstraintsSpec extends Specification implements Do
         domain.validate(['name'])
     }
 
-    void 'test gormUrl can be null'() {
-        when:
-        domain.gormUrl = null
-
-        then:
-        domain.validate(['gormUrl'])
-    }
-
     void 'test value cannot be null'() {
         when:
         domain.value = null

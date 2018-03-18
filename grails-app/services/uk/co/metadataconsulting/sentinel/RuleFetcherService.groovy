@@ -129,4 +129,18 @@ class RuleFetcherService implements GrailsConfigurationAware {
         metadataUsername = co.getRequiredProperty('metadata.username', String)
         metadataApiKey = co.getRequiredProperty('metadata.apiKey', String)
     }
+
+    Map<String,ValidationRules> fetchValidationRulesByMapping(List<RecordPortionMapping> recordPortionMappings) {
+        Map<String, ValidationRules> m = [:]
+        if ( recordPortionMappings ) {
+            List<String> gormUrls = recordPortionMappings*.gormUrl.findAll { it != null && it != 'null' }
+            for ( String gormUrl : gormUrls ) {
+                ValidationRules validationRules = fetchValidationRules(gormUrl)
+                if ( validationRules ) {
+                    m[gormUrl] = validationRules
+                }
+            }
+        }
+        m
+    }
 }

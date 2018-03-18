@@ -2,6 +2,7 @@ package uk.co.metadataconsulting.sentinel
 
 import groovy.transform.CompileStatic
 import org.springframework.context.MessageSource
+import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 
 @CompileStatic
 class RecordController implements ValidateableErrorsMessage {
@@ -11,6 +12,8 @@ class RecordController implements ValidateableErrorsMessage {
     RecordService recordService
 
     RecordPortionGormService recordPortionGormService
+    RecordCollectionMappingGormService recordCollectionMappingGormService
+    RuleFetcherService ruleFetcherService
 
     static allowedMethods = [
             index: 'GET',
@@ -42,13 +45,17 @@ class RecordController implements ValidateableErrorsMessage {
         ]
     }
 
-    def validate(Long recordId) {
-
-        recordService.validate(recordId)
-
+    def validate(Long recordId, Long recordCollectionId) {
+        List<RecordPortionMapping> recordPortionMappingList = recordCollectionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
+        Map<String, ValidationRules> validationRulesMap = ruleFetcherService.fetchValidationRulesByMapping(recordPortionMappingList)
+        if ( !validationRulesMap ) {
+            flash.error = messageSource.getMessage('record.validation.noRules', [] as Object[],'Could not trigger validation. No rules for mapping', request.locale)
+            redirect action: 'show', controller: 'record', params: [recordId: recordId, recordCollectionId: recordCollectionId]
+            return
+        }
+        recordService.validate(recordId, recordPortionMappingList, validationRulesMap)
         flash.message = messageSource.getMessage('record.validation', [] as Object[],'Record validated again', request.locale)
-
-        redirect action: 'show', controller: 'record', params: [recordId: recordId]
+        redirect action: 'show', controller: 'record', params: [recordId: recordId, recordCollectionId: recordCollectionId]
     }
 
     def show(Long recordId, Long recordCollectionId) {

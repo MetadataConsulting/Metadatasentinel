@@ -2,8 +2,8 @@ package uk.co.metadataconsulting.sentinel
 
 import grails.gorm.services.Service
 
-@Service(RecordPortionMappingGormEntity)
+@Service(RecordCollectionMappingGormEntity)
 interface RecordPortionMappingGormDataService {
-    RecordPortionMappingGormEntity save(String header)
-    RecordPortionMappingGormEntity update(Serializable id, String gormUrl)
+    RecordCollectionMappingGormEntity save(String header, RecordCollectionGormEntity recordCollection)
+    RecordCollectionMappingGormEntity update(Serializable id, String gormUrl, Long dataModelId)
 }
