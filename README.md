@@ -6,15 +6,9 @@ Demonstration application to show use of MDX as validator source
 
 `/api/modelCatalogue/core/validationRule/rules`
 
-Note: that endpoint is only available at branch:  
-
-https://github.com/MetadataConsulting/ModelCataloguePlugin/tree/drools
-
-Currently that endpoint does not require authentication.
-
 ## Description
 
-This applications allows the user to import Data as CSV format and a mapping comma separated string. 
+This applications allows the user to import Data as CSV format 
 
 If you import a CSV file of two columns
 
@@ -24,23 +18,10 @@ NHSNumber,NHSNumberStatus
 "1234567890","01" 
 ```
 
-You need to create a mapping string for each of the elements.
+You need to create a mapping string for each of the elements. To create a mapping, once the record collection has been imported go
+to the mapping screen and select matching catalogue elements. 
 
-`gorm://org.modelcatalogue.core.DataElement:53,gorm://org.modelcatalogue.core.DataElement:57,` 
-
-If one of your csv values does not match any MDX element leave the value in the mapping blank.
-
-For example: 
-
-  ```
-Price,Color,NHSNumber,NHSNumberStatus
-10,"Red","1234567890","01"
-20"Blue","1234567890","01" 
-  ```
-  
-Since you don't have matches for Price and Color we have blank value. See leading commas in the next example:
-  
-`,,,gorm://org.modelcatalogue.core.DataElement:53,gorm://org.modelcatalogue.core.DataElement:57,`  
+If one of your csv header values does not match any MDX element leave the value in the mapping blank.
 
 ### DRL rules
 
@@ -92,14 +73,16 @@ metadata:
 
 ### Persistence
 The app GORM for Hibernate implementation as an data access toolkit. It uses MySQL. You will 
-need to configure your database url, user, password at `grails-app/conf/application.yml`. 
+need to configure your driver, dialect, database url, user, password at `grails-app/conf/application.yml`.
+
+Currently the application contains the MySQL Driver and the H2 driver as a `testRuntime` dependency. 
 
 
 ## Running
 
 To run the app
 
-`./gradlew -DJDBC_CONNECTION_STRING=jdbc:mysql://127.0.0.1:8889/metadatasentinel_dev -DJDBC_USERNAME=root -DJDBC_PASSWORD=root bootRun`
+`./gradlew -DJDBC_DRIVER=com.mysql.jdbc.Driver -DJDBC_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect -DJDBC_CONNECTION_STRING=jdbc:mysql://127.0.0.1:8889/metadatasentinel_dev -DJDBC_USERNAME=root -DJDBC_PASSWORD=root bootRun`
 
 To run the unit tests:
 
@@ -107,4 +90,4 @@ To run the unit tests:
 
 To run the integration tests:
 
-`./gradlew -DJDBC_CONNECTION_STRING=jdbc:mysql://127.0.0.1:8889/metadatasentinel_dev -DJDBC_USERNAME=root -DJDBC_PASSWORD=root iT`
+`./gradlew -DJDBC_DRIVER=com.mysql.jdbc.Driver -DJDBC_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect -DJDBC_CONNECTION_STRING=jdbc:mysql://127.0.0.1:8889/metadatasentinel_dev -DJDBC_USERNAME=root -DJDBC_PASSWORD=root iT`
