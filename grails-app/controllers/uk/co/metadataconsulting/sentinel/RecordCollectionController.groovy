@@ -116,8 +116,12 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
     }
 
     def headersMapping(Long recordCollectionId) {
+        List dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
+        if ( !dataModelList ) {
+            flash.error = messageSource.getMessage('dataModel.couldNotLoad', [] as Object[], 'Could not data Models', request.locale)
+        }  
         [
-                dataModelList: ruleFetcherService.fetchDataModels()?.dataModels,
+                dataModelList: dataModelList, 
                 recordCollectionId: recordCollectionId,
                 recordPortionMappingList: recordCollectionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
         ]

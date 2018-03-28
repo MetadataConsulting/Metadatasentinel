@@ -48,6 +48,8 @@ class RecordControllerAllowedMethodsSpec extends Specification implements Contro
     def "test RecordController.show accepts GET requests"() {
         given:
         controller.recordPortionGormService = Mock(RecordPortionGormService)
+        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+
         when:
         request.method = 'GET'
         controller.show()

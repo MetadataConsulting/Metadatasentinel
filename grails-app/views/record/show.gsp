@@ -29,8 +29,6 @@
         <thead class="thead-dark">
         <tr>
             <th><g:message code="recordPortion.header" default="Header"/></th>
-            <th><g:message code="recordPortion.name" default="Name"/></th>
-            <th></th>
             <th><g:message code="recordPortion.value" default="Value"/></th>
             <th><g:message code="recordPortion.numberOfRulesValidatedAgainst" default="# Rules"/></th>
             <th><g:message code="recordPortion.valid" default="Valid"/></th>
@@ -48,20 +46,8 @@
             </g:else>
             <td>
                 <g:if test="${recordPortion.header}">
-                    <g:if test="${recordPortion.header.size() > 30}">
-                        <g:set var="headertooltip" value="${recordPortion.header.substring(0, Math.min(30, recordPortion.header.length()))}..."/>
-                    </g:if>
-                    <g:else>
-                        <g:set var="headertooltip" value="${recordPortion.header}"/>
-                    </g:else>
+                    <mdx:link recordPortionMappingList="${recordPortionMappingList}" recordPortion="${recordPortion}"/>
                 </g:if>
-                <span data-toggle="tooltip" title="${recordPortion.header}">${headertooltip}</span>
-            </td>
-            <td>${recordPortion.name}</td>
-            <td>
-                %{--<g:if test="${recordPortion.url}"><a href="${recordPortion.url}"></g:if>--}%
-                %{--<small>${recordPortion.gormUrl}</small>--}%
-                %{--<g:if test="${recordPortion.url}"></a></g:if>--}%
             </td>
             <td>${recordPortion.value}</td>
             <td>${recordPortion.numberOfRulesValidatedAgainst}</td>
