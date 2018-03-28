@@ -17,6 +17,7 @@
         <li class="breadcrumb-item active" aria-current="page"><g:message code="nav.importFile" default="Import File"/></li>
     </ol>
 </nav>
+<article>
 <div class="ml-5">
     <h1><g:message code="recordCollection.import" default="Import File" /></h1>
     <g:render template="/templates/flashmessage"/>
@@ -41,6 +42,6 @@
         </div>
     </g:uploadForm>
 </div>
-
+</article>
 </body>
 </html>

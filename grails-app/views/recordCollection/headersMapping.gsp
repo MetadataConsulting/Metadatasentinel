@@ -99,53 +99,55 @@
 <g:render template="/templates/flasherror"/>
 
 <g:if test="${dataModelList}">
+    <article>
     <g:if test="${recordPortionMappingList}">
         <g:form controller="recordCollectionMapping" action="update" method="POST">
             <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
             <table class="table table-striped">
                 <thead class="thead-dark">
-                    <tr>
-                        <th><g:message code="recordPortionMapping.header" default="Header"/></th>
-                        <th><g:message code="recordPortionMapping.dataModel" default="Data Model"/></th>
-                        <th><g:message code="recordPortionMapping.catalogueElement" default="Catalogue Element"/></th>
-                        <th><g:message code="recordPortionMapping.gormUrl" default="GORM Url"/></th>
-        </tr>
-        </thead>
-        <tbody>
-        <g:each var="recordPortionMapping" in="${recordPortionMappingList}">
-            <td>${recordPortionMapping.header}</td>
-            <td>
+                <tr>
+                    <th><g:message code="recordPortionMapping.header" default="Header"/></th>
+                    <th><g:message code="recordPortionMapping.dataModel" default="Data Model"/></th>
+                    <th><g:message code="recordPortionMapping.catalogueElement" default="Catalogue Element"/></th>
+                    <th><g:message code="recordPortionMapping.gormUrl" default="GORM Url"/></th>
+                </tr>
+                </thead>
+                <tbody>
+                <g:each var="recordPortionMapping" in="${recordPortionMappingList}">
+                    <td>${recordPortionMapping.header}</td>
+                    <td>
 
-                <g:select noSelection="${['null':'Select One...']}"
-                        optionKey="id"
-                        optionValue="name"
-                        name="dataModel${recordPortionMapping.id}"
-                        from="${dataModelList}"
-                        value="${recordPortionMapping.dataModelId}"
-                        onChange="onDataModelChanged(${recordPortionMapping.id});"/>
-                <g:if test="${recordPortionMapping.dataModelId}">
-                    <g:javascript>
+                        <g:select noSelection="${['null':'Select One...']}"
+                                  optionKey="id"
+                                  optionValue="name"
+                                  name="dataModel${recordPortionMapping.id}"
+                                  from="${dataModelList}"
+                                  value="${recordPortionMapping.dataModelId}"
+                                  onChange="onDataModelChanged(${recordPortionMapping.id});"/>
+                        <g:if test="${recordPortionMapping.dataModelId}">
+                            <g:javascript>
                         onDataModelChanged(${recordPortionMapping.id});
-                    </g:javascript>
-                </g:if>
+                            </g:javascript>
+                        </g:if>
 
-            </td>
-            <td><g:select
-                    name="catalogueElement${recordPortionMapping.id}"
-                    noSelection="${['null':'Select One...']}"
-                    from="${[]}"
-                    onChange="onCatalogueElementChanged(${recordPortionMapping.id});"/>
-            </td>
-            <td>
-                <input type="text" disabled="disabled" id="gormUrl${recordPortionMapping.id}" name="gormUrl${recordPortionMapping.id}" value="${recordPortionMapping.gormUrl}" />
-            </td>
-            </tr>
-        </g:each>
-        </tbody>
-    </table>
-        <input type="submit" class="btn-primary btn" value="${g.message(code: 'recordCollection.mapping.save', default: 'Save')}"/>
-    </g:form>
-</g:if>
+                    </td>
+                    <td><g:select
+                            name="catalogueElement${recordPortionMapping.id}"
+                            noSelection="${['null':'Select One...']}"
+                            from="${[]}"
+                            onChange="onCatalogueElementChanged(${recordPortionMapping.id});"/>
+                    </td>
+                    <td>
+                        <input type="text" disabled="disabled" id="gormUrl${recordPortionMapping.id}" name="gormUrl${recordPortionMapping.id}" value="${recordPortionMapping.gormUrl}" />
+                    </td>
+                    </tr>
+                </g:each>
+                </tbody>
+            </table>
+            <input type="submit" class="btn-primary btn" value="${g.message(code: 'recordCollection.mapping.save', default: 'Save')}"/>
+        </g:form>
+    </g:if>
+    <article>
 </g:if>
 </body>
 </html>

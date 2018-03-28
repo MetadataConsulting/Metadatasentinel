@@ -41,6 +41,7 @@
 
 
 <g:if test="${recordList}">
+    <article>
     <table class="table table-striped">
         <thead class="thead-dark">
         <tr>
@@ -74,7 +75,8 @@
                     params="[correctness: correctness, recordCollectionId: recordCollectionId]" />
         </div>
     </g:if>
+        <g:render template="/record/paginationinfo"/>
+    </article>
 </g:if>
-<g:render template="/record/paginationinfo"/>
 </body>
 </html>

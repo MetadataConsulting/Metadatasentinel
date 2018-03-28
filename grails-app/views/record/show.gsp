@@ -25,6 +25,7 @@
 <g:render template="/templates/flasherror"/>
 
 <g:if test="${recordPortionList}">
+    <article>
     <table class="table table-striped">
         <thead class="thead-dark">
         <tr>
@@ -58,6 +59,7 @@
         </g:each>
         </tbody>
     </table>
+    </article>
 </g:if>
 </body>
 </html>
