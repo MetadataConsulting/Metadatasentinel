@@ -8,7 +8,6 @@ import groovy.transform.CompileStatic
 class RecordPortion {
     String header
     String name
-    String url
     String gormUrl
     String value
     Boolean valid

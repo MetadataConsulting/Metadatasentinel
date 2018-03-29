@@ -7,7 +7,6 @@ class RecordPortionGormEntity {
 
     String header
     String name
-    String url
     String value
     Boolean valid
     String reason
@@ -18,7 +17,6 @@ class RecordPortionGormEntity {
 
     static constraints = {
         numberOfRulesValidatedAgainst min: 0, nullable: false
-        url nullable: true
         header nullable: true, blank: true
         name nullable: true, blank: true
         value nullable: false, blank: false
