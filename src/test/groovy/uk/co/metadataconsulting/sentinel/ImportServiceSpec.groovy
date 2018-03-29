@@ -10,7 +10,6 @@ class ImportServiceSpec extends Specification implements ServiceUnitTest<ImportS
 
     def "validating rule is processed"() {
         given:
-        service.validateRecordPortionService = Mock(ValidateRecordPortionService)
         String gormUrl = 'gorm://org.modelcatalogue.core.EnumeratedType:250'
         String value = 'yellow'
         String header = 'Color'
@@ -22,15 +21,20 @@ class ImportServiceSpec extends Specification implements ServiceUnitTest<ImportS
             gormUrls = ['gorm://org.modelcatalogue.core.DataElement:77', 'gorm://org.modelcatalogue.core.EnumeratedType:250']
             gormUrlsRules = [('gorm://org.modelcatalogue.core.EnumeratedType:250'): validationRules]
         }
+        service.validatorService = Stub(ValidatorService) {
+            validate(_, _, _) >> new ValidationResult(name: 'must be red and blue',
+                    reason: 'failure',
+                    numberOfRulesValidatedAgainst: 1,
+                    status: ValidationStatus.INVALID)
+        }
 
         when:
         RecordPortion portion = service.recordPortionFromValue(gormUrl, value, header, values, metadata)
 
         then:
-        portion.gormUrl == gormUrl
         portion.numberOfRulesValidatedAgainst == 1
         portion.reason != null
-        !portion.valid
+        portion.status == ValidationStatus.INVALID
     }
 
     @Unroll

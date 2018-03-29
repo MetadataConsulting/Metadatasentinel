@@ -30,13 +30,13 @@ class RecordPortionGormEntityConstraintsSpec extends Specification implements Do
         domain.errors['value'].code == 'nullable'
     }
 
-    void 'test valid cannot be null'() {
+    void 'test status cannot be null'() {
         when:
-        domain.valid = null
+        domain.status = null
 
         then:
-        !domain.validate(['valid'])
-        domain.errors['valid'].code == 'nullable'
+        !domain.validate(['status'])
+        domain.errors['status'].code == 'nullable'
     }
 
     void 'test numberOfRulesValidatedAgainst cannot be null'() {

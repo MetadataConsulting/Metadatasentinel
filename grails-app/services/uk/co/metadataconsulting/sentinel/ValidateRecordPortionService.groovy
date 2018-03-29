@@ -1,6 +1,5 @@
 package uk.co.metadataconsulting.sentinel
 
-import grails.gorm.DetachedCriteria
 import groovy.transform.CompileStatic
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRule
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
@@ -9,17 +8,27 @@ import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 class ValidateRecordPortionService {
 
     DlrValidatorService dlrValidatorService
+    ValidatorService validatorService
 
-    String failureReason(RecordPortionGormEntity recordPortion, List<RecordPortionMapping> recordPortionMappingList, Map<String, ValidationRules> validationRulesMap) {
+    ValidationRules validationRulesByRecordPortion(RecordPortionGormEntity recordPortion, List<RecordPortionMapping> recordPortionMappingList, Map<String, ValidationRules> validationRulesMap) {
         String recordPortionGormUrl = gormUrlByRecordPortionGormEntity(recordPortionMappingList, recordPortion)
-        ValidationRules validationRules = validationRulesMap.get(recordPortionGormUrl)
+        validationRulesMap.get(recordPortionGormUrl)
+    }
+
+    ValidationResult failureReason(RecordPortionGormEntity recordPortion, List<RecordPortionMapping> recordPortionMappingList, Map<String, ValidationRules> validationRulesMap) {
+        ValidationRules validationRules = validationRulesByRecordPortion(recordPortion, recordPortionMappingList, validationRulesMap)
+        RecordGormUrlsAndValues recordGormUrlsAndValues = recordGormUrlsAndValuesByRecordPortion(recordPortionMappingList, recordPortion)
+        validatorService.validate(validationRules, recordPortion.value, recordGormUrlsAndValues)
+    }
+
+    RecordGormUrlsAndValues recordGormUrlsAndValuesByRecordPortion(List<RecordPortionMapping> recordPortionMappingList, RecordPortionGormEntity recordPortion) {
         List<String> gormUrls = []
         List<String> values = []
         recordPortion.record.portions.each { RecordPortionGormEntity recordPortionGormEntity ->
             values << recordPortionGormEntity.value
             gormUrls << gormUrlByRecordPortionGormEntity(recordPortionMappingList, recordPortionGormEntity)
         }
-        failureReason(validationRules, gormUrls, values)
+        new RecordGormUrlsAndValues(values: values, gormUrls: gormUrls)
     }
 
     String gormUrlByRecordPortionGormEntity(List<RecordPortionMapping> recordPortionMappingList, RecordPortionGormEntity recordPortionGormEntity) {

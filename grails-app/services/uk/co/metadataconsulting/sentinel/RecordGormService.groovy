@@ -62,9 +62,8 @@ class RecordGormService implements GormErrorsMessage {
         new RecordPortionGormEntity(
                 header: portion.header,
                 name: portion.name,
-                gormUrl: portion.gormUrl,
                 value: portion.value,
-                valid: portion.valid,
+                status: portion.status,
                 reason: portion.reason,
                 numberOfRulesValidatedAgainst: portion.numberOfRulesValidatedAgainst)
     }
@@ -82,7 +81,17 @@ class RecordGormService implements GormErrorsMessage {
     }
 
     @ReadOnly
-    DetachedCriteria<RecordGormEntity> findById(Long recordId) {
+    RecordGormEntity findById(Long recordId, List<String> joinProperties = null) {
+        DetachedCriteria<RecordGormEntity> query = queryById(recordId)
+        if ( joinProperties ) {
+            for ( String propertyName : joinProperties ) {
+                query.join(propertyName)
+            }
+        }
+        query.get()
+    }
+
+    DetachedCriteria<RecordGormEntity> queryById(Long recordId) {
         RecordGormEntity.where { id == recordId }
     }
 

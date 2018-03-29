@@ -29,15 +29,20 @@ class RuleFetcherService implements GrailsConfigurationAware {
     String metadataUsername
     String metadataApiKey
 
-    Map<String, ValidationRules> fetchValidationRules(List<String> gormUrls) {
-        Map<String, ValidationRules> gormUrlsRules = [:]
-        for ( String gormUrl : gormUrls ) {
-            ValidationRules validationRules = fetchValidationRules(gormUrl)
-            if ( validationRules ) {
-                gormUrlsRules[gormUrl] = validationRules
-            }
+    @Override
+    void setConfiguration(Config co) {
+        metadataUrl = co.getProperty('metadata.url', String)
+        if ( !metadataUrl || metadataUrl == '${METADATA_URL}') {
+            metadataUrl == 'localhost:8080'
         }
-        gormUrlsRules
+        metadataUsername = co.getProperty('metadata.username', String)
+        if ( !metadataUsername || metadataUsername == '${METADATA_USERNAME}') {
+            metadataUsername == 'admin'
+        }
+        metadataApiKey = co.getProperty('metadata.apiKey', String)
+        if ( !metadataApiKey || metadataApiKey == '${METADATA_APIKEY}') {
+            metadataApiKey == '123456'
+        }
     }
 
     DataModels fetchDataModels() {
@@ -121,13 +126,6 @@ class RuleFetcherService implements GrailsConfigurationAware {
         }
 
         validationRules
-    }
-
-    @Override
-    void setConfiguration(Config co) {
-        metadataUrl = co.getProperty('metadata.url', String, 'http://localhost:8080')
-        metadataUsername = co.getRequiredProperty('metadata.username', String)
-        metadataApiKey = co.getRequiredProperty('metadata.apiKey', String)
     }
 
     Map<String,ValidationRules> fetchValidationRulesByMapping(List<RecordPortionMapping> recordPortionMappings) {

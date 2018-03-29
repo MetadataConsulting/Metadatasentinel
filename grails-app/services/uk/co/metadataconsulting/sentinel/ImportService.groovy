@@ -9,12 +9,7 @@ class ImportService {
 
     RuleFetcherService ruleFetcherService
     RecordGormService recordGormService
-    ValidateRecordPortionService validateRecordPortionService
-
-    MappingMetadata mappingMetadata(List<String> gormUrls) {
-        Map<String, ValidationRules> gormUrlsRules = ruleFetcherService.fetchValidationRules(gormUrls)
-        new MappingMetadata(gormUrls: gormUrls, gormUrlsRules: gormUrlsRules)
-    }
+    ValidatorService validatorService
 
     void saveListOfValues(RecordCollectionGormEntity recordCollection, List<List<String>> valuesList, MappingMetadata metadata) {
         for ( List<String> values : valuesList ) {
@@ -51,33 +46,23 @@ class ImportService {
         metadata.headerLineList[index]
     }
 
-    RecordPortion recordPortionFromValue(String gormUrl, String value, String header, List<String> values, MappingMetadata metadata) {
-        ValidationRules validationRules = metadata.gormUrlsRules[gormUrl]
-
-        String reason
-        String name
-        int numberOfRulesValidatedAgainst = 0
-
-        if ( validationRules ) {
-            reason = validateRecordPortionService.failureReason(validationRules, metadata.gormUrls, values)
-            name = validationRules.name
-            numberOfRulesValidatedAgainst = validationRules.rules?.size() ?: 0
-
-            if ( validationRules.validating ) {
-                if ( !ValueValidator.validateRule(validationRules.validating, value) ) {
-                    reason = reason ?: validationRules.validating.toString()
-                }
-                numberOfRulesValidatedAgainst++
-            }
+    RecordPortion recordPortionFromValue(String gormUrl,
+                                         String value,
+                                         String header,
+                                         List<String> values,
+                                         MappingMetadata metadata) {
+        ValidationResult validationResult = new ValidationResult()
+        if ( gormUrl ) {
+            ValidationRules validationRules = metadata.gormUrlsRules[gormUrl]
+            validationResult = validatorService.validate(validationRules,
+                    value,
+                    new RecordGormUrlsAndValues(gormUrls: metadata.gormUrls, values: values))
         }
-
         new RecordPortion(header: header,
-                name: name,
-                url: validationRules?.url,
-                gormUrl: gormUrl,
+                name: validationResult.name,
                 value: value,
-                valid: !(reason as boolean),
-                reason: reason,
-                numberOfRulesValidatedAgainst: numberOfRulesValidatedAgainst)
+                status: validationResult.status,
+                reason: validationResult.reason,
+                numberOfRulesValidatedAgainst: validationResult.numberOfRulesValidatedAgainst)
     }
 }

@@ -8,7 +8,7 @@ class RecordPortionGormEntity {
     String header
     String name
     String value
-    Boolean valid
+    ValidationStatus status = ValidationStatus.NOT_VALIDATED
     String reason
     Integer numberOfRulesValidatedAgainst
     Date lastUpdated
@@ -20,7 +20,7 @@ class RecordPortionGormEntity {
         header nullable: true, blank: true
         name nullable: true, blank: true
         value nullable: false, blank: false
-        valid nullable: false, blank: false
+        status nullable: false
         reason nullable: true
     }
 

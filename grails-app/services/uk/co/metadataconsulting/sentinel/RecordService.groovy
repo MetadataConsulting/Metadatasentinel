@@ -11,15 +11,14 @@ import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 class RecordService {
     RecordGormService recordGormService
     ValidateRecordPortionService validateRecordPortionService
-    RecordCollectionMappingGormService recordCollectionMappingGormService
-    RuleFetcherService ruleFetcherService
+    RecordPortionGormService recordPortionGormService
 
     @CompileDynamic
     @ReadOnly
     Set<Long> findAllInvalidRecordIds() {
         DetachedCriteria<RecordPortionGormEntity> invalidQuery =  RecordPortionGormEntity.where {
             def r = record
-            valid == false
+            status == ValidationStatus.INVALID
         }.projections {
             property('r.id')
         }
@@ -43,14 +42,14 @@ class RecordService {
 
     @Transactional
     void validate(Long recordId, List<RecordPortionMapping> recordPortionMappingList, Map<String, ValidationRules> validationRulesMap) {
-        DetachedCriteria<RecordGormEntity> query = recordGormService.findById(recordId)
+        DetachedCriteria<RecordGormEntity> query = recordGormService.queryById(recordId)
         query.join('portions')
         RecordGormEntity recordGormEntity = query.get()
         for ( RecordPortionGormEntity recordPortionGormEntity : recordGormEntity.portions ) {
-            String failure = validateRecordPortionService.failureReason(recordPortionGormEntity, recordPortionMappingList, validationRulesMap)
-            recordPortionGormEntity.reason = failure
-            recordPortionGormEntity.valid = !(failure as boolean)
-            recordPortionGormEntity.save()
+            ValidationResult validationResult = validateRecordPortionService.failureReason(recordPortionGormEntity,
+                    recordPortionMappingList,
+                    validationRulesMap)
+            recordPortionGormService.updateWithValidationResult(recordPortionGormEntity, validationResult)
         }
     }
 

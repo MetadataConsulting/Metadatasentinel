@@ -1,3 +1,4 @@
+<%@ page import="uk.co.metadataconsulting.sentinel.ValidationStatus" %>
 <html>
 <head>
     <title>Record Portions</title>
@@ -39,11 +40,11 @@
         </thead>
         <tbody>
         <g:each var="recordPortion" in="${recordPortionList}">
-            <g:if test="${recordPortion.valid}">
-                <tr>
+            <g:if test="${recordPortion.status == ValidationStatus.INVALID}">
+                <tr class="alert-danger">
             </g:if>
             <g:else>
-                <tr class="alert-danger">
+                <tr>
             </g:else>
             <td>
                 <g:if test="${recordPortion.header}">
@@ -52,7 +53,7 @@
             </td>
             <td>${recordPortion.value}</td>
             <td>${recordPortion.numberOfRulesValidatedAgainst}</td>
-            <td>${recordPortion.valid}</td>
+            <td>${recordPortion.status}</td>
             <td>${recordPortion.reason}</td>
             <td>${recordPortion.lastUpdated}</td>
             </tr>
