@@ -19,6 +19,34 @@ class RecordCollectionControllerSpec extends Specification implements Controller
         view == '/recordCollection/importCsv'
     }
 
+    def "RecordCollectionController.cloneMapping model contains recordCollectionId"() {
+        given:
+        controller.recordCollectionGormService = Mock(RecordCollectionGormService)
+        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+
+        when:
+        request.method = 'GET'
+        Map model = controller.cloneMapping()
+
+        then:
+        response.status == SC_OK
+        model.containsKey('toRecordCollectionId')
+    }
+
+    def "RecordCollectionController.cloneMapping model contains recordCollectionList"() {
+        given:
+        controller.recordCollectionGormService = Mock(RecordCollectionGormService)
+        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+
+        when:
+        request.method = 'GET'
+        Map model = controller.cloneMapping()
+
+        then:
+        response.status == SC_OK
+        model.containsKey('recordCollectionList')
+    }
+
     def "RecordCollectionController.index model contains recordCollectionList"() {
         given:
         controller.recordCollectionGormService = Mock(RecordCollectionGormService)

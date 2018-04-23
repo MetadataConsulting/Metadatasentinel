@@ -10,6 +10,58 @@ import static javax.servlet.http.HttpServletResponse.SC_MOVED_TEMPORARILY
 class RecordCollectionControllerAllowedMethodsSpec extends Specification implements ControllerUnitTest<RecordCollectionController> {
 
     @Unroll
+    def "test RecordCollectionController.cloneSave does not accept #method requests"(String method) {
+        when:
+        request.method = method
+        controller.cloneSave()
+
+        then:
+        response.status == SC_METHOD_NOT_ALLOWED
+
+        where:
+        method << ['PATCH', 'DELETE', 'GET', 'PUT']
+    }
+
+    def "test RecordCollectionController.cloneSave accepts GET requests"() {
+        given:
+        controller.recordCollectionGormService = Mock(RecordCollectionGormService)
+
+        when:
+        request.method = 'POST'
+        controller.cloneSave()
+
+        then:
+        response.status == SC_MOVED_TEMPORARILY
+    }
+
+
+    @Unroll
+    def "test RecordCollectionController.cloneMapping does not accept #method requests"(String method) {
+        when:
+        request.method = method
+        controller.cloneMapping()
+
+        then:
+        response.status == SC_METHOD_NOT_ALLOWED
+
+        where:
+        method << ['PATCH', 'DELETE', 'POST', 'PUT']
+    }
+
+    def "test RecordCollectionController.cloneMapping accepts GET requests"() {
+        given:
+        controller.recordCollectionGormService = Mock(RecordCollectionGormService)
+        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+
+        when:
+        request.method = 'GET'
+        controller.cloneMapping()
+
+        then:
+        response.status == SC_OK
+    }
+
+    @Unroll
     def "test RecordCollectionController.index does not accept #method requests"(String method) {
         when:
         request.method = method

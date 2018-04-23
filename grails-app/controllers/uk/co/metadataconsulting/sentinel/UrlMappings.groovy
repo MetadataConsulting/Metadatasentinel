@@ -4,6 +4,8 @@ class UrlMappings {
 
     static mappings = {
         "/"(controller: 'recordCollection', action: 'index')
+        "/recordCollection/cloneMapping"(controller: 'recordCollection', action: 'cloneMapping')
+        "/recordCollection/cloneSave"(controller: 'recordCollection', action: 'cloneSave', httpMethod: 'POST')
         "/recordCollection/validate"(controller: 'recordCollection', action: 'validate')
         "/recordCollection/delete"(controller: 'recordCollection', action: 'delete')
         "/recordCollection/$recordCollectionId/mapping"(controller: 'recordCollection', action: 'headersMapping')

@@ -1,5 +1,6 @@
 package uk.co.metadataconsulting.sentinel
 
+import grails.gorm.DetachedCriteria
 import grails.gorm.transactions.ReadOnly
 import grails.gorm.transactions.Transactional
 import groovy.transform.CompileStatic
@@ -52,5 +53,17 @@ class RecordCollectionGormService implements GormErrorsMessage {
     @Transactional
     void delete(Serializable id) {
         RecordCollectionGormEntity.get(id).delete()
+    }
+
+    @ReadOnly
+    List<RecordCollectionGormEntity> findAllInIds(Collection<Long> ids) {
+        if ( !ids ) {
+            return []
+        }
+        queryAllInIds(ids).list()
+    }
+
+    DetachedCriteria<RecordCollectionGormEntity> queryAllInIds(Collection<Long> ids) {
+        RecordCollectionGormEntity.where { id in ids }
     }
 }

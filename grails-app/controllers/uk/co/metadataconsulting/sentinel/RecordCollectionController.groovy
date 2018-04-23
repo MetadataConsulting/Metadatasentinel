@@ -17,7 +17,9 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
             uploadCsv: 'POST',
             validate: 'POST',
             delete: 'POST',
-            headersMapping: 'GET'
+            headersMapping: 'GET',
+            cloneMapping: 'GET',
+            cloneSave: 'POST',
     ]
 
     MessageSource messageSource
@@ -118,13 +120,33 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
     def headersMapping(Long recordCollectionId) {
         List dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
         if ( !dataModelList ) {
-            flash.error = messageSource.getMessage('dataModel.couldNotLoad', [] as Object[], 'Could not data Models', request.locale)
+            flash.error = messageSource.getMessage('dataModel.couldNotLoad', [] as Object[], 'Could not load data Models', request.locale)
         }  
         [
                 dataModelList: dataModelList, 
                 recordCollectionId: recordCollectionId,
                 recordPortionMappingList: recordCollectionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
         ]
+    }
+
+    def cloneMapping(Long recordCollectionId) {
+        Set<Long> recordCollectionIdList = recordCollectionMappingGormService.findAllRecordCollectionIdByGormUrlNotNull()
+        [
+                toRecordCollectionId: recordCollectionId,
+                recordCollectionList: recordCollectionGormService.findAllInIds(recordCollectionIdList)
+        ]
+    }
+
+    def cloneSave(CloneMappingCommand cmd) {
+        if ( cmd.hasErrors() ) {
+            flash.error = errorsMsg(cmd, messageSource)
+            redirect action: 'cloneMapping'
+            return
+        }
+
+        recordCollectionMappingGormService.cloneMapping(cmd.fromRecordCollectionId, cmd.toRecordCollectionId)
+
+        redirect action: 'headersMapping', params: [recordCollectionId: cmd.toRecordCollectionId]
     }
 
     protected CsvImport csvImportByContentType(ImportContentType contentType) {
