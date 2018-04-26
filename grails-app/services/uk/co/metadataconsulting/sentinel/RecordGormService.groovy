@@ -49,8 +49,13 @@ class RecordGormService implements GormErrorsMessage {
         RecordGormEntity record = new RecordGormEntity()
         record.recordCollection = recordCollection
         for ( RecordPortion portion : portionList ) {
+            if((portion.value.isEmpty())|(portion.value == " ")){
+                portion.value = 'N/A'
+            }
             RecordPortionGormEntity recordPortion = recordPortionGormEntityOfRecordPortion(portion)
+
             record.addToPortions(recordPortion)
+
         }
         if ( !record.save() ) {
             log.warn '{}', errorsMsg(record, messageSource)
