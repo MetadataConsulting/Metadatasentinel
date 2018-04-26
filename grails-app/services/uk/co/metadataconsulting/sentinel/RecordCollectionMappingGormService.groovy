@@ -47,7 +47,7 @@ class RecordCollectionMappingGormService {
         List<RecordCollectionMappingGormEntity> toEntities = queryByRecordCollectionId(toRecordCollectionId).list()
 
         for ( RecordCollectionMappingGormEntity toEntity : toEntities ) {
-            RecordCollectionMappingGormEntity fromEntity = fromEntities.find { it.header == toEntity.header }
+            RecordCollectionMappingGormEntity fromEntity = fromEntities.find { it.header.equalsIgnoreCase(toEntity.header) }
             if ( fromEntity ) {
                 toEntity.with {
                     dataModelId = fromEntity.dataModelId
