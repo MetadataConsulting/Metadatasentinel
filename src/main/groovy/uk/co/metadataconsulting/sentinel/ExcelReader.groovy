@@ -7,6 +7,8 @@ import org.apache.poi.xssf.usermodel.*;
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
+import java.text.SimpleDateFormat
+
 @CompileStatic
 class ExcelReader {
 
@@ -17,22 +19,23 @@ class ExcelReader {
         Workbook workbook = WorkbookFactory.create(inputStream)
         Sheet sheet = workbook.getSheetAt(sheetNumber)
         DataFormatter dataFormatter = new DataFormatter()
-        Iterator<Row> rowIterator = sheet.rowIterator()Meta
+        Iterator<Row> rowIterator = sheet.rowIterator()
         int max = 1
         int rowNumber = 0
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next()
-            List<String> cellValues = cellValuesForRow(dataFormatter, row, max)
+            List<String> cellValues
             if ( rowNumber == 0 && headerListClosure) {
-                headerListClosure(cellValues)
-            }
-            if(rowNumber == 0){
+                cellValues = cellValuesForHeader(dataFormatter, row)
                 max = cellValues.size()
+                headerListClosure(cellValues)
+            }else{
+                cellValues = cellValuesForRow(dataFormatter, row, max)
             }
 
             boolean processRow = !(rowNumber == 0 && skipFirstRow)
             try{
-                boolean everyValueInLineIsEmpty = cellValues.every { String str -> !str }
+                boolean everyValueInLineIsEmpty = cellValues.every { str -> !str }
                 if ( everyValueInLineIsEmpty ) {
                     processRow = false
                 }
@@ -40,13 +43,12 @@ class ExcelReader {
                     cls(cellValues)
                 }
             }catch(Exception ex){
-                println ex.getMessage()
+                log.error(ex.getMessage())
             }
             rowNumber++
         }
         workbook.close()
     }
-
 
     static List<String> cellValuesForRow(DataFormatter dataFormatter, Row row, int max) {
 
@@ -63,35 +65,62 @@ class ExcelReader {
                     getValue(row, cell, data)
                 } else {
                     //log
+                    log.warn("null value in row")
                 }
             }
         }catch(Exception ex){
-            println ex.getMessage()
+            log.error(ex.getMessage())
         }
 
         data
+    }
+
+    static List<String> cellValuesForHeader(DataFormatter dataFormatter, Row row) {
+        List<String> cellValues = []
+        Iterator<Cell> cellIterator = row.cellIterator()
+        while (cellIterator.hasNext()) {
+            Cell cell = cellIterator.next()
+            String cellValue = dataFormatter.formatCellValue(cell)
+            if(!cellValue.isEmpty() && cellValue!="") {
+                cellValues << cellValue;
+            }else{
+                break;
+            }
+        }
+        cellValues
     }
 
     static String getValue(Row row, Cell cell, List data) {
         def rowIndex = row.getRowNum()
         def colIndex = cell.getColumnIndex()
         def value = ""
+        DataFormatter df = new DataFormatter();
         switch (cell.getCellType()) {
             case Cell.CELL_TYPE_STRING:
                 value = cell.getRichStringCellValue().getString();
                 break;
             case Cell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
-                    value = cell.getDateCellValue();
+                    value = df.formatCellValue(cell);
                 } else {
                     value = cell.getNumericCellValue();
+                    if((value.mod(1)) == 0){
+                        value = value.toInteger()
+                    }
                 }
                 break;
             case Cell.CELL_TYPE_BOOLEAN:
                 value = cell.getBooleanCellValue();
                 break;
             case Cell.CELL_TYPE_FORMULA:
-                value = cell.getCellFormula();
+                switch(cell.getCachedFormulaResultType()) {
+                    case Cell.CELL_TYPE_NUMERIC:
+                       value = cell.getNumericCellValue()
+                        break;
+                    case Cell.CELL_TYPE_STRING:
+                        value = cell.getRichStringCellValue()
+                        break;
+                }
                 break;
             default:
                 value = ""
@@ -100,14 +129,5 @@ class ExcelReader {
         data
     }
 
-//    static List<String> cellValuesForRow(DataFormatter dataFormatter, Row row) {
-//        List<String> cellValues = []
-//        Iterator<Cell> cellIterator = row.cellIterator()
-//        while (cellIterator.hasNext()) {
-//            Cell cell = cellIterator.next()
-//            String cellValue = dataFormatter.formatCellValue(cell)
-//            cellValues << cellValue
-//        }
-//        cellValues
-//    }
+
 }
