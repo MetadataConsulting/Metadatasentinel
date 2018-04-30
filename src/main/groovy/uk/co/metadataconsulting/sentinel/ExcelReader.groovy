@@ -94,14 +94,14 @@ class ExcelReader {
         def rowIndex = row.getRowNum()
         def colIndex = cell.getColumnIndex()
         def value = ""
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        DataFormatter df = new DataFormatter();
         switch (cell.getCellType()) {
             case Cell.CELL_TYPE_STRING:
                 value = cell.getRichStringCellValue().getString();
                 break;
             case Cell.CELL_TYPE_NUMERIC:
                 if (DateUtil.isCellDateFormatted(cell)) {
-                    value = sdf.format(cell.getDateCellValue());
+                    value = df.formatCellValue(cell);
                 } else {
                     value = cell.getNumericCellValue();
                     if((value.mod(1)) == 0){
