@@ -29,7 +29,7 @@ class ExcelReader {
                 cellValues = cellValuesForHeader(dataFormatter, row)
                 max = cellValues.size()
                 headerListClosure(cellValues)
-            }else{
+            } else {
                 cellValues = cellValuesForRow(dataFormatter, row, max)
             }
 
@@ -58,17 +58,11 @@ class ExcelReader {
             int lastColumn = (max == 1) ? row.getLastCellNum():max
 
             for (int cn = 0; cn < lastColumn; cn++) {
-                Cell cell = row.getCell(cn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK  )
+                Cell cell = row.getCell(cn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK)
                 String cellValue = dataFormatter.formatCellValue(cell)
-                data << cellValue
-                if (cell != null) {
-                    getValue(row, cell, data)
-                } else {
-                    //log
-                    log.warn("null value in row")
-                }
+                data << cellValue ?: ''
             }
-        }catch(Exception ex){
+        } catch(Exception ex){
             log.error(ex.getMessage())
         }
 
@@ -81,53 +75,12 @@ class ExcelReader {
         while (cellIterator.hasNext()) {
             Cell cell = cellIterator.next()
             String cellValue = dataFormatter.formatCellValue(cell)
-            if(!cellValue.isEmpty() && cellValue!="") {
-                cellValues << cellValue;
-            }else{
-                break;
+            if ( !cellValue.isEmpty() && cellValue!="" ) {
+                cellValues << cellValue
+            } else {
+                break
             }
         }
         cellValues
     }
-
-    static String getValue(Row row, Cell cell, List data) {
-        def rowIndex = row.getRowNum()
-        def colIndex = cell.getColumnIndex()
-        def value = ""
-        DataFormatter df = new DataFormatter();
-        switch (cell.getCellType()) {
-            case Cell.CELL_TYPE_STRING:
-                value = cell.getRichStringCellValue().getString();
-                break;
-            case Cell.CELL_TYPE_NUMERIC:
-                if (DateUtil.isCellDateFormatted(cell)) {
-                    value = df.formatCellValue(cell);
-                } else {
-                    value = cell.getNumericCellValue();
-                    if((value.mod(1)) == 0){
-                        value = value.toInteger()
-                    }
-                }
-                break;
-            case Cell.CELL_TYPE_BOOLEAN:
-                value = cell.getBooleanCellValue();
-                break;
-            case Cell.CELL_TYPE_FORMULA:
-                switch(cell.getCachedFormulaResultType()) {
-                    case Cell.CELL_TYPE_NUMERIC:
-                       value = cell.getNumericCellValue()
-                        break;
-                    case Cell.CELL_TYPE_STRING:
-                        value = cell.getRichStringCellValue()
-                        break;
-                }
-                break;
-            default:
-                value = ""
-        }
-        data[colIndex] = value
-        data
-    }
-
-
 }
