@@ -98,6 +98,15 @@ webdriverBinaries {
     chromedriver '2.36'
     geckodriver '0.18.0'
 }
+
+test {
+    systemProperties System.properties
+}
+
+integrationTest {
+    systemProperties System.properties
+}
+
 tasks.withType(Test) {
     systemProperties System.properties
     systemProperty "geb.env", System.getProperty('geb.env')
