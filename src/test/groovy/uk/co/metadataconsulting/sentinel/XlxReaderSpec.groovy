@@ -6,8 +6,8 @@ class XlxReaderSpec extends Specification {
 
     List<List<String>> expectedLines =  [
             ['NHSNumber', 'Empty', 'NHSNumberStatus','PersonBirthDate','PersonGenderCode','postalCode','GPCodeRegistration','PatientSourceSetting','ReferrerCode','ReferringOrgCode','DiagnosticTestReqDate','DiagnosticTestReqRecDate','ImagingCodeNICIP','ImagingCodeSNOMEDCT','DiagnosticTestDate','ImagingSiteCode','RadiologicalAccessionNumber','Color'],
-            ['1234567890', '', '01','1987-01-40','1','LS1 4HY','Y44680','01','C2918341','RR807','1950-09-09','9/10/11','XMAMB','71651007','10/9/11','RR807','RW6A06729288','red'],
-            ['1234567890', '', '01','1987-01-11','1','LS1 4HY','Y44680','01','C2918341','RR807','2011-09-09','9/10/11','UGRAF','334531000000104','10/10/86','RR807','RW6A06647291','yellow'],
+            ['1234567890', '', '01','1987-01-40','1','LS1 4HY','Y44680','01','C2918341','RR807','1950-09-09','10/09/2011','XMAMB','71651007','09/10/2011','RR807','RW6A06729288','red'],
+            ['1234567890', '', '01','1987-01-11','1','LS1 4HY','Y44680','01','C2918341','RR807','2011-09-09','10/09/2011','UGRAF','334531000000104','10/10/1986','RR807','RW6A06647291','yellow'],
     ]
 
     def "reading an excel file does not throw any exception"() {
