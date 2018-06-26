@@ -98,8 +98,9 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         log.debug 'Content Type {}', cmd.csvFile.contentType
         InputStream inputStream = cmd.csvFile.inputStream
         Integer batchSize = cmd.batchSize
+        String datasetName = cmd.datasetName
         CsvImport importService = csvImportByContentType (ImportContentType.of(cmd.csvFile.contentType))
-        importService.save(inputStream, batchSize)
+        importService.save(inputStream, datasetName, batchSize)
 
         redirect controller: 'recordCollection', action: 'index'
     }

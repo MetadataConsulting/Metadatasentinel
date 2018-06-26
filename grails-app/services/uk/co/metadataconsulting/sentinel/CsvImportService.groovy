@@ -26,8 +26,10 @@ class CsvImportService implements CsvImport, Benchmark {
     
     @CompileDynamic
     @Override
-    void save(InputStream inputStream, Integer batchSize) {
+    void save(InputStream inputStream, String datasetName, Integer batchSize ) {
+
         RecordCollectionGormEntity recordCollection = recordCollectionGormService.save()
+        recordCollection.datasetName = datasetName
 
         executorService.submit {
             log.info 'fetching validation rules'
