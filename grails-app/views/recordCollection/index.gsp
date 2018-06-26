@@ -18,6 +18,7 @@
         <table class="table table-striped">
             <thead class="thead-dark">
             <tr>
+                <th><g:message code="recordCollection.datasetname" default="Dataset name"/></th>
                 <th><g:message code="recordCollection.th.lastUpdated" default="Record Collection Creation Date"/></th>
                 <th><g:message code="recordCollection.th.actions" default="Actions"/></th></th>
             </tr>
@@ -25,6 +26,7 @@
             <tbody>
             <g:each var="recordCollection" in="${recordCollectionList}">
                 <tr>
+                    <td><g:link controller="record" action="index" params="[recordCollectionId: recordCollection?.id]">${recordCollection.datasetName}</g:link></td>
                     <td><g:link controller="record" action="index" params="[recordCollectionId: recordCollection?.id]">${recordCollection.lastUpdated}</g:link></td>
                     <td>
                         <g:form controller="recordCollection" action="delete">

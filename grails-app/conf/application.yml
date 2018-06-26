@@ -106,7 +106,7 @@ dataSource:
 environments:
     development:
         dataSource:
-            dbCreate: update
+            dbCreate: create
             url: '${JDBC_CONNECTION_STRING}'
     test:
         dataSource:
