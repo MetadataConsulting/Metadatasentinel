@@ -4,6 +4,8 @@ package uk.co.metadataconsulting.sentinel
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.springframework.context.MessageSource
+import pl.touk.excel.export.WebXlsxExporter
+import pl.touk.excel.export.XlsxExporter
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 import grails.config.Config
 import grails.core.support.GrailsConfigurationAware
@@ -11,7 +13,6 @@ import grails.core.support.GrailsConfigurationAware
 import static org.springframework.http.HttpStatus.OK
 
 @Slf4j
-@CompileStatic
 class RecordCollectionController implements ValidateableErrorsMessage, GrailsConfigurationAware {
 
     static allowedMethods = [
@@ -102,6 +103,36 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
 
         redirect action: 'index', controller: 'record', params: [recordCollectionId: recordCollectionId]
     }
+
+    def exportValidExcel(Long recordCollectionId) {
+
+        String csvMimeType
+        String encoding
+
+        final String filename = 'dataset_valid.csv'
+        //List<RecordPortionMapping> recordPortionMappingList = recordCollectionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
+        List<RecordGormEntity> recordGormEntityList = recordGormService.findAllByRecordCollectionId(recordCollectionId)
+        List<RecordGormEntity> dataRecordsList = new ArrayList<RecordGormEntity>()
+        List<String> headers = new ArrayList<String>()
+        recordGormEntityList.each { RecordGormEntity record ->
+            record.portions.each { RecordPortionGormEntity portion ->
+                headers.add(portion.header)
+            }
+        }
+
+       // new XlsxExporter('/tmp/myReportFile.xlsx').
+       //         add(dataRecordsList, properties).save()
+        new WebXlsxExporter().with {
+            setResponseHeaders(response)
+            fillHeader(headers)
+            add(dataRecordsList )
+            save(response.outputStream)
+        }
+
+
+        redirect action: 'index', controller: 'record', params: [recordCollectionId: recordCollectionId]
+    }
+
 
     def importCsv() {
         [:]
