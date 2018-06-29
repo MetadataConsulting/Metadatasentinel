@@ -13,15 +13,15 @@ class XlxReaderSpec extends Specification {
         f.exists()
 
         when:
-        List<List<String>> lines = []
+        List<List<Object>> lines = []
         Closure cls = { List<String> values -> lines << values }
         ExcelReader.read(f.newInputStream(), 0, true, null, cls)
 
         then:
         noExceptionThrown()
         lines.size() == 2
-        lines.each { List<String> line ->
-            assert line.any { String str -> str}
+        lines.each { List<Object> line ->
+            assert line.any { it }
         }
 
     }
