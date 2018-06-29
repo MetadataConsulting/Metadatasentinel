@@ -11,6 +11,7 @@ class RecordFileCommand implements Validateable {
     String datasetName
 
     static constraints = {
+        datasetName nullable: false, blank: false
         batchSize nullable: false
         csvFile  validator: { MultipartFile val, RecordFileCommand obj ->
             if ( val == null ) {
