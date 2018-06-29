@@ -98,7 +98,8 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         final String filenameprefix = collectionGormEntity.datasetName
         response.status = OK.value()
 
-        RecordCollectionExportView view = recordCollectionExportService.export(cmd.recordCollectionId)
+        RecordCorrectnessDropdown recordCorrectnessDropdown = RecordCorrectnessDropdown.ALL
+        RecordCollectionExportView view = recordCollectionExportService.export(cmd.recordCollectionId, recordCorrectnessDropdown)
         def outs = response.outputStream
         List<String> headers = view.headers
         List<String> portionsHeaders = view.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
@@ -119,9 +120,8 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
                 }
                 break
             case ExportFormat.XLSX:
-
                 PoiSpreadsheetBuilder.create(outs).build {
-                    sheet(collectionGormEntity.datasetName) {
+                    sheet(messageSource.getMessage("export.valid".toString(), [] as Object[], 'Valid', request.locale)) {
                         row {
                             for ( String header : headers ) {
                                 cell {
@@ -143,7 +143,72 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
                             }
                         }
                         if ( view.rows ) {
-                            for (RecordCollectionExportRowView rowView  : view.rows ) {
+                            for (RecordCollectionExportRowView rowView  : findAllValid(view.rows) ) {
+                                row {
+                                    for (String val : rowView.toList()) {
+                                        cell {
+                                            value val
+                                        }
+                                    }
+                                }                            }
+                        }
+                    }
+                    sheet(messageSource.getMessage("export.invalid".toString(), [] as Object[], 'Invalid', request.locale)) {
+                        row {
+                            for ( String header : headers ) {
+                                cell {
+                                    value header
+                                    colspan RecordPortion.toHeaderList().size()
+                                }
+                            }
+                        }
+                        if ( portionsHeaders ) {
+                            row {
+                                for ( String recordPortionHeader : portionsHeaders ) {
+                                    cell {
+                                        value messageSource.getMessage("export.header.${recordPortionHeader}".toString(),
+                                                [] as Object[],
+                                                recordPortionHeader,
+                                                request.locale)
+                                    }
+                                }
+                            }
+                        }
+                        if ( view.rows ) {
+                            for (RecordCollectionExportRowView rowView  : findAllInvalid(view.rows) ) {
+                                row {
+                                    for (String val : rowView.toList()) {
+                                        cell {
+                                            value val
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    sheet(messageSource.getMessage("export.notValidated".toString(), [] as Object[], 'Not Validated', request.locale)) {
+                        row {
+                            for ( String header : headers ) {
+                                cell {
+                                    value header
+                                    colspan RecordPortion.toHeaderList().size()
+                                }
+                            }
+                        }
+                        if ( portionsHeaders ) {
+                            row {
+                                for ( String recordPortionHeader : portionsHeaders ) {
+                                    cell {
+                                        value messageSource.getMessage("export.header.${recordPortionHeader}".toString(),
+                                                [] as Object[],
+                                                recordPortionHeader,
+                                                request.locale)
+                                    }
+                                }
+                            }
+                        }
+                        if ( view.rows ) {
+                            for (RecordCollectionExportRowView rowView  : findAllNotValidated(view.rows) ) {
                                 row {
                                     for (String val : rowView.toList()) {
                                         cell {
@@ -155,10 +220,29 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
                         }
                     }
                 }
+
                 break
         }
         outs.flush()
         outs.close()
+    }
+
+    private List<RecordCollectionExportRowView> findAllValid(List<RecordCollectionExportRowView> all) {
+        all.findAll { RecordCollectionExportRowView row ->
+            !row.recordPortionList.any { it.status == ValidationStatus.INVALID } && row.recordPortionList.any { it.status == ValidationStatus.VALID }
+        }
+    }
+
+    private List<RecordCollectionExportRowView> findAllInvalid(List<RecordCollectionExportRowView> all) {
+        all.findAll { RecordCollectionExportRowView row ->
+            row.recordPortionList.any { it.status == ValidationStatus.INVALID }
+        }
+    }
+
+    private List<RecordCollectionExportRowView> findAllNotValidated(List<RecordCollectionExportRowView> all) {
+        all.findAll { RecordCollectionExportRowView row ->
+            row.recordPortionList.every { it.status == ValidationStatus.NOT_VALIDATED }
+        }
     }
 
     def importCsv() {
