@@ -23,7 +23,7 @@
     <g:link class="btn-primary btn" controller="recordCollection" action="headersMapping" params="[recordCollectionId: recordCollectionId]">
         <g:message code="recordCollection.headersMapping" default="Mappings"/>
     </g:link>
-    <g:link class="btn-primary btn" controller="recordCollection" action="exportValidExcel" params="[recordCollectionId: recordCollectionId]">
+    <g:link class="btn-primary btn" controller="recordCollection" action="exportValidRecords" params="[recordCollectionId: recordCollectionId]">
         <g:message code="recordCollection.exportValidExcel" default="Export"/>
     </g:link>
         </li>

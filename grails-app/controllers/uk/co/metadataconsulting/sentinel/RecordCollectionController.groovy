@@ -1,11 +1,11 @@
 package uk.co.metadataconsulting.sentinel
 
-
-import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.springframework.context.MessageSource
-import pl.touk.excel.export.WebXlsxExporter
-import pl.touk.excel.export.XlsxExporter
+import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportRowView
+import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportView
+
+//import pl.touk.excel.export.WebXlsxExporter
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 import grails.config.Config
 import grails.core.support.GrailsConfigurationAware
@@ -24,6 +24,7 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
             headersMapping: 'GET',
             cloneMapping: 'GET',
             cloneSave: 'POST',
+            exportValidRecords: 'GET'
     ]
 
     MessageSource messageSource
@@ -42,14 +43,22 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
 
     RuleFetcherService ruleFetcherService
 
+
+    RecordCollectionExportService recordCollectionExportService
+
     int defaultPaginationMax = 25
     int defaultPaginationOffset = 0
+    String csvMimeType
+    String encoding
 
     @Override
     void setConfiguration(Config co) {
         defaultPaginationMax = co.getProperty('sentinel.pagination.max', Integer, 25)
         defaultPaginationOffset = co.getProperty('sentinel.pagination.offset', Integer, 0)
+        csvMimeType = co.getProperty('grails.mime.types.csv', String, 'text/csv')
+        encoding = co.getProperty('grails.converters.encoding', String, 'UTF-8')
     }
+
 
     def index() {
 
@@ -76,32 +85,30 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
 
     def exportValidRecords(Long recordCollectionId){
 
-         String csvMimeType
-         String encoding
-
          final String filename = 'dataset_valid.csv'
-         List<RecordPortionMapping> recordPortionMappingList = recordCollectionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
 
-                def validCsvExport = response.outputStream
-                response.status = OK.value()
-                response.contentType = "${csvMimeType};charset=${encoding}";
-                response.setHeader "Content-disposition", "attachment; filename=${filename}"
+        def outs = response.outputStream
+        response.status = OK.value()
+        response.contentType = "${csvMimeType};charset=${encoding}"
+        response.setHeader "Content-disposition", "attachment; filename=${filename}"
+        final String separator = ';'
+        RecordCollectionExportView view = recordCollectionExportService.export(recordCollectionId)
+        List<String> headers = view.headers
+        // TODO remove this line
+        headers = headers.collect { [it, it, it, it, it, it] }.flatten()
+        outs << "${headers.join(separator)}\n"
 
-        recordPortionMappingList.each { RecordPortionMapping record ->
-
-            RecordGormEntity dataRecord = recordGormService.findById(record.id)
-
-            if (dataRecord.validate()) {
-                validCsvExport << "${dataRecord},"
-            }else{
-                println dataRecord
+        if ( view.rows ) {
+            List<String> portionsHeaders = view.rows.first().recordPortionList.collect { RecordPortion.toHeaderCsv(separator) }
+            String line = "${portionsHeaders.join(separator)}\n"
+            outs << line
+            view.rows.each { RecordCollectionExportRowView row ->
+                outs << "${row.toCsv(separator)}\n"
             }
         }
-        validCsvExport.flush()
-        validCsvExport.close()
 
-
-        redirect action: 'index', controller: 'record', params: [recordCollectionId: recordCollectionId]
+        outs.flush()
+        outs.close()
     }
 
     def exportValidExcel(Long recordCollectionId) {
@@ -122,17 +129,16 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
 
        // new XlsxExporter('/tmp/myReportFile.xlsx').
        //         add(dataRecordsList, properties).save()
-        new WebXlsxExporter().with {
-            setResponseHeaders(response)
-            fillHeader(headers)
-            add(dataRecordsList )
-            save(response.outputStream)
-        }
+//        new WebXlsxExporter().with {
+//            setResponseHeaders(response)
+//            fillHeader(headers)
+//            add(dataRecordsList )
+//            save(response.outputStream)
+//        }
 
 
         redirect action: 'index', controller: 'record', params: [recordCollectionId: recordCollectionId]
     }
-
 
     def importCsv() {
         [:]
