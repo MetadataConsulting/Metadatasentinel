@@ -99,8 +99,8 @@ bootRun {
 }
 
 webdriverBinaries {
-    chromedriver '2.36'
     geckodriver '0.18.0'
+    chromedriver "${chromedriverVersion}"
 }
 
 test {
