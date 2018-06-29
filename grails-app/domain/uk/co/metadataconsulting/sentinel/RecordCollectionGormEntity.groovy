@@ -19,8 +19,7 @@ class RecordCollectionGormEntity {
     static constraints = {
         records nullable: true
         mappings nullable: true
-        datasetName blank: true
-        datasetName nullable: true
+        datasetName nullable: false, blank: false
     }
 
     static mapping = {
