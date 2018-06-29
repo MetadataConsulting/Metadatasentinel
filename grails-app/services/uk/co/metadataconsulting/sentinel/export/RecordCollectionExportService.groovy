@@ -1,6 +1,13 @@
-package uk.co.metadataconsulting.sentinel
+package uk.co.metadataconsulting.sentinel.export
 
 import groovy.transform.CompileStatic
+import uk.co.metadataconsulting.sentinel.RecordCorrectnessDropdown
+import uk.co.metadataconsulting.sentinel.RecordGormEntity
+import uk.co.metadataconsulting.sentinel.RecordGormService
+import uk.co.metadataconsulting.sentinel.RecordPortion
+import uk.co.metadataconsulting.sentinel.RecordPortionGormEntity
+import uk.co.metadataconsulting.sentinel.RecordPortionUtils
+import uk.co.metadataconsulting.sentinel.RecordService
 import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportRowView
 import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportView
 

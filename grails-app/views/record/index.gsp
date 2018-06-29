@@ -1,4 +1,6 @@
 <%@ page import="uk.co.metadataconsulting.sentinel.RecordCorrectnessDropdown" %>
+<%@ page import="uk.co.metadataconsulting.sentinel.export.ExportFormat" %>
+
 <html>
 <head>
     <title>Records</title>
@@ -23,10 +25,13 @@
     <g:link class="btn-primary btn" controller="recordCollection" action="headersMapping" params="[recordCollectionId: recordCollectionId]">
         <g:message code="recordCollection.headersMapping" default="Mappings"/>
     </g:link>
-    <g:link class="btn-primary btn" controller="recordCollection" action="exportValidRecords" params="[recordCollectionId: recordCollectionId]">
-        <g:message code="recordCollection.exportValidExcel" default="Export"/>
-    </g:link>
-        </li>
+    <li class="nav-item">
+        <g:form controller="recordCollection" action="export" method="GET"  class="form-inline">
+            <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
+            <g:select name="format" from="${ExportFormat.values()}"/>
+            <input type="submit" class="btn-primary btn" value="${g.message(code: 'record.export', default: 'Export')}"/>
+        </g:form>
+    </li>
     <li class="nav-item">
     <g:form controller="recordCollection" action="validate" method="POST"  class="form-inline">
         <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>

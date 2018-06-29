@@ -1,16 +1,18 @@
 package uk.co.metadataconsulting.sentinel
 
-import groovy.util.logging.Slf4j
-import org.springframework.context.MessageSource
-import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportRowView
-import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportView
-
-//import pl.touk.excel.export.WebXlsxExporter
-import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
+import builders.dsl.spreadsheet.builder.poi.PoiSpreadsheetBuilder
 import grails.config.Config
 import grails.core.support.GrailsConfigurationAware
-
+import groovy.util.logging.Slf4j
+import org.springframework.context.MessageSource
+import uk.co.metadataconsulting.sentinel.export.ExportRecordCollectionCommand
+import uk.co.metadataconsulting.sentinel.export.ExportService
+import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportRowView
+import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportService
+import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportView
+import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 import static org.springframework.http.HttpStatus.OK
+import  uk.co.metadataconsulting.sentinel.export.ExportFormat
 
 @Slf4j
 class RecordCollectionController implements ValidateableErrorsMessage, GrailsConfigurationAware {
@@ -24,7 +26,7 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
             headersMapping: 'GET',
             cloneMapping: 'GET',
             cloneSave: 'POST',
-            exportValidRecords: 'GET'
+            export: 'GET'
     ]
 
     MessageSource messageSource
@@ -43,22 +45,20 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
 
     RuleFetcherService ruleFetcherService
 
-
     RecordCollectionExportService recordCollectionExportService
+
+    ExportService exportService
 
     int defaultPaginationMax = 25
     int defaultPaginationOffset = 0
-    String csvMimeType
-    String encoding
+    String separator
 
     @Override
     void setConfiguration(Config co) {
+        separator = co.getProperty('export.csv.separator', String, ';')
         defaultPaginationMax = co.getProperty('sentinel.pagination.max', Integer, 25)
         defaultPaginationOffset = co.getProperty('sentinel.pagination.offset', Integer, 0)
-        csvMimeType = co.getProperty('grails.mime.types.csv', String, 'text/csv')
-        encoding = co.getProperty('grails.converters.encoding', String, 'UTF-8')
     }
-
 
     def index() {
 
@@ -83,30 +83,80 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         ]
     }
 
-    def exportValidRecords(Long recordCollectionId){
+    def export(ExportRecordCollectionCommand cmd) {
 
-         final String filename = 'dataset_valid.csv'
-
-        def outs = response.outputStream
-        response.status = OK.value()
-        response.contentType = "${csvMimeType};charset=${encoding}"
-        response.setHeader "Content-disposition", "attachment; filename=${filename}"
-        final String separator = ';'
-        RecordCollectionExportView view = recordCollectionExportService.export(recordCollectionId)
-        List<String> headers = view.headers
-        // TODO remove this line
-        headers = headers.collect { [it, it, it, it, it, it] }.flatten()
-        outs << "${headers.join(separator)}\n"
-
-        if ( view.rows ) {
-            List<String> portionsHeaders = view.rows.first().recordPortionList.collect { RecordPortion.toHeaderCsv(separator) }
-            String line = "${portionsHeaders.join(separator)}\n"
-            outs << line
-            view.rows.each { RecordCollectionExportRowView row ->
-                outs << "${row.toCsv(separator)}\n"
-            }
+        if ( cmd.hasErrors() ) {
+            // TODO Maybe display an error message with flash.error and redirect to HomePage
+            return
         }
 
+        RecordCollectionGormEntity collectionGormEntity = recordCollectionGormService.find(cmd.recordCollectionId)
+        if ( !collectionGormEntity ) {
+            // TODO Maybe display an error message with flash.error and redirect to HomePage
+            return
+        }
+        final String filenameprefix = collectionGormEntity.datasetName
+        response.status = OK.value()
+
+        RecordCollectionExportView view = recordCollectionExportService.export(cmd.recordCollectionId)
+        def outs = response.outputStream
+        List<String> headers = view.headers
+        List<String> portionsHeaders = view.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
+        String filename = "${filenameprefix}.${exportService.fileExtensionForFormat(cmd.format)}"
+        response.setHeader "Content-disposition", "attachment; filename=${filename}"
+        response.contentType = exportService.mimeTypeForFormat(cmd.format)
+        switch (cmd.format) {
+            case ExportFormat.CSV:
+                // TODO remove this line?
+                headers = headers.collect { [it, it, it, it, it, it] }.flatten()
+                outs << "${headers.join(separator)}\n"
+                if ( view.rows ) {
+                    String line = "${portionsHeaders.join(separator)}\n"
+                    outs << line
+                    view.rows.each { RecordCollectionExportRowView row ->
+                        outs << "${row.toCsv(separator)}\n"
+                    }
+                }
+                break
+            case ExportFormat.XLSX:
+
+                PoiSpreadsheetBuilder.create(outs).build {
+                    sheet(collectionGormEntity.datasetName) {
+                        row {
+                            for ( String header : headers ) {
+                                cell {
+                                    value header
+                                    colspan RecordPortion.toHeaderList().size()
+                                }
+                            }
+                        }
+                        if ( portionsHeaders ) {
+                            row {
+                                for ( String recordPortionHeader : portionsHeaders ) {
+                                    cell {
+                                        value messageSource.getMessage("export.header.${recordPortionHeader}".toString(),
+                                                [] as Object[],
+                                                recordPortionHeader,
+                                                request.locale)
+                                    }
+                                }
+                            }
+                        }
+                        if ( view.rows ) {
+                            for (RecordCollectionExportRowView rowView  : view.rows ) {
+                                row {
+                                    for (String val : rowView.toList()) {
+                                        cell {
+                                            value val
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                break
+        }
         outs.flush()
         outs.close()
     }
@@ -127,8 +177,8 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
             }
         }
 
-       // new XlsxExporter('/tmp/myReportFile.xlsx').
-       //         add(dataRecordsList, properties).save()
+        // new XlsxExporter('/tmp/myReportFile.xlsx').
+        //         add(dataRecordsList, properties).save()
 //        new WebXlsxExporter().with {
 //            setResponseHeaders(response)
 //            fillHeader(headers)
@@ -194,9 +244,9 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         List dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
         if ( !dataModelList ) {
             flash.error = messageSource.getMessage('dataModel.couldNotLoad', [] as Object[], 'Could not load data Models', request.locale)
-        }  
+        }
         [
-                dataModelList: dataModelList, 
+                dataModelList: dataModelList,
                 recordCollectionId: recordCollectionId,
                 recordPortionMappingList: recordCollectionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
         ]

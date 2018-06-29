@@ -65,6 +65,7 @@ grails:
             xml:
               - text/xml
               - application/xml
+
     urlmapping:
         cache:
             maxsize: 1000
@@ -99,16 +100,16 @@ hibernate:
 dataSource:
     pooled: true
     jmxExport: true
-    driverClassName: '${JDBC_DRIVER}'
-    dialect: '${JDBC_DIALECT}'
-    username: '${JDBC_USERNAME}'
-    password: '${JDBC_PASSWORD}'
+    driverClassName: com.mysql.jdbc.Driver
+    dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+    username: root
+    password: root
 
 environments:
     development:
         dataSource:
             dbCreate: create
-            url: '${JDBC_CONNECTION_STRING}'
+            url: jdbc:mysql://127.0.0.1:8889/metadatasentinel_dev
     test:
         dataSource:
             dbCreate: create-drop

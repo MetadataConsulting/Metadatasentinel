@@ -27,6 +27,7 @@ apply plugin: "org.grails.plugins.views-json"
 repositories {
     mavenLocal()
     maven { url "https://repo.grails.org/grails/core" }
+    jcenter()
 }
 
 dependencies {
@@ -86,6 +87,9 @@ dependencies {
 
     testCompile "com.stehno.ersatz:ersatz:$ersatzVersion:safe@jar"
     testCompile "org.hamcrest:hamcrest-library:$hamcrestVersion"
+
+    compile "builders.dsl:spreadsheet-builder-poi:$spreadsheetBuilderVersion"
+    compile "builders.dsl:spreadsheet-builder-groovy:$spreadsheetBuilderVersion"
 }
 
 bootRun {
