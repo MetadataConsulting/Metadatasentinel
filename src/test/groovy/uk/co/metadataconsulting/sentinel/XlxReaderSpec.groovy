@@ -19,13 +19,14 @@ class XlxReaderSpec extends Specification {
         f.exists()
 
         when:
-        List<List<String>> lines = []
+        List<List<Object>> lines = []
         Closure cls = { List<String> values -> lines << values }
         ExcelReader.read(f.newInputStream(), 0, true, null, cls)
 
         then:
         noExceptionThrown()
         lines.size() == 2
+
         lines[0].size() == expectedLines[1].size()
         for (int i = 0; i < lines[0].size(); i++) {
             assert lines[0].get(i) == expectedLines[1].get(i)
@@ -33,6 +34,9 @@ class XlxReaderSpec extends Specification {
         lines[1].size() == expectedLines[2].size()
         for (int i = 0; i < lines[1].size(); i++) {
             assert lines[1].get(i) == expectedLines[2].get(i)
+        }
+        lines.each { List<Object> line ->
+            assert line.any { it }
         }
     }
 
