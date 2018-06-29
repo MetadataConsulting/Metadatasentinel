@@ -86,6 +86,13 @@ class RecordGormService implements GormErrorsMessage {
     }
 
     @ReadOnly
+    List<RecordGormEntity> findAllByRecordCollectionId(Long recordCollectionId ) {
+        DetachedCriteria<RecordGormEntity> query = queryByRecordCollectionId(recordCollectionId)
+        return query as List<RecordGormEntity>
+
+    }
+
+    @ReadOnly
     RecordGormEntity findById(Long recordId, List<String> joinProperties = null) {
         DetachedCriteria<RecordGormEntity> query = queryById(recordId)
         if ( joinProperties ) {

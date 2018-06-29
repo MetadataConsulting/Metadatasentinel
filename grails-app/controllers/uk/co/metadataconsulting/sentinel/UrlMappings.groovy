@@ -7,6 +7,7 @@ class UrlMappings {
         "/recordCollection/cloneMapping"(controller: 'recordCollection', action: 'cloneMapping')
         "/recordCollection/cloneSave"(controller: 'recordCollection', action: 'cloneSave', httpMethod: 'POST')
         "/recordCollection/validate"(controller: 'recordCollection', action: 'validate')
+        "/recordCollection/exportValidExcel"(controller: 'recordCollection', action: 'exportValidExcel')
         "/recordCollection/delete"(controller: 'recordCollection', action: 'delete')
         "/recordCollection/$recordCollectionId/mapping"(controller: 'recordCollection', action: 'headersMapping')
         "/recordCollectionMapping/catalogueElements/$dataModelId"(controller: 'recordCollectionMapping', action: 'catalogueElements')
