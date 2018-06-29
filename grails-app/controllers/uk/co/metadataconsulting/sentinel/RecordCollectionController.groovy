@@ -161,35 +161,6 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         outs.close()
     }
 
-    def exportValidExcel(Long recordCollectionId) {
-
-        String csvMimeType
-        String encoding
-
-        final String filename = 'dataset_valid.csv'
-        //List<RecordPortionMapping> recordPortionMappingList = recordCollectionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
-        List<RecordGormEntity> recordGormEntityList = recordGormService.findAllByRecordCollectionId(recordCollectionId)
-        List<RecordGormEntity> dataRecordsList = new ArrayList<RecordGormEntity>()
-        List<String> headers = new ArrayList<String>()
-        recordGormEntityList.each { RecordGormEntity record ->
-            record.portions.each { RecordPortionGormEntity portion ->
-                headers.add(portion.header)
-            }
-        }
-
-        // new XlsxExporter('/tmp/myReportFile.xlsx').
-        //         add(dataRecordsList, properties).save()
-//        new WebXlsxExporter().with {
-//            setResponseHeaders(response)
-//            fillHeader(headers)
-//            add(dataRecordsList )
-//            save(response.outputStream)
-//        }
-
-
-        redirect action: 'index', controller: 'record', params: [recordCollectionId: recordCollectionId]
-    }
-
     def importCsv() {
         [:]
     }
