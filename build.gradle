@@ -99,8 +99,8 @@ bootRun {
 }
 
 webdriverBinaries {
-    geckodriver '0.18.0'
     chromedriver "${chromedriverVersion}"
+    geckodriver "${geckodriverVersion}"
 }
 tasks.withType(Test) {
     systemProperties System.properties
