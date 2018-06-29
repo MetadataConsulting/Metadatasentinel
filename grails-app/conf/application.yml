@@ -100,16 +100,16 @@ hibernate:
 dataSource:
     pooled: true
     jmxExport: true
-    driverClassName: com.mysql.jdbc.Driver
-    dialect: org.hibernate.dialect.MySQL5InnoDBDialect
-    username: root
-    password: root
+    driverClassName: '${JDBC_DRIVER}'
+    dialect: '${JDBC_DIALECT}'
+    username: '${JDBC_USERNAME}'
+    password: '${JDBC_PASSWORD}'
 
 environments:
     development:
         dataSource:
             dbCreate: create
-            url: jdbc:mysql://127.0.0.1:8889/metadatasentinel_dev
+            url: '${JDBC_CONNECTION_STRING}'
     test:
         dataSource:
             dbCreate: create-drop
