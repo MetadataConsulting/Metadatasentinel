@@ -113,6 +113,7 @@ integrationTest {
 
 tasks.withType(Test) {
     systemProperties System.properties
+    systemProperty "grails.env", 'test'
     systemProperty "geb.env", System.getProperty('geb.env')
     systemProperty "geb.build.reportsDir", reporting.file("geb/integrationTest")
     beforeTest { descriptor -> logger.quiet " -- $descriptor" }
