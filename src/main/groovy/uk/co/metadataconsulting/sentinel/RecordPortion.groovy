@@ -13,13 +13,15 @@ class RecordPortion {
     String reason
     Integer numberOfRulesValidatedAgainst = 0
 
-    static String toHeaderCsv(String separator = ';') {
-        List l = ['name', 'value', 'status', 'reason', 'numberOfRulesValidatedAgainst']
-        l.join(separator)
+    static List<String> toHeaderList() {
+        ['name', 'value', 'status', 'reason', 'numberOfRulesValidatedAgainst']
+    }
+
+    List<String> toList() {
+        [name ?: '', value ?: '', status.toString() ?: '', reason ?: '', "${numberOfRulesValidatedAgainst}".toString()]
     }
 
     String toCsv(String separator = ';') {
-        List l = [name ?: '', value ?: '', status.toString() ?: '', reason ?: '', numberOfRulesValidatedAgainst]
-        l.join(separator)
+        toList().join(separator)
     }
 }

@@ -10,4 +10,8 @@ class RecordCollectionExportRowView {
     String toCsv(String separator = ';') {
         recordPortionList.collect { it.toCsv(separator) }.join(separator)
     }
+
+    List<String> toList() {
+        recordPortionList.collect { it.toList() }.flatten() as List<String>
+    }
 }

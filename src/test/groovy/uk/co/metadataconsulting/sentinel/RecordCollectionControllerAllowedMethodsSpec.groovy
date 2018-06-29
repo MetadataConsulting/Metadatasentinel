@@ -3,6 +3,7 @@ package uk.co.metadataconsulting.sentinel
 import grails.testing.web.controllers.ControllerUnitTest
 import spock.lang.Specification
 import spock.lang.Unroll
+import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportService
 import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportView
 
 import static javax.servlet.http.HttpServletResponse.SC_OK
@@ -12,10 +13,10 @@ import static javax.servlet.http.HttpServletResponse.SC_MOVED_TEMPORARILY
 class RecordCollectionControllerAllowedMethodsSpec extends Specification implements ControllerUnitTest<RecordCollectionController> {
 
     @Unroll
-    def "test RecordCollectionController.exportValidRecords does not accept #method requests"(String method) {
+    def "test RecordCollectionController.export does not accept #method requests"(String method) {
         when:
         request.method = method
-        controller.exportValidRecords()
+        controller.export()
 
         then:
         response.status == SC_METHOD_NOT_ALLOWED
@@ -24,7 +25,7 @@ class RecordCollectionControllerAllowedMethodsSpec extends Specification impleme
         method << ['PATCH', 'DELETE', 'POST', 'PUT']
     }
 
-    def "test RecordCollectionController.exportValidRecords accepts GET requests"() {
+    def "test RecordCollectionController.export accepts GET requests"() {
         given:
         controller.recordCollectionExportService =  Stub(RecordCollectionExportService) {
             export(_,_) >> new RecordCollectionExportView()
@@ -32,7 +33,7 @@ class RecordCollectionControllerAllowedMethodsSpec extends Specification impleme
 
         when:
         request.method = 'GET'
-        controller.exportValidRecords()
+        controller.export()
 
         then:
         response.status == SC_OK
