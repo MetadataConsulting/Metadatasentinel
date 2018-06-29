@@ -1,5 +1,6 @@
 package uk.co.metadataconsulting.sentinel
 
+import builders.dsl.spreadsheet.api.Color
 import builders.dsl.spreadsheet.builder.poi.PoiSpreadsheetBuilder
 import grails.config.Config
 import grails.core.support.GrailsConfigurationAware
@@ -145,12 +146,22 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
                         if ( view.rows ) {
                             for (RecordCollectionExportRowView rowView  : findAllValid(view.rows) ) {
                                 row {
-                                    for (String val : rowView.toList()) {
-                                        cell {
-                                            value val
+                                    for ( RecordPortion recordPortion : rowView.recordPortionList) {
+                                        for (String val : recordPortion.toList()) {
+                                            cell {
+//                                                if (recordPortion.status == ValidationStatus.INVALID) {
+//                                                    style {
+//                                                        font {
+//                                                            color red
+//                                                        }
+//                                                    }
+//                                                }
+                                                value val
+                                            }
                                         }
                                     }
-                                }                            }
+                                }
+                            }
                         }
                     }
                     sheet(messageSource.getMessage("export.invalid".toString(), [] as Object[], 'Invalid', request.locale)) {
@@ -177,9 +188,18 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
                         if ( view.rows ) {
                             for (RecordCollectionExportRowView rowView  : findAllInvalid(view.rows) ) {
                                 row {
-                                    for (String val : rowView.toList()) {
-                                        cell {
-                                            value val
+                                    for ( RecordPortion recordPortion : rowView.recordPortionList) {
+                                        for (String val : recordPortion.toList()) {
+                                            cell {
+//                                                if (recordPortion.status == ValidationStatus.INVALID) {
+//                                                    style {
+//                                                        font {
+//                                                            color red
+//                                                        }
+//                                                    }
+//                                                }
+                                                value val
+                                            }
                                         }
                                     }
                                 }
@@ -210,9 +230,18 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
                         if ( view.rows ) {
                             for (RecordCollectionExportRowView rowView  : findAllNotValidated(view.rows) ) {
                                 row {
-                                    for (String val : rowView.toList()) {
-                                        cell {
-                                            value val
+                                    for ( RecordPortion recordPortion : rowView.recordPortionList) {
+                                        for (String val : recordPortion.toList()) {
+                                            cell {
+//                                                if (recordPortion.status == ValidationStatus.INVALID) {
+//                                                    style {
+//                                                        font {
+//                                                            color red
+//                                                        }
+//                                                    }
+//                                                }
+                                                value val
+                                            }
                                         }
                                     }
                                 }
