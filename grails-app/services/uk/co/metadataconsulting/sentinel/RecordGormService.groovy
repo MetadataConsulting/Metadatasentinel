@@ -111,4 +111,19 @@ class RecordGormService implements GormErrorsMessage {
     Number count() {
         RecordGormEntity.count()
     }
+
+    @ReadOnly
+    List<RecordGormEntity> findAllByIds(List<Long> ids, List<String> propertiesToJoin = ['portions']) {
+        DetachedCriteria<RecordGormEntity> query = queryAllByIds(ids)
+        if ( propertiesToJoin ) {
+            for ( String propertyName : propertiesToJoin ) {
+                query.join('portions')
+            }
+        }
+        query.list()
+    }
+
+    DetachedCriteria<RecordGormEntity> queryAllByIds(List<Long> ids) {
+        RecordGormEntity.where { id in ids }
+    }
 }
