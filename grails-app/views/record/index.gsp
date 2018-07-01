@@ -20,7 +20,7 @@
         <li class="nav-item">
 
     <g:link class="btn-primary btn" controller="recordCollection" action="cloneMapping" params="[recordCollectionId: recordCollectionId]">
-        <g:message code="recordCollection.mapping.clone" default="Clone Mapping"/>
+        <g:message code="recordCollection.mapping.clone" default="Clone Mapping 2"/>
     </g:link>
     <g:link class="btn-primary btn" controller="recordCollection" action="headersMapping" params="[recordCollectionId: recordCollectionId]">
         <g:message code="recordCollection.headersMapping" default="Mappings"/>

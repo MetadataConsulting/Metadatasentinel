@@ -64,9 +64,11 @@ class RecordService {
                     new RecordViewModel(id: id, valid: !invalidRecordIds.contains(id))
                 }
             case RecordCorrectnessDropdown.VALID:
-                return findAllIdsByRecordCollectionId(recordCollectionId, correctness, paginationQuery).collect {
+                List<Long> recordCollection = findAllIdsByRecordCollectionId(recordCollectionId, correctness, paginationQuery)
+                List<RecordViewModel> validViews = recordCollection.collect {
                     new RecordViewModel(id: it, valid: true)
                 }
+                return validViews
             case RecordCorrectnessDropdown.INVALID:
                 return findAllIdsByRecordCollectionId(recordCollectionId, correctness, paginationQuery).collect {
                     new RecordViewModel(id: it, valid: false)

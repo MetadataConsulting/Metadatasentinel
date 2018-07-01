@@ -18,8 +18,8 @@ class RecordCollectionExportService {
 
     RecordGormService recordGormService
 
-    RecordCollectionExportView export(Long recordCollectionId, RecordCorrectnessDropdown correctnes = RecordCorrectnessDropdown.VALID) {
-        List<Long> recordIds = recordService.findAllIdsByRecordCollectionId(recordCollectionId, correctnes, null)
+    RecordCollectionExportView export(Long recordCollectionId, RecordCorrectnessDropdown correctness = RecordCorrectnessDropdown.VALID) {
+        List<Long> recordIds = recordService.findAllIdsByRecordCollectionId(recordCollectionId, correctness, null)
         List<RecordGormEntity> recordGormEntityList = recordGormService.findAllByIds(recordIds)
         List<RecordCollectionExportRowView> rows = []
         List<String> headers
