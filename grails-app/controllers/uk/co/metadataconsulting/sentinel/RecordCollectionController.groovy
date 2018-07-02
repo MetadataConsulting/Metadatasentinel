@@ -60,7 +60,7 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
 
     @Override
     void setConfiguration(Config co) {
-        separator = co.getProperty('export.csv.separator', String, ';')
+        separator = co.getProperty('export.csv.separator', String, ',')
         defaultPaginationMax = co.getProperty('sentinel.pagination.max', Integer, 25)
         defaultPaginationOffset = co.getProperty('sentinel.pagination.offset', Integer, 0)
     }
@@ -88,6 +88,7 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         ]
     }
 
+
     def export(ExportRecordCollectionCommand cmd) {
 
         if ( cmd.hasErrors() ) {
@@ -109,9 +110,211 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         RecordCollectionExportView view3 = recordCollectionExportService.export(cmd.recordCollectionId, recordCorrectnessDropdown)
         def outs = response.outputStream
 
-        viewAll.rows = findAllValid(viewAll.rows)
-        view2.rows = findAllInvalid(view2.rows)
-        view3.rows = findAllNotValidated(view3.rows)
+       // viewAll.rows = findAllValid(viewAll.rows, false)
+        view2.rows = findAllValidRows(viewAll.rows )
+        view3.rows = findAllInValidRows(viewAll.rows)
+
+        //Ensure that all portions are sorted
+        viewAll.rows.each { RecordCollectionExportRowView rowView ->
+            List<RecordPortion> dataItemList = rowView.recordPortionList
+            dataItemList.sort {
+                it.header
+            }
+        }
+
+        //Ensure that all portions are sorted
+        view2.rows.each { RecordCollectionExportRowView rowView ->
+            List<RecordPortion> dataItemList = rowView.recordPortionList
+            dataItemList.sort {
+                it.header
+            }
+        }
+
+        //Ensure that all portions are sorted
+        view3.rows.each { RecordCollectionExportRowView rowView ->
+            List<RecordPortion> dataItemList = rowView.recordPortionList
+            dataItemList.sort {
+                it.header
+            }
+        }
+
+        RecordCollectionExportRowView firstRow1 = viewAll.rows.first()
+        viewAll.headers = firstRow1.recordPortionList*.header
+        List<String> headers1 = viewAll.headers
+        List<String> portionsHeaders1 = viewAll.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
+
+        RecordCollectionExportRowView firstRow2 = view2.rows.first()
+        view2.headers = firstRow2.recordPortionList*.header
+        List<String> headers2 = view2.headers
+        List<String> portionsHeaders2 = view2.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
+
+        RecordCollectionExportRowView firstRow3 = view3.rows.first()
+        view3.headers = firstRow3.recordPortionList*.header
+        List<String> headers3 = view3.headers
+        List<String> portionsHeaders3 = view3.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
+
+
+
+
+        String filename = "${filenameprefix}.${exportService.fileExtensionForFormat(cmd.format)}"
+        response.setHeader "Content-disposition", "attachment; filename=${filename}"
+        response.contentType = exportService.mimeTypeForFormat(cmd.format)
+        switch (cmd.format) {
+            case ExportFormat.CSV:
+                // TODO remove this line?
+                headers = headers1.collect { [it] }.flatten()
+                outs << "${headers1.join(separator)}\n"
+                if ( viewAll.rows ) {
+                    String line = "${portionsHeaders1.join(separator)}\n"
+                    outs << line
+                    viewAll.rows.each { RecordCollectionExportRowView row ->
+                        println row.
+                        outs << "${row.toCsv(separator)}\n"
+                    }
+                }
+                break
+            case ExportFormat.XLSX:
+                PoiSpreadsheetBuilder.create(outs).build {
+                    sheet(messageSource.getMessage("export.all".toString(), [] as Object[], 'All', request.locale)) {
+                        row {
+                            for (String header : headers1) {
+                                cell {
+                                    value header
+                                    //colspan RecordPortion.toHeaderList().size()
+                                }
+                            }
+                        }
+
+                        if (viewAll.rows) {
+                            //viewAll.rows.each{List<RecordCollectionExportRowView> rowView ->
+                            for (RecordCollectionExportRowView rowView : viewAll.rows) {
+                                row {
+                                    for (RecordPortion recordPortion : rowView.recordPortionList) {
+                                        cell {
+                                            if (isValidPortionFunction(recordPortion)) {
+                                                style {
+                                                    font {
+                                                        color green
+                                                    }
+                                                }
+                                            }
+                                            if (isInValidPortionFunction(recordPortion)) {
+                                                style {
+                                                    font {
+                                                        color red
+                                                    }
+                                                }
+                                            }
+                                            value recordPortion.value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    sheet(messageSource.getMessage("export.valid".toString(), [] as Object[], 'Valid', request.locale)) {
+                        row {
+                            for (String header : headers2) {
+                                cell {
+                                    value header
+                                }
+                            }
+                        }
+
+                        if (view2.rows) {
+                            //viewAll.rows.each{List<RecordCollectionExportRowView> rowView ->
+                            for (RecordCollectionExportRowView rowView : view2.rows) {
+                                row {
+                                    for (RecordPortion recordPortion : rowView.recordPortionList) {
+                                        cell {
+                                            if (isValidPortionFunction(recordPortion)) {
+                                                style {
+                                                    font {
+                                                        color green
+                                                    }
+                                                }
+                                            }
+                                            if (isInValidPortionFunction(recordPortion)) {
+                                                style {
+                                                    font {
+                                                        color red
+                                                    }
+                                                }
+                                            }
+                                            value recordPortion.value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    sheet(messageSource.getMessage("export.invalid".toString(), [] as Object[], 'Invalid', request.locale)) {
+                        row {
+                            for (String header : headers3) {
+                                cell {
+                                    value header
+                                    //colspan RecordPortion.toHeaderList().size()
+                                }
+                            }
+                        }
+                        if (view3.rows) {
+                            //viewAll.rows.each{List<RecordCollectionExportRowView> rowView ->
+                            for (RecordCollectionExportRowView rowView : view3.rows) {
+                                row {
+                                    for (RecordPortion recordPortion : rowView.recordPortionList) {
+                                        cell {
+                                            if (isValidPortionFunction(recordPortion)) {
+                                                style {
+                                                    font {
+                                                        color green
+                                                    }
+                                                }
+                                            }
+                                            if (isInValidPortionFunction(recordPortion)) {
+                                                style {
+                                                    font {
+                                                        color red
+                                                    }
+                                                }
+                                            }
+                                            value recordPortion.value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                break
+        }
+        outs.flush()
+        outs.close()
+    }
+
+    def exportAll(ExportRecordCollectionCommand cmd) {
+
+        if ( cmd.hasErrors() ) {
+            // TODO Maybe display an error message with flash.error and redirect to HomePage
+            return
+        }
+
+        RecordCollectionGormEntity collectionGormEntity = recordCollectionGormService.find(cmd.recordCollectionId)
+        if ( !collectionGormEntity ) {
+            // TODO Maybe display an error message with flash.error and redirect to HomePage
+            return
+        }
+        final String filenameprefix = collectionGormEntity.datasetName
+        response.status = OK.value()
+
+        RecordCorrectnessDropdown recordCorrectnessDropdown = RecordCorrectnessDropdown.ALL
+        RecordCollectionExportView viewAll = recordCollectionExportService.export(cmd.recordCollectionId, recordCorrectnessDropdown)
+        RecordCollectionExportView view2 = recordCollectionExportService.export(cmd.recordCollectionId, recordCorrectnessDropdown)
+        RecordCollectionExportView view3 = recordCollectionExportService.export(cmd.recordCollectionId, recordCorrectnessDropdown)
+        def outs = response.outputStream
+
+        viewAll.rows = findAllValid(viewAll.rows, true)
+        view2.rows = findAllInvalid(view2.rows, true)
+        view3.rows = findAllNotValidated(view3.rows, true)
 
         List<String> headers = []
 
@@ -277,13 +480,13 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
                                     for ( RecordPortion recordPortion : rowView3.recordPortionList) {
                                         for (String val : recordPortion.toList()) {
                                             cell {
-//                                                if (isInValidPortionFunction(recordPortion)) {
-//                                                    style {
-//                                                        font {
-//                                                            color red
-//                                                        }
-//                                                    }
-//                                                }
+
+                                                    style {
+                                                        font {
+                                                            color red
+                                                        }
+                                                    }
+
                                                 value val
                                             }
                                         }
@@ -300,7 +503,36 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         outs.close()
     }
 
-    private List<RecordCollectionExportRowView> findAllValid(List<RecordCollectionExportRowView> all) {
+    private List<RecordCollectionExportRowView> findAllValidRows(List<RecordCollectionExportRowView> all ) {
+        List<RecordCollectionExportRowView>  newList = []
+        all.each{ RecordCollectionExportRowView row ->
+            int cntr = 0
+            row.recordPortionList.each{ portion ->
+                boolean bResult = isValidPortionFunction( portion)
+                if(bResult){cntr++}
+            }
+            if(cntr > 0){
+                newList.add(row)
+            }
+        }
+        return newList
+    }
+    private List<RecordCollectionExportRowView> findAllInValidRows(List<RecordCollectionExportRowView> all ) {
+        List<RecordCollectionExportRowView>  newList = []
+        all.each{ RecordCollectionExportRowView row ->
+            int cntr = 0
+            row.recordPortionList.each{ portion ->
+                boolean bResult = isInValidPortionFunction( portion)
+                if(bResult){cntr++}
+            }
+            if(cntr > 0){
+                newList.add(row)
+            }
+        }
+        return newList
+    }
+
+    private List<RecordCollectionExportRowView> findAllValid(List<RecordCollectionExportRowView> all, boolean addRows) {
         List<RecordCollectionExportRowView>  newList =  all.each{ RecordCollectionExportRowView row ->
 
             def workingRecordPortionList = row.recordPortionList
@@ -312,15 +544,18 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
                     validDataItemList.add(portion)
                     println "added portion"
                 }else{
-                    validDataItemList.add(new RecordPortion(portion.header))
-                    println "empty portion added "
+                    if(addRows){
+                        validDataItemList.add(new RecordPortion(portion.header))
+                        println "empty portion added "
+                    }
+
                 }
             }
             row.recordPortionList = validDataItemList
         }
         return newList
     }
-    private List<RecordCollectionExportRowView> findAllInvalid(List<RecordCollectionExportRowView> all) {
+    private List<RecordCollectionExportRowView> findAllInvalid(List<RecordCollectionExportRowView> all, boolean addRows) {
         List<RecordCollectionExportRowView>  newList =  all.each{ RecordCollectionExportRowView row ->
 
             def workingRecordPortionList = row.recordPortionList
@@ -333,15 +568,17 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
                     validDataItemList.add(portion)
                     println "added portion"
                 }else{
-                    validDataItemList.add(new RecordPortion(portion.header))
-                    println "empty portion added "
+                    if(addRows){
+                        validDataItemList.add(new RecordPortion(portion.header))
+                        println "empty portion added "
+                    }
                 }
             }
             row.recordPortionList = validDataItemList
         }
         return newList
     }
-    private List<RecordCollectionExportRowView> findAllNotValidated(List<RecordCollectionExportRowView> all) {
+    private List<RecordCollectionExportRowView> findAllNotValidated(List<RecordCollectionExportRowView> all, boolean addRows) {
         List<RecordCollectionExportRowView>  newList =  all.each{ RecordCollectionExportRowView row ->
 
             def workingRecordPortionList = row.recordPortionList
@@ -353,8 +590,10 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
                     validDataItemList.add(portion)
                     println "added portion"
                 }else{
-                    validDataItemList.add(new RecordPortion(portion.header))
-                    println "empty portion added "
+                    if(addRows){
+                        validDataItemList.add(new RecordPortion(portion.header))
+                        println "empty portion added "
+                    }
                 }
             }
             row.recordPortionList = validDataItemList
