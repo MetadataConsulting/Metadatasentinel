@@ -116,7 +116,8 @@ class RecordService {
             return [] as List<Long>
         }
         DetachedCriteria<RecordGormEntity> query = queryInvalidRecords(recordCollectionId, invalidRecordIds)
-        query.id().list(paginationQuery.toMap()) as List<Long>
+        //query.id().list(paginationQuery.toMap()) as List<Long>
+        return (paginationQuery ? query.id().list(paginationQuery.toMap()) : query.id().list()) as List<Long>
     }
 
     Number countValidRecords(Long recordCollectionId) {

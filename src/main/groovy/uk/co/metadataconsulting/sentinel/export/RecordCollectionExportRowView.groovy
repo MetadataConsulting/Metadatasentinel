@@ -7,7 +7,7 @@ import uk.co.metadataconsulting.sentinel.RecordPortion
 class RecordCollectionExportRowView {
     List<RecordPortion> recordPortionList
 
-    String toCsv(String separator = ';') {
+    String toCsv(String separator = ',') {
         recordPortionList.collect { it.toCsv(separator) }.join(separator)
     }
 
