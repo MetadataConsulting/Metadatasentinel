@@ -27,5 +27,6 @@ class RecordPortionGormEntity {
     static mapping = {
         table 'recordportion'
         reason type: 'text'
+        sort 'header'
     }
 }

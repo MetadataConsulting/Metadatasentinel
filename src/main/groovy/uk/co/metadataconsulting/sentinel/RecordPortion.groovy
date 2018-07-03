@@ -14,11 +14,13 @@ class RecordPortion {
     Integer numberOfRulesValidatedAgainst = 0
 
     static List<String> toHeaderList() {
-        ['name', 'value', 'status', 'reason', 'numberOfRulesValidatedAgainst']
+        ['name', 'value', 'numberOfRulesValidatedAgainst','status', 'reason']
     }
 
     List<String> toList() {
-        [name ?: '', value ?: '', status.toString() ?: '', reason ?: '', "${numberOfRulesValidatedAgainst}".toString()]
+        toHeaderList().collect { String propertyName ->
+            this.getProperty(propertyName)?.toString() ?: ''
+        }
     }
 
     String toCsv(String separator = ';') {
