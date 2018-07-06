@@ -10,6 +10,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.apache.poi.ss.usermodel.BorderStyle
 import org.springframework.context.MessageSource
+import uk.co.metadataconsulting.sentinel.export.CsvExportService
 import uk.co.metadataconsulting.sentinel.export.ExcelExportService
 import uk.co.metadataconsulting.sentinel.export.ExcelSheet
 import uk.co.metadataconsulting.sentinel.export.ExportFormat
@@ -59,6 +60,9 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
     RecordCollectionExportService recordCollectionExportService
 
     ExportService exportService
+
+    CsvExportService csvExportService
+
     ExcelExportService excelExportService
 
     int defaultPaginationMax = 25
@@ -99,43 +103,36 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
     def export(ExportRecordCollectionCommand cmd) {
 
         if ( cmd.hasErrors() ) {
-            // TODO Maybe display an error message with flash.error and redirect to HomePage
+            redirect(controller: 'recordCollection', action: 'index')
             return
         }
 
         RecordCollectionGormEntity collectionGormEntity = recordCollectionGormService.find(cmd.recordCollectionId)
         if ( !collectionGormEntity ) {
-            // TODO Maybe display an error message with flash.error and redirect to HomePage
+            redirect(controller: 'recordCollection', action: 'index')
             return
         }
-        final String filenameprefix = collectionGormEntity.datasetName
-        response.status = OK.value()
 
         RecordCorrectnessDropdown recordCorrectnessDropdown = RecordCorrectnessDropdown.ALL
         RecordCollectionExportView view = recordCollectionExportService.export(cmd.recordCollectionId, recordCorrectnessDropdown)
 
-        String filename = "${filenameprefix}.${exportService.fileExtensionForFormat(cmd.format)}"
+        response.status = OK.value()
+        final String filename = "${collectionGormEntity.datasetName}.${exportService.fileExtensionForFormat(cmd.format)}"
         response.setHeader "Content-disposition", "attachment; filename=${filename}"
         response.contentType = exportService.mimeTypeForFormat(cmd.format)
 
         ServletOutputStream outs = response.outputStream
         switch (cmd.format) {
             case ExportFormat.CSV:
-//                // TODO remove this line?
-//                view.headers = view.headers.collect { [it] }.flatten()
-//                outs << "${headers1.join(separator)}\n"
-                if ( view.rows ) {
-//                    String line = "${portionsHeaders1.join(separator)}\n"
-//                    outs << line
-                    view.rows.each { RecordCollectionExportRowView row ->
-                        outs << "${row.toCsv(separator)}\n"
-                    }
-                }
+                csvExportService.export(outs, view)
                 break
+            case ExportFormat.XLSX_COMPACT:
             case ExportFormat.XLSX:
-                excelExportService.export(outs, view, request.locale)
+                excelExportService.export(outs, view, cmd.format, request.locale)
                 break
         }
+
+
         outs.flush()
         outs.close()
     }

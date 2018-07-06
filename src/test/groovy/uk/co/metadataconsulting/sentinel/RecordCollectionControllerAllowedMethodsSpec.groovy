@@ -36,7 +36,7 @@ class RecordCollectionControllerAllowedMethodsSpec extends Specification impleme
         controller.export()
 
         then:
-        response.status == SC_OK
+        response.status == SC_MOVED_TEMPORARILY
     }
 
 

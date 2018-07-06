@@ -25,6 +25,7 @@ class ExportService implements GrailsConfigurationAware {
             case ExportFormat.CSV:
                 return 'csv'
 
+            case ExportFormat.XLSX_COMPACT:
             case ExportFormat.XLSX:
                 return "xlsx"
         }
@@ -34,6 +35,7 @@ class ExportService implements GrailsConfigurationAware {
             case ExportFormat.CSV:
                 return "${csvMimeType};charset=${encoding}"
 
+            case ExportFormat.XLSX_COMPACT:
             case ExportFormat.XLSX:
                 return "${xlsxMimeType};charset=${encoding}"
         }

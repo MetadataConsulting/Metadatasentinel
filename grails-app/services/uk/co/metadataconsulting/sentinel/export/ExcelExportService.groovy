@@ -10,7 +10,7 @@ class ExcelExportService {
 
     MessageSource messageSource
 
-    void export(OutputStream outs, RecordCollectionExportView view, Locale locale) {
+    void export(OutputStream outs, RecordCollectionExportView view, ExportFormat format, Locale locale) {
         String msgAll = messageSource.getMessage("export.all".toString(), [] as Object[], 'All', locale)
         String msgNotValidated = messageSource.getMessage("export.notValidated".toString(), [] as Object[], 'Not Validated', locale)
         String msgValid = messageSource.getMessage("export.valid".toString(), [] as Object[], 'Valid', locale)
@@ -29,7 +29,9 @@ class ExcelExportService {
                         for (String header : excelSheet.headers) {
                             cell {
                                 value header
-                                colspan RecordPortion.toHeaderList().size()
+                                if (format == ExportFormat.XLSX) {
+                                    colspan RecordPortion.toHeaderList().size()
+                                }
                                 style {
                                     background whiteSmoke
                                     align center center
@@ -45,26 +47,30 @@ class ExcelExportService {
                         }
                     }
                     if (excelSheet.rows) {
-                        row {
-                            List<String> recordPortionHeaders = excelSheet.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
-                            for ( String recordPortionHeader :  recordPortionHeaders) {
-                                cell {
-                                    value messageSource.getMessage("export.header.${recordPortionHeader}".toString(),
-                                            [] as Object[],
-                                            recordPortionHeader,
-                                            locale)
+                        if (format == ExportFormat.XLSX) {
+                            row {
+                                List<String> recordPortionHeaders = excelSheet.rows.first().recordPortionList.collect {
+                                    RecordPortion.toHeaderList()
+                                }.flatten()
+                                for (String recordPortionHeader : recordPortionHeaders) {
+                                    cell {
+                                        value messageSource.getMessage("export.header.${recordPortionHeader}".toString(),
+                                                [] as Object[],
+                                                recordPortionHeader,
+                                                locale)
 
-                                    style {
-                                        background whiteSmoke
-                                        if (recordPortionHeader == recordPortionHeaders[-1]) {
-                                            border right, {
-                                                style BorderStyle.THICK
+                                        style {
+                                            background whiteSmoke
+                                            if (recordPortionHeader == recordPortionHeaders[-1]) {
+                                                border right, {
+                                                    style BorderStyle.THICK
+                                                    color black
+                                                }
+                                            }
+                                            border bottom, {
+                                                style BorderStyle.THIN
                                                 color black
                                             }
-                                        }
-                                        border bottom, {
-                                            style BorderStyle.THIN
-                                            color black
                                         }
                                     }
                                 }
@@ -72,33 +78,57 @@ class ExcelExportService {
                         }
                         for (RecordCollectionExportRowView rowView : excelSheet.rows) {
                             row {
-                                for (RecordPortion recordPortion : rowView.recordPortionList) {
-                                    int numberOfRecordPortions = recordPortion.toList().size()
-                                    int countRecordPortion = 1
-                                    for (String val : recordPortion.toList()) {
+                                if (format == ExportFormat.XLSX) {
+
+                                    for (RecordPortion recordPortion : rowView.recordPortionList) {
+                                        int numberOfRecordPortions = recordPortion.toList().size()
+                                        int countRecordPortion = 1
+                                        for (String val : recordPortion.toList()) {
+                                            cell {
+                                                style {
+                                                    if (recordPortion.status == ValidationStatus.VALID) {
+                                                        font {
+                                                            color green
+                                                        }
+                                                    }
+                                                    if (recordPortion.status == ValidationStatus.INVALID) {
+                                                        font {
+                                                            color red
+                                                        }
+                                                    }
+                                                    if (countRecordPortion == numberOfRecordPortions) {
+                                                        style {
+                                                            border right, {
+                                                                style BorderStyle.THICK
+                                                                color black
+                                                            }
+                                                        }
+                                                    }
+                                                    countRecordPortion++
+                                                }
+                                                value val
+                                            }
+                                        }
+                                    }
+                                } else if (format == ExportFormat.XLSX_COMPACT ) {
+                                    for (RecordPortion recordPortion : rowView.recordPortionList) {
                                         cell {
                                             style {
-                                                if (recordPortion.status == ValidationStatus.VALID) {
-                                                    font {
-                                                        color green
-                                                    }
-                                                }
                                                 if (recordPortion.status == ValidationStatus.INVALID) {
                                                     font {
                                                         color red
                                                     }
-                                                }
-                                                if (countRecordPortion == numberOfRecordPortions) {
-                                                    style {
-                                                        border right, {
-                                                            style BorderStyle.THICK
-                                                            color black
-                                                        }
+                                                } else if (recordPortion.status == ValidationStatus.VALID) {
+                                                    font {
+                                                        color green
                                                     }
                                                 }
-                                                countRecordPortion++
+                                                border right, {
+                                                    style BorderStyle.THICK
+                                                    color black
+                                                }
                                             }
-                                            value val
+                                            value recordPortion.value
                                         }
                                     }
                                 }

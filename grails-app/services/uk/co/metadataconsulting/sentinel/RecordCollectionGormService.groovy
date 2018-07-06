@@ -56,6 +56,17 @@ class RecordCollectionGormService implements GormErrorsMessage {
         RecordCollectionGormEntity.get(id).delete()
     }
 
+    @Transactional
+    void deleteByDatasetName(String datasetName) {
+        queryByDatasetName(datasetName).get().delete()
+    }
+
+    DetachedCriteria<RecordCollectionGormEntity> queryByDatasetName(String name) {
+        RecordCollectionGormEntity.where {
+            datasetName == name
+        }
+    }
+
     @ReadOnly
     List<RecordCollectionGormEntity> findAllInIds(Collection<Long> ids) {
         if ( !ids ) {
