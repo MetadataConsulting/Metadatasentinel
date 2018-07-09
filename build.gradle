@@ -102,6 +102,15 @@ webdriverBinaries {
     chromedriver "${chromedriverVersion}"
     geckodriver "${geckodriverVersion}"
 }
+
+test {
+    systemProperties System.properties
+}
+
+integrationTest {
+    systemProperties System.properties
+}
+
 tasks.withType(Test) {
     systemProperties System.properties
     systemProperty "grails.env", 'test'

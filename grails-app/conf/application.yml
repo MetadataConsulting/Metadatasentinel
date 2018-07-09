@@ -101,7 +101,6 @@ dataSource:
     dialect: '${JDBC_DIALECT}'
     username: '${JDBC_USERNAME}'
     password: '${JDBC_PASSWORD}'
-
 environments:
     development:
         dataSource:
@@ -109,8 +108,12 @@ environments:
             url: '${JDBC_CONNECTION_STRING}'
     test:
         dataSource:
-            dbCreate: create-drop
-            url: '${JDBC_CONNECTION_STRING}'
+            dbCreate: update
+            url: jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+            driverClassName: org.h2.Driver
+            dialect: org.hibernate.dialect.H2Dialect
+            username: sa
+            password: ''
     production:
         dataSource:
             dbCreate: none
