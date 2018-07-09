@@ -138,20 +138,21 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
             }
         }
 
-        RecordCollectionExportRowView firstRow1 = viewAll.rows.first()
+        RecordCollectionExportRowView firstRow1 = (viewAll?.rows)?viewAll.rows.first():[]
         viewAll.headers = firstRow1.recordPortionList*.header
         List<String> headers1 = viewAll.headers
-        List<String> portionsHeaders1 = viewAll.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
 
-        RecordCollectionExportRowView firstRow2 = view2.rows.first()
+        if(viewAll?.rows) List<String> portionsHeaders1 = viewAll.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
+
+        RecordCollectionExportRowView firstRow2 = (view2?.rows)?view2.rows.first():[]
         view2.headers = firstRow2.recordPortionList*.header
         List<String> headers2 = view2.headers
-        List<String> portionsHeaders2 = view2.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
+        if(view2?.rows) List<String> portionsHeaders2 = view2.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
 
-        RecordCollectionExportRowView firstRow3 = view3.rows.first()
+        RecordCollectionExportRowView firstRow3 = (view2?.rows)?view3.rows.first():[]
         view3.headers = firstRow3.recordPortionList*.header
         List<String> headers3 = view3.headers
-        List<String> portionsHeaders3 = view3.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
+        if(view3?.rows) List<String> portionsHeaders3 = view3.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
 
 
 
