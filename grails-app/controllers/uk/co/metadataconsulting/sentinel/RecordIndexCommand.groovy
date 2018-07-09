@@ -9,6 +9,7 @@ class RecordIndexCommand implements Validateable {
     Integer offset
     Integer max
     Long recordCollectionId
+    //String datasetName
     RecordCorrectnessDropdown correctness = RecordCorrectnessDropdown.ALL
 
     static constraints = {

@@ -50,7 +50,7 @@ class RecordCollectionControllerIntegrationSpec extends Specification {
         ruleFetcherService.metadataUrl = ersatz.httpUrl
 
         when:
-        RecordCollectionGormEntity recordCollection= recordCollectionGormService.save()
+        RecordCollectionGormEntity recordCollection= recordCollectionGormService.save("Test")
 
         then:
         recordCollectionGormService.count() == old(recordCollectionGormService.count()) + 1

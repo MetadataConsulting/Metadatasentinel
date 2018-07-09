@@ -32,7 +32,7 @@ class CsvImportServiceIntegrationSpec extends Specification {
         expectedNumberOfRows
 
         when:
-        csvImportService.save(f.newInputStream(), 50)
+        csvImportService.save(f.newInputStream(), "DIDS_XMLExample_20", 50)
 
         then:
         recordCollectionGormService.count() == old(recordCollectionGormService.count()) + 1

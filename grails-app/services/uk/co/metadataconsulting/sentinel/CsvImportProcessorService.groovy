@@ -40,7 +40,7 @@ class CsvImportProcessorService implements GrailsConfigurationAware, CsvImportPr
     }
 
     @Override
-    int processInputStream(InputStream inputStream, Integer batchSize, Closure headerListClosure, Closure cls) {
+    int processInputStream(InputStream inputStream, Integer batchSize,   Closure headerListClosure, Closure cls) {
         int processed = 0
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))
         List<String> lines = []

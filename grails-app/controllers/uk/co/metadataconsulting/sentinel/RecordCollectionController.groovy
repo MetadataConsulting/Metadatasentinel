@@ -1,14 +1,25 @@
 package uk.co.metadataconsulting.sentinel
 
+import builders.dsl.spreadsheet.api.Color
+import builders.dsl.spreadsheet.builder.poi.PoiSpreadsheetBuilder
 import grails.config.Config
 import grails.core.support.GrailsConfigurationAware
-import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.apache.poi.xssf.usermodel.XSSFColor
 import org.springframework.context.MessageSource
+import uk.co.metadataconsulting.sentinel.export.ExportRecordCollectionCommand
+import uk.co.metadataconsulting.sentinel.export.ExportService
+import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportRowView
+import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportService
+import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportView
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 
+import java.awt.Color
+
+import static org.springframework.http.HttpStatus.OK
+import  uk.co.metadataconsulting.sentinel.export.ExportFormat
+
 @Slf4j
-@CompileStatic
 class RecordCollectionController implements ValidateableErrorsMessage, GrailsConfigurationAware {
 
     static allowedMethods = [
@@ -20,6 +31,7 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
             headersMapping: 'GET',
             cloneMapping: 'GET',
             cloneSave: 'POST',
+            export: 'GET'
     ]
 
     MessageSource messageSource
@@ -27,6 +39,8 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
     CsvImportService csvImportService
 
     RecordCollectionGormService recordCollectionGormService
+
+    RecordGormService recordGormService
 
     RecordCollectionService recordCollectionService
 
@@ -36,11 +50,17 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
 
     RuleFetcherService ruleFetcherService
 
+    RecordCollectionExportService recordCollectionExportService
+
+    ExportService exportService
+
     int defaultPaginationMax = 25
     int defaultPaginationOffset = 0
+    String separator
 
     @Override
     void setConfiguration(Config co) {
+        separator = co.getProperty('export.csv.separator', String, ',')
         defaultPaginationMax = co.getProperty('sentinel.pagination.max', Integer, 25)
         defaultPaginationOffset = co.getProperty('sentinel.pagination.offset', Integer, 0)
     }
@@ -67,6 +87,540 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
                 recordCollectionTotal: recordCollectionListTotal,
         ]
     }
+
+
+    def export(ExportRecordCollectionCommand cmd) {
+
+        if ( cmd.hasErrors() ) {
+            // TODO Maybe display an error message with flash.error and redirect to HomePage
+            return
+        }
+
+        RecordCollectionGormEntity collectionGormEntity = recordCollectionGormService.find(cmd.recordCollectionId)
+        if ( !collectionGormEntity ) {
+            // TODO Maybe display an error message with flash.error and redirect to HomePage
+            return
+        }
+        final String filenameprefix = collectionGormEntity.datasetName
+        response.status = OK.value()
+
+        RecordCorrectnessDropdown recordCorrectnessDropdown = RecordCorrectnessDropdown.ALL
+        RecordCollectionExportView viewAll = recordCollectionExportService.export(cmd.recordCollectionId, recordCorrectnessDropdown)
+        RecordCollectionExportView view2 = recordCollectionExportService.export(cmd.recordCollectionId, recordCorrectnessDropdown)
+        RecordCollectionExportView view3 = recordCollectionExportService.export(cmd.recordCollectionId, recordCorrectnessDropdown)
+        def outs = response.outputStream
+
+       // viewAll.rows = findAllValid(viewAll.rows, false)
+        view2.rows = findAllValidRows(viewAll.rows )
+        view3.rows = findAllInValidRows(viewAll.rows)
+
+        //Ensure that all portions are sorted
+        viewAll.rows.each { RecordCollectionExportRowView rowView ->
+            List<RecordPortion> dataItemList = rowView.recordPortionList
+            dataItemList.sort {
+                it.header
+            }
+        }
+
+        //Ensure that all portions are sorted
+        view2.rows.each { RecordCollectionExportRowView rowView ->
+            List<RecordPortion> dataItemList = rowView.recordPortionList
+            dataItemList.sort {
+                it.header
+            }
+        }
+
+        //Ensure that all portions are sorted
+        view3.rows.each { RecordCollectionExportRowView rowView ->
+            List<RecordPortion> dataItemList = rowView.recordPortionList
+            dataItemList.sort {
+                it.header
+            }
+        }
+
+        RecordCollectionExportRowView firstRow1 = (viewAll?.rows)?viewAll.rows.first():[]
+        viewAll.headers = firstRow1.recordPortionList*.header
+        List<String> headers1 = viewAll.headers
+
+        if(viewAll?.rows) List<String> portionsHeaders1 = viewAll.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
+
+        RecordCollectionExportRowView firstRow2 = (view2?.rows)?view2.rows.first():[]
+        view2.headers = firstRow2.recordPortionList*.header
+        List<String> headers2 = view2.headers
+        if(view2?.rows) List<String> portionsHeaders2 = view2.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
+
+        RecordCollectionExportRowView firstRow3 = (view2?.rows)?view3.rows.first():[]
+        view3.headers = firstRow3.recordPortionList*.header
+        List<String> headers3 = view3.headers
+        if(view3?.rows) List<String> portionsHeaders3 = view3.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
+
+
+
+
+        String filename = "${filenameprefix}.${exportService.fileExtensionForFormat(cmd.format)}"
+        response.setHeader "Content-disposition", "attachment; filename=${filename}"
+        response.contentType = exportService.mimeTypeForFormat(cmd.format)
+        switch (cmd.format) {
+            case ExportFormat.CSV:
+                // TODO remove this line?
+                headers = headers1.collect { [it] }.flatten()
+                outs << "${headers1.join(separator)}\n"
+                if ( viewAll.rows ) {
+                    String line = "${portionsHeaders1.join(separator)}\n"
+                    outs << line
+                    viewAll.rows.each { RecordCollectionExportRowView row ->
+                        println row.
+                        outs << "${row.toCsv(separator)}\n"
+                    }
+                }
+                break
+            case ExportFormat.XLSX:
+                PoiSpreadsheetBuilder.create(outs).build {
+                    sheet(messageSource.getMessage("export.all".toString(), [] as Object[], 'All', request.locale)) {
+                        row {
+                            for (String header : headers1) {
+                                cell {
+                                    value header
+                                    //colspan RecordPortion.toHeaderList().size()
+                                }
+                            }
+                        }
+
+                        if (viewAll.rows) {
+                            //viewAll.rows.each{List<RecordCollectionExportRowView> rowView ->
+                            for (RecordCollectionExportRowView rowView : viewAll.rows) {
+                                row {
+                                    for (RecordPortion recordPortion : rowView.recordPortionList) {
+                                        cell {
+                                            if (isValidPortionFunction(recordPortion)) {
+                                                style {
+                                                    font {
+                                                        color green
+                                                    }
+                                                }
+                                            }
+                                            if (isInValidPortionFunction(recordPortion)) {
+                                                style {
+                                                    font {
+                                                        color red
+                                                    }
+                                                }
+                                            }
+                                            value recordPortion.value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    sheet(messageSource.getMessage("export.valid".toString(), [] as Object[], 'Valid', request.locale)) {
+                        row {
+                            for (String header : headers2) {
+                                cell {
+                                    value header
+                                }
+                            }
+                        }
+
+                        if (view2.rows) {
+                            //viewAll.rows.each{List<RecordCollectionExportRowView> rowView ->
+                            for (RecordCollectionExportRowView rowView : view2.rows) {
+                                row {
+                                    for (RecordPortion recordPortion : rowView.recordPortionList) {
+                                        cell {
+                                            if (isValidPortionFunction(recordPortion)) {
+                                                style {
+                                                    font {
+                                                        color green
+                                                    }
+                                                }
+                                            }
+                                            if (isInValidPortionFunction(recordPortion)) {
+                                                style {
+                                                    font {
+                                                        color red
+                                                    }
+                                                }
+                                            }
+                                            value recordPortion.value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    sheet(messageSource.getMessage("export.invalid".toString(), [] as Object[], 'Invalid', request.locale)) {
+                        row {
+                            for (String header : headers3) {
+                                cell {
+                                    value header
+                                    //colspan RecordPortion.toHeaderList().size()
+                                }
+                            }
+                        }
+                        if (view3.rows) {
+                            //viewAll.rows.each{List<RecordCollectionExportRowView> rowView ->
+                            for (RecordCollectionExportRowView rowView : view3.rows) {
+                                row {
+                                    for (RecordPortion recordPortion : rowView.recordPortionList) {
+                                        cell {
+                                            if (isValidPortionFunction(recordPortion)) {
+                                                style {
+                                                    font {
+                                                        color green
+                                                    }
+                                                }
+                                            }
+                                            if (isInValidPortionFunction(recordPortion)) {
+                                                style {
+                                                    font {
+                                                        color red
+                                                    }
+                                                }
+                                            }
+                                            value recordPortion.value
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                break
+        }
+        outs.flush()
+        outs.close()
+    }
+
+    def exportAll(ExportRecordCollectionCommand cmd) {
+
+        if ( cmd.hasErrors() ) {
+            // TODO Maybe display an error message with flash.error and redirect to HomePage
+            return
+        }
+
+        RecordCollectionGormEntity collectionGormEntity = recordCollectionGormService.find(cmd.recordCollectionId)
+        if ( !collectionGormEntity ) {
+            // TODO Maybe display an error message with flash.error and redirect to HomePage
+            return
+        }
+        final String filenameprefix = collectionGormEntity.datasetName
+        response.status = OK.value()
+
+        RecordCorrectnessDropdown recordCorrectnessDropdown = RecordCorrectnessDropdown.ALL
+        RecordCollectionExportView viewAll = recordCollectionExportService.export(cmd.recordCollectionId, recordCorrectnessDropdown)
+        RecordCollectionExportView view2 = recordCollectionExportService.export(cmd.recordCollectionId, recordCorrectnessDropdown)
+        RecordCollectionExportView view3 = recordCollectionExportService.export(cmd.recordCollectionId, recordCorrectnessDropdown)
+        def outs = response.outputStream
+
+        viewAll.rows = findAllValid(viewAll.rows, true)
+        view2.rows = findAllInvalid(view2.rows, true)
+        view3.rows = findAllNotValidated(view3.rows, true)
+
+        List<String> headers = []
+
+        //Ensure that all portions are sorted
+        viewAll.rows.each { RecordCollectionExportRowView rowView ->
+            List<RecordPortion> dataItemList = rowView.recordPortionList
+            dataItemList.sort {
+                it.header
+            }
+        }
+
+        //Ensure that all portions are sorted
+        view2.rows.each { RecordCollectionExportRowView rowView ->
+            List<RecordPortion> dataItemList = rowView.recordPortionList
+            dataItemList.sort {
+                it.header
+            }
+        }
+
+        //Ensure that all portions are sorted
+        view3.rows.each { RecordCollectionExportRowView rowView ->
+            List<RecordPortion> dataItemList = rowView.recordPortionList
+            dataItemList.sort {
+                it.header
+            }
+        }
+
+        RecordCollectionExportRowView firstRow1 = viewAll.rows.first()
+        viewAll.headers = firstRow1.recordPortionList*.header
+        List<String> headers1 = viewAll.headers
+        List<String> portionsHeaders1 = viewAll.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
+
+        RecordCollectionExportRowView firstRow2 = view2.rows.first()
+        view2.headers = firstRow2.recordPortionList*.header
+        List<String> headers2 = view2.headers
+        List<String> portionsHeaders2 = view2.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
+
+        RecordCollectionExportRowView firstRow3 = view3.rows.first()
+        view3.headers = firstRow3.recordPortionList*.header
+        List<String> headers3 = view3.headers
+        List<String> portionsHeaders3 = view3.rows.first().recordPortionList.collect { RecordPortion.toHeaderList() }.flatten()
+
+
+
+
+        String filename = "${filenameprefix}.${exportService.fileExtensionForFormat(cmd.format)}"
+        response.setHeader "Content-disposition", "attachment; filename=${filename}"
+        response.contentType = exportService.mimeTypeForFormat(cmd.format)
+        switch (cmd.format) {
+            case ExportFormat.CSV:
+                // TODO remove this line?
+                headers = headers.collect { [it, it, it, it, it, it] }.flatten()
+                outs << "${headers.join(separator)}\n"
+                if ( viewAll.rows ) {
+                    String line = "${portionsHeaders.join(separator)}\n"
+                    outs << line
+                    viewAll.rows.each { RecordCollectionExportRowView row ->
+                        outs << "${row.toCsv(separator)}\n"
+                    }
+                }
+                break
+            case ExportFormat.XLSX:
+                PoiSpreadsheetBuilder.create(outs).build {
+                    sheet(messageSource.getMessage("export.valid".toString(), [] as Object[], 'Valid', request.locale)) {
+                        row {
+                            for ( String header : headers1 ) {
+                                cell {
+                                    value header
+                                    colspan RecordPortion.toHeaderList().size()
+                                }
+                            }
+                        }
+                        if ( portionsHeaders1 ) {
+                            row {
+                                for ( String recordPortionHeader : portionsHeaders1 ) {
+                                    cell {
+                                        value messageSource.getMessage("export.header.${recordPortionHeader}".toString(),
+                                                [] as Object[],
+                                                recordPortionHeader,
+                                                request.locale)
+                                    }
+                                }
+                            }
+                        }
+                        if ( viewAll.rows ) {
+                            //viewAll.rows.each{List<RecordCollectionExportRowView> rowView ->
+                                for (RecordCollectionExportRowView rowView: viewAll.rows){
+                                    row {
+                                    for ( RecordPortion recordPortion : rowView.recordPortionList) {
+                                        for (String val : recordPortion.toList()) {
+                                            cell {
+                                                value val
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    sheet(messageSource.getMessage("export.invalid".toString(), [] as Object[], 'Invalid', request.locale)) {
+                        row {
+                            for ( String header : headers2 ) {
+                                cell {
+                                    value header
+                                    colspan RecordPortion.toHeaderList().size()
+                                }
+                            }
+                        }
+                        if ( portionsHeaders1 ) {
+                            row {
+                                for ( String recordPortionHeader : portionsHeaders2 ) {
+                                    cell {
+                                        value messageSource.getMessage("export.header.${recordPortionHeader}".toString(),
+                                                [] as Object[],
+                                                recordPortionHeader,
+                                                request.locale)
+                                    }
+                                }
+                            }
+                        }
+                        if ( view2.rows ) {
+                            for (RecordCollectionExportRowView rowView2  : view2.rows ) {
+                                row {
+                                    for ( RecordPortion recordPortion : rowView2.recordPortionList) {
+                                        for (String val : recordPortion.toList()) {
+                                            cell {
+                                                value val
+                                                style{
+
+                                                }
+
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    sheet(messageSource.getMessage("export.notValidated".toString(), [] as Object[], 'Not Validated', request.locale)) {
+                        row {
+                            for ( String header : headers3 ) {
+                                cell {
+                                    value header
+                                    colspan RecordPortion.toHeaderList().size()
+                                }
+                            }
+                        }
+                        if ( portionsHeaders3 ) {
+                            row {
+                                for ( String recordPortionHeader : portionsHeaders3) {
+                                    cell {
+                                        value messageSource.getMessage("export.header.${recordPortionHeader}".toString(),
+                                                [] as Object[],
+                                                recordPortionHeader,
+                                                request.locale)
+                                    }
+                                }
+                            }
+                        }
+                        if ( view3.rows ) {
+                            for (RecordCollectionExportRowView rowView3 : view3.rows ) {
+                                row {
+                                    for ( RecordPortion recordPortion : rowView3.recordPortionList) {
+                                        for (String val : recordPortion.toList()) {
+                                            cell {
+
+                                                    style {
+                                                        font {
+                                                            color red
+                                                        }
+                                                    }
+
+                                                value val
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                break
+        }
+        outs.flush()
+        outs.close()
+    }
+
+    private List<RecordCollectionExportRowView> findAllValidRows(List<RecordCollectionExportRowView> all ) {
+        List<RecordCollectionExportRowView>  newList = []
+        all.each{ RecordCollectionExportRowView row ->
+            int cntr = 0
+            row.recordPortionList.each{ portion ->
+                boolean bResult = isValidPortionFunction( portion)
+                if(bResult){cntr++}
+            }
+            if(cntr > 0){
+                newList.add(row)
+            }
+        }
+        return newList
+    }
+    private List<RecordCollectionExportRowView> findAllInValidRows(List<RecordCollectionExportRowView> all ) {
+        List<RecordCollectionExportRowView>  newList = []
+        all.each{ RecordCollectionExportRowView row ->
+            int cntr = 0
+            row.recordPortionList.each{ portion ->
+                boolean bResult = isInValidPortionFunction( portion)
+                if(bResult){cntr++}
+            }
+            if(cntr > 0){
+                newList.add(row)
+            }
+        }
+        return newList
+    }
+
+    private List<RecordCollectionExportRowView> findAllValid(List<RecordCollectionExportRowView> all, boolean addRows) {
+        List<RecordCollectionExportRowView>  newList =  all.each{ RecordCollectionExportRowView row ->
+
+            def workingRecordPortionList = row.recordPortionList
+            List<RecordPortion> validDataItemList = []
+            workingRecordPortionList.each{ portion ->
+                boolean bResult = isValidPortionFunction( portion)
+                println "Is Valid:" + bResult + ":" + portion.toString()
+                if(bResult){
+                    validDataItemList.add(portion)
+                    println "added portion"
+                }else{
+                    if(addRows){
+                        validDataItemList.add(new RecordPortion(portion.header))
+                        println "empty portion added "
+                    }
+
+                }
+            }
+            row.recordPortionList = validDataItemList
+        }
+        return newList
+    }
+    private List<RecordCollectionExportRowView> findAllInvalid(List<RecordCollectionExportRowView> all, boolean addRows) {
+        List<RecordCollectionExportRowView>  newList =  all.each{ RecordCollectionExportRowView row ->
+
+            def workingRecordPortionList = row.recordPortionList
+            List<RecordPortion> validDataItemList = []
+            workingRecordPortionList.each{ portion ->
+                boolean bResult = isInValidPortionFunction(portion)
+                println "Is In Valid:" + bResult + ":" + portion.toString()
+
+                if(bResult){
+                    validDataItemList.add(portion)
+                    println "added portion"
+                }else{
+                    if(addRows){
+                        validDataItemList.add(new RecordPortion(portion.header))
+                        println "empty portion added "
+                    }
+                }
+            }
+            row.recordPortionList = validDataItemList
+        }
+        return newList
+    }
+    private List<RecordCollectionExportRowView> findAllNotValidated(List<RecordCollectionExportRowView> all, boolean addRows) {
+        List<RecordCollectionExportRowView>  newList =  all.each{ RecordCollectionExportRowView row ->
+
+            def workingRecordPortionList = row.recordPortionList
+            List<RecordPortion> validDataItemList = []
+            workingRecordPortionList.each{ portion ->
+                boolean bResult = isNotYetValidatedPortionFunction(portion)
+                println "Is Not Validated:" + bResult + ":" + portion.toString()
+                if(bResult){
+                    validDataItemList.add(portion)
+                    println "added portion"
+                }else{
+                    if(addRows){
+                        validDataItemList.add(new RecordPortion(portion.header))
+                        println "empty portion added "
+                    }
+                }
+            }
+            row.recordPortionList = validDataItemList
+        }
+        return newList
+    }
+
+
+    private boolean isValidPortionFunction(RecordPortion portion){
+        ValidationStatus vStatus =  portion.status as ValidationStatus
+        boolean bstatus = (vStatus == ValidationStatus.VALID)
+        return bstatus
+    }
+
+    private boolean isInValidPortionFunction(RecordPortion portion){
+        ValidationStatus vStatus =  portion.status as ValidationStatus
+        boolean bstatus = (vStatus == ValidationStatus.INVALID)
+        return bstatus
+    }
+
+    private boolean isNotYetValidatedPortionFunction(RecordPortion portion){
+        ValidationStatus vStatus =  portion.status as ValidationStatus
+        boolean bstatus = (vStatus == ValidationStatus.NOT_VALIDATED)
+        return bstatus
+    }
+
 
     def importCsv() {
         [:]
@@ -98,8 +652,9 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         log.debug 'Content Type {}', cmd.csvFile.contentType
         InputStream inputStream = cmd.csvFile.inputStream
         Integer batchSize = cmd.batchSize
+        String datasetName = cmd.datasetName
         CsvImport importService = csvImportByContentType (ImportContentType.of(cmd.csvFile.contentType))
-        importService.save(inputStream, batchSize)
+        importService.save(inputStream, datasetName, batchSize)
 
         redirect controller: 'recordCollection', action: 'index'
     }
@@ -121,9 +676,9 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         List dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
         if ( !dataModelList ) {
             flash.error = messageSource.getMessage('dataModel.couldNotLoad', [] as Object[], 'Could not load data Models', request.locale)
-        }  
+        }
         [
-                dataModelList: dataModelList, 
+                dataModelList: dataModelList,
                 recordCollectionId: recordCollectionId,
                 recordPortionMappingList: recordCollectionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
         ]

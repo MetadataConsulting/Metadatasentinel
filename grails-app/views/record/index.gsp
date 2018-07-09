@@ -1,56 +1,108 @@
 <%@ page import="uk.co.metadataconsulting.sentinel.RecordCorrectnessDropdown" %>
+<%@ page import="uk.co.metadataconsulting.sentinel.export.ExportFormat" %>
+
 <html>
 <head>
     <title>Records</title>
     <meta name="layout" content="main" />
 </head>
 <body>
-<nav class="navbar navbar-default" role="navigation">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
     <g:render template="/templates/navbarBrand"/>
-        <ul id="rightactions">
-        <li class="nav-item">
-        <g:form controller="record" action="index" method="GET"  class="form-inline">
-        <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
-        <g:select name="correctness" from="${RecordCorrectnessDropdown.values()}" value="${correctness}"/>
-        <input type="submit" class="btn-primary btn" value="${g.message(code: 'record.filter', default: 'Filter')}"/>
-    </g:form>
-        </li>
-        <li class="nav-item">
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+            %{--<li class="nav-item active">--}%
 
-    <g:link class="btn-primary btn" controller="recordCollection" action="cloneMapping" params="[recordCollectionId: recordCollectionId]">
-        <g:message code="recordCollection.mapping.clone" default="Clone Mapping"/>
-    </g:link>
-    <g:link class="btn-primary btn" controller="recordCollection" action="headersMapping" params="[recordCollectionId: recordCollectionId]">
-        <g:message code="recordCollection.headersMapping" default="Mappings"/>
-    </g:link>
-        </li>
-    <li class="nav-item">
-    <g:form controller="recordCollection" action="validate" method="POST"  class="form-inline">
-        <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
-        <input type="submit" class="btn-primary btn" value="${g.message(code: 'record.validate', default: 'Validate')}"/>
-    </g:form>
-    </li>
-    </ul>
+                %{----}%
+
+
+            %{--</li>--}%
+
+            %{--<g:link class="btn-primary btn" controller="recordCollection" action="cloneMapping" params="[recordCollectionId: recordCollectionId]">--}%
+                %{--<g:message code="recordCollection.mapping.clone" default="Clone Mapping 2"/>--}%
+            %{--</g:link>--}%
+
+            <li class="nav-item">
+                <g:link class="nav-link" controller="recordCollection" action="headersMapping" params="[recordCollectionId: recordCollectionId]">
+                    <g:message code="recordCollection.headersMapping" default="Mappings"/>
+                </g:link>
+            </li>
+
+
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="export" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Export
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <g:each in="${ExportFormat.values()}">
+                        <g:link class="dropdown-item"  controller="recordCollection" action="export" method="GET" params='[recordCollectionId: "${recordCollectionId}", format: "${it}"]'>${it}</g:link>
+                    </g:each>
+                </div>
+            </li>
+
+
+
+
+            %{--<g:form controller="recordCollection" action="export" method="GET"  class="form-inline">--}%
+                %{--<g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>--}%
+                %{--<g:select name="format" from=""/>--}%
+                %{--<input type="submit" value="${g.message(code: 'record.export', default: 'Export')}"/>--}%
+            %{--</g:form>--}%
+
+
+        </ul>
+
+        <g:form controller="recordCollection" action="validate" method="POST"  class="form-inline my-2 my-lg-0">
+            <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
+            <input type="submit" class="btn btn-outline-success my-2 my-sm-0" value="${g.message(code: 'record.validate', default: 'Validate')}"/>
+        </g:form>
+
+%{--<form class="form-inline my-2 my-lg-0">--}%
+            %{--<input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">--}%
+            %{--<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>--}%
+        %{--</form>--}%
+    </div>
 </nav>
+
+
+
 <nav aria-label="breadcrumb">
+
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><g:link controller="recordCollection" action="index"><g:message code="nav.home" default="Home"/></g:link></li>
         <li class="breadcrumb-item active" aria-current="page"><g:message code="nav.recordCollection" args="${[recordCollectionId]}" default="Record Collection {0}"/></li>
     </ol>
+
 </nav>
 
 <g:render template="/templates/flashmessage"/>
 <g:render template="/templates/flasherror"/>
 
+<article>
+<table class="table table-striped">
+<thead class="thead-dark">
+<tr>
+    <th>
 
+        <div class="float-right">
+            <a class="nav-link dropdown-toggle" href="#" id="filter" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Filter
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <g:each in="${RecordCorrectnessDropdown.values()}">
+                    <g:link class="dropdown-item"  action="index" params='[recordCollectionId: "${recordCollectionId}", correctness: "${it}"]'>${it}</g:link>
+                </g:each>
+            </div>
+        </div>
+        <g:message code="record.th." default="Record"/>
+
+    </th>
+
+</tr>
+</thead>
 <g:if test="${recordList}">
-    <article>
-    <table class="table table-striped">
-        <thead class="thead-dark">
-        <tr>
-            <th><g:message code="record.th." default="Record"/></th>
-        </tr>
-        </thead>
+
         <tbody>
             <g:each var="record" in="${recordList}" status="i">
                 <g:if test="${record.valid}">
@@ -66,6 +118,7 @@
                 </td>
                 </tr>
             </g:each>
+</g:if>
         </tbody>
     </table>
     <g:if test="${recordTotal > paginationQuery?.max}">
@@ -80,6 +133,6 @@
     </g:if>
         <g:render template="/record/paginationinfo"/>
     </article>
-</g:if>
+
 </body>
 </html>

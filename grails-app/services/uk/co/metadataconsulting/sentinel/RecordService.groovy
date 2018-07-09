@@ -40,6 +40,8 @@ class RecordService {
         } as Set<Long>
     }
 
+
+
     @Transactional
     void validate(Long recordId, List<RecordPortionMapping> recordPortionMappingList, Map<String, ValidationRules> validationRulesMap) {
         DetachedCriteria<RecordGormEntity> query = recordGormService.queryById(recordId)
@@ -54,32 +56,39 @@ class RecordService {
     }
 
     List<RecordViewModel> findAllByRecordCollectionId(Long recordCollectionId, RecordCorrectnessDropdown correctness, PaginationQuery paginationQuery) {
-        // TODO Do this with a query
-        DetachedCriteria<RecordGormEntity> query = recordGormService.queryByRecordCollectionId(recordCollectionId)
-        //query.join('portions')
-
-        if ( correctness == RecordCorrectnessDropdown.ALL ) {
-            Map args = paginationQuery.toMap()
-
-            List<RecordGormEntity> l = query.list(args)
-
-            List<Long> ids = query.id().list(args) as List<Long>
-            Set<Long> invalidRecordIds = findAllInvalidRecordIds()
-
-            return ids.collect { Long id ->
-                new RecordViewModel(id: id, valid: !invalidRecordIds.contains(id))
-            }
+        switch (correctness) {
+            case RecordCorrectnessDropdown.ALL:
+                List<Long> ids = findAllIdsByRecordCollectionId(recordCollectionId, correctness, paginationQuery)
+                Set<Long> invalidRecordIds = findAllInvalidRecordIds()
+                return ids.collect { Long id ->
+                    new RecordViewModel(id: id, valid: !invalidRecordIds.contains(id))
+                }
+            case RecordCorrectnessDropdown.VALID:
+                List<Long> recordCollection = findAllIdsByRecordCollectionId(recordCollectionId, correctness, paginationQuery)
+                List<RecordViewModel> validViews = recordCollection.collect {
+                    new RecordViewModel(id: it, valid: true)
+                }
+                return validViews
+            case RecordCorrectnessDropdown.INVALID:
+                return findAllIdsByRecordCollectionId(recordCollectionId, correctness, paginationQuery).collect {
+                    new RecordViewModel(id: it, valid: false)
+                }
         }
+    }
 
-        boolean valid = validForCorrectnes(correctness)
-
-        if ( valid ) {
-            return findAllValidRecords(recordCollectionId, paginationQuery).collect {
-                new RecordViewModel(id:it, valid: true)
-            }
-        }
-        return findAllInvalidRecords(recordCollectionId, paginationQuery).collect {
-            new RecordViewModel(id:it, valid: false)
+    List<Long> findAllIdsByRecordCollectionId(Long recordCollectionId, RecordCorrectnessDropdown correctness, PaginationQuery paginationQuery) {
+        switch (correctness) {
+            case RecordCorrectnessDropdown.ALL:
+                // TODO Do this with a query
+                DetachedCriteria<RecordGormEntity> query = recordGormService.queryByRecordCollectionId(recordCollectionId)
+                //query.join('portions')
+                Map args = paginationQuery?.toMap()
+                List<Long> ids = (args ? query.id().list(args) : query.id().list()) as List<Long>
+                return ids
+            case RecordCorrectnessDropdown.VALID:
+                return findAllValidRecords(recordCollectionId, paginationQuery)
+            case RecordCorrectnessDropdown.INVALID:
+                return findAllInvalidRecords(recordCollectionId, paginationQuery)
         }
     }
 
@@ -98,7 +107,7 @@ class RecordService {
             return [] as List<Long>
         }
         DetachedCriteria<RecordGormEntity> query = queryValidRecords(recordCollectionId, validRecordIds)
-        query.id().list(paginationQuery.toMap()) as List<Long>
+        return (paginationQuery ? query.id().list(paginationQuery.toMap()) : query.id().list()) as List<Long>
     }
 
     List<Long> findAllInvalidRecords(Long recordCollectionId, PaginationQuery paginationQuery) {
@@ -107,7 +116,8 @@ class RecordService {
             return [] as List<Long>
         }
         DetachedCriteria<RecordGormEntity> query = queryInvalidRecords(recordCollectionId, invalidRecordIds)
-        query.id().list(paginationQuery.toMap()) as List<Long>
+        //query.id().list(paginationQuery.toMap()) as List<Long>
+        return (paginationQuery ? query.id().list(paginationQuery.toMap()) : query.id().list()) as List<Long>
     }
 
     Number countValidRecords(Long recordCollectionId) {

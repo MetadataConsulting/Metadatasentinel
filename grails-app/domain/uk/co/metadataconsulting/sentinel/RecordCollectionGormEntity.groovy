@@ -5,6 +5,8 @@ import grails.compiler.GrailsCompileStatic
 @GrailsCompileStatic
 class RecordCollectionGormEntity {
 
+    String datasetName
+
     Date dateCreated
 
     Date lastUpdated
@@ -17,6 +19,7 @@ class RecordCollectionGormEntity {
     static constraints = {
         records nullable: true
         mappings nullable: true
+        datasetName nullable: false, blank: false
     }
 
     static mapping = {

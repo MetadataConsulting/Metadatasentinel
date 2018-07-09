@@ -3,9 +3,6 @@ grails:
     profile: web
     codegen:
         defaultPackage: uk.co.metadataconsulting.sentinel
-    spring:
-        transactionManagement:
-            proxies: false
     gorm:
         reactor:
             # Whether to translate GORM events into Reactor events
@@ -65,6 +62,7 @@ grails:
             xml:
               - text/xml
               - application/xml
+
     urlmapping:
         cache:
             maxsize: 1000
@@ -106,7 +104,7 @@ dataSource:
 environments:
     development:
         dataSource:
-            dbCreate: update
+            dbCreate: create
             url: '${JDBC_CONNECTION_STRING}'
     test:
         dataSource:
