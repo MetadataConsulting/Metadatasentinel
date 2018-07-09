@@ -7,11 +7,11 @@ import grails.testing.services.ServiceUnitTest
 import spock.lang.Specification
 import spock.lang.Unroll
 
-class ExcelExportViewServiceSpec extends Specification
+class ExcelExportServiceSpec extends Specification
         implements ServiceUnitTest<ExcelExportService>, RecordCollectionExportViewFixture {
 
     @Unroll
-    def "verifies an Excel file is generated with four tabs"(ExportFormat format) {
+    def "verifies an Excel file is generated with four tabs for #format"(ExportFormat format) {
         given:
         File f = new File("build/${format.toString()}.xlsx")
         OutputStream os = f.newOutputStream()
@@ -96,7 +96,7 @@ class ExcelExportViewServiceSpec extends Specification
 
         cleanup:
         os.close()
-        f.delete()
+        //f.delete()
 
         where:
         format << [ExportFormat.XLSX_COMPACT, ExportFormat.XLSX]
