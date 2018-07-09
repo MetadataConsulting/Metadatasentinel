@@ -96,7 +96,7 @@ class ExcelExportServiceSpec extends Specification
 
         cleanup:
         os.close()
-        //f.delete()
+        f.delete()
 
         where:
         format << [ExportFormat.XLSX_COMPACT, ExportFormat.XLSX]

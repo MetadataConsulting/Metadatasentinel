@@ -18,7 +18,7 @@ class ExcelExportIntegrationSpec extends GebSpec {
     @IgnoreIf({ !(sys['geb.env'] == 'chrome' || sys['geb.env'] == 'chromeHeadless') || !sys['download.folder'] } )
     def "verifies a file with #description can be exported for a record collection"(ExportFormat format, String extension, String description) {
         given:
-        PollingConditions conditions = new PollingConditions(timeout: 30)
+        PollingConditions conditions = new PollingConditions(timeout: 5)
         String expectedFileDownloadPath = "${System.getProperty('download.folder')}/DIDS_XMLExample_20.$extension"
 
         final String filename = "src/test/resources/DIDS_XMLExample_20.csv"
