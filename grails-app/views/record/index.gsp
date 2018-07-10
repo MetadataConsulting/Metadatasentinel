@@ -8,48 +8,56 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
     <g:render template="/templates/navbarBrand"/>
-    <div class=""collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav ml-auto" id="rightactions">
+    <div class=""collapse navbar-collapse  justify-content-end" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto" >
 
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="Mapping" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Mapping
-            </a>
-            <div class="dropdown-menu">
-                <a class="dropdown-item" href="#">
-                <g:link class="nav-link" controller="recordCollection" action="headersMapping" params="[recordCollectionId: recordCollectionId]">
-                    <g:message code="recordCollection.headersMapping" default="New Mapping"/>
-                </g:link>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="MappingDrop" role="button" data-toggle="dropdown">
+                    Mapping
                 </a>
-                <a class="dropdown-item" href="#">
-                    <g:link class="btn-primary btn" controller="recordCollection" action="cloneMapping" params="[recordCollectionId: recordCollectionId]">
-                        <g:message code="recordCollection.mapping.clone" default="Clone Mapping"/>
-                    </g:link></a>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" >
+                    <g:link class="nav-link" controller="recordCollection" action="headersMapping" params="[recordCollectionId: recordCollectionId]">
+                        <g:message code="recordCollection.headersMapping" default="New Mapping"/>
+                    </g:link>
+                    </a>
+                    <a class="dropdown-item" >
+                        <g:link class="nav-link" controller="recordCollection" action="cloneMapping" params="[recordCollectionId: recordCollectionId]">
+                            <g:message code="recordCollection.mapping.clone" default="Clone Mapping"/>
+                        </g:link>
+                    </a>
+                </div>
+            </li>
+
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="export" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Export
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <g:each in="${ExportFormat.values()}">
+                        <g:link class="dropdown-item"  controller="recordCollection" action="export" method="GET" params='[recordCollectionId: "${recordCollectionId}", format: "${it}"]'>${it}</g:link>
+                    </g:each>
+                </div>
+            </li>
+
+
+            <div class="navbar-nav justify-content-end " >
+                <li class="nav-item " >
+                    <g:form controller="recordCollection" action="validate" method="POST" class="form-inline my-2 my-lg-0">
+                        <g:hiddenField name="recordId" value="${recordId}"/>
+                        <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
+                        <g:hiddenField name="datasetName" value="${datasetName}"/>
+                        <input type="submit" class="btn btn-outline-success my-2 my-sm-0" value="${g.message(code: 'record.validate', default: 'Validate')}"/>
+                    </g:form>
+                </li>
             </div>
-        </li>
-
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="export" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Export
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                <g:each in="${ExportFormat.values()}">
-                    <g:link class="dropdown-item"  controller="recordCollection" action="export" method="GET" params='[recordCollectionId: "${recordCollectionId}", format: "${it}"]'>${it}</g:link>
-                </g:each>
-            </div>
-        </li>
-    </ul>
 
 
-            <g:form controller="record" action="validate" method="POST">
-                <g:hiddenField name="recordId" value="${recordId}"/>
-                <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
-                <g:hiddenField name="datasetName" value="${datasetName}"/>
-                <input type="submit" class="btn-primary btn" value="${g.message(code: 'record.validate', default: 'Validate')}"/>
-            </g:form>
         </ul>
+
+
     </div>
 </nav>
 
