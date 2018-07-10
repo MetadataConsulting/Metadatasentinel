@@ -11,16 +11,33 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <g:render template="/templates/navbarBrand"/>
     <div class=""collapse navbar-collapse" id="navbarSupportedContent">
-        <ul id="rightactions">
-            <li class="nav-item">
+        <ul class="navbar-nav ml-auto" id="rightactions">
 
-            </li>
-            <li class="nav-item">
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="Mapping" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Mapping
+            </a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">
+                <g:link class="nav-link" controller="recordCollection" action="headersMapping" params="[recordCollectionId: recordCollectionId]">
+                    <g:message code="recordCollection.headersMapping" default="New Mapping"/>
+                </g:link>
+                </a>
+                <a class="dropdown-item" href="#">Clone Existing Mapping</a>
+            </div>
+        </li>
 
-            </li>
-            <li class="nav-item">
-
-            </li>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="export" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Export
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <g:each in="${ExportFormat.values()}">
+                    <g:link class="dropdown-item"  controller="recordCollection" action="export" method="GET" params='[recordCollectionId: "${recordCollectionId}", format: "${it}"]'>${it}</g:link>
+                </g:each>
+            </div>
+        </li>
+    </ul>
 
 
             <g:form controller="record" action="validate" method="POST">
