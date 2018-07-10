@@ -7,40 +7,18 @@
     <meta name="layout" content="main" />
 </head>
 <body>
-<nav class="navbar navbar-default" role="navigation">
-    <g:render template="/templates/navbarBrand"/>
-        <ul id="rightactions">
-        <li class="nav-item">
-        <g:form controller="record" action="index" method="GET"  class="form-inline">
-            <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
-            <g:select name="correctness" from="${RecordCorrectnessDropdown.values()}" value="${correctness}"/>
-             <input type="submit" class="btn-primary btn" value="${g.message(code: 'record.filter', default: 'Filter')}"/>
-        </g:form>
-        </li>
-        <li class="nav-item">
 
-    <g:link class="btn-primary btn" controller="recordCollection" action="cloneMapping" params="[recordCollectionId: recordCollectionId]">
-        <g:message code="recordCollection.mapping.clone" default="Clone Mapping"/>
-    </g:link>
-    <g:link class="btn-primary btn" controller="recordCollection" action="headersMapping" params="[recordCollectionId: recordCollectionId]">
-        <g:message code="recordCollection.headersMapping" default="Mappings"/>
-    </g:link>
-    <li class="nav-item">
-        <g:form controller="recordCollection" action="export" method="GET"  class="form-inline">
-            <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
-            <g:select name="format" from="${ExportFormat.values()}"/>
-            <input type="submit" class="btn-primary btn" value="${g.message(code: 'record.export', default: 'Export')}"/>
-        </g:form>
-    </li>
-    <li class="nav-item">
-    <g:form controller="recordCollection" action="validate" method="POST"  class="form-inline">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <g:render template="/templates/navbarBrand"/>
+    <g:form controller="record" action="validate" method="POST">
+        <g:hiddenField name="recordId" value="${recordId}"/>
         <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
+        <g:hiddenField name="datasetName" value="${datasetName}"/>
         <input type="submit" class="btn-primary btn" value="${g.message(code: 'record.validate', default: 'Validate')}"/>
     </g:form>
-    </li>
-
-    </ul>
 </nav>
+
+
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><g:link controller="recordCollection" action="index"><g:message code="nav.home" default="Home"/></g:link></li>
