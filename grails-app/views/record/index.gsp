@@ -23,7 +23,10 @@
                     <g:message code="recordCollection.headersMapping" default="New Mapping"/>
                 </g:link>
                 </a>
-                <a class="dropdown-item" href="#">Clone Existing Mapping</a>
+                <a class="dropdown-item" href="#">
+                    <g:link class="btn-primary btn" controller="recordCollection" action="cloneMapping" params="[recordCollectionId: recordCollectionId]">
+                        <g:message code="recordCollection.mapping.clone" default="Clone Mapping"/>
+                    </g:link></a>
             </div>
         </li>
 
