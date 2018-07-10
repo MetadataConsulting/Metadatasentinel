@@ -10,12 +10,27 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <g:render template="/templates/navbarBrand"/>
-    <g:form controller="record" action="validate" method="POST">
-        <g:hiddenField name="recordId" value="${recordId}"/>
-        <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
-        <g:hiddenField name="datasetName" value="${datasetName}"/>
-        <input type="submit" class="btn-primary btn" value="${g.message(code: 'record.validate', default: 'Validate')}"/>
-    </g:form>
+    <div class=""collapse navbar-collapse" id="navbarSupportedContent">
+        <ul id="rightactions">
+            <li class="nav-item">
+
+            </li>
+            <li class="nav-item">
+
+            </li>
+            <li class="nav-item">
+
+            </li>
+
+
+            <g:form controller="record" action="validate" method="POST">
+                <g:hiddenField name="recordId" value="${recordId}"/>
+                <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
+                <g:hiddenField name="datasetName" value="${datasetName}"/>
+                <input type="submit" class="btn-primary btn" value="${g.message(code: 'record.validate', default: 'Validate')}"/>
+            </g:form>
+        </ul>
+    </div>
 </nav>
 
 
@@ -30,14 +45,29 @@
 <g:render template="/templates/flasherror"/>
 
 
-<g:if test="${recordList}">
-    <article>
-    <table class="table table-striped">
-        <thead class="thead-dark">
-        <tr>
-            <th><g:message code="record.th." default="Record"/></th>
-        </tr>
-        </thead>
+<article>
+<table class="table table-striped">
+<thead class="thead-dark">
+    <tr>
+        <th>
+
+            <div class="float-right">
+                <a class="nav-link dropdown-toggle" href="#" id="filter" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Filter
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <g:each in="${RecordCorrectnessDropdown.values()}">
+                        <g:link class="dropdown-item"  action="index" params='[recordCollectionId: "${recordCollectionId}", correctness: "${it}"]'>${it}</g:link>
+                    </g:each>
+                </div>
+            </div>
+            <g:message code="record.th." default="Record"/>
+
+        </th>
+
+    </tr>
+</thead>
+    <g:if test="${recordList}">
         <tbody>
             <g:each var="record" in="${recordList}" status="i">
                 <g:if test="${record.valid}">
