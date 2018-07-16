@@ -12,4 +12,18 @@ class RecordPortion {
     ValidationStatus status = ValidationStatus.NOT_VALIDATED
     String reason
     Integer numberOfRulesValidatedAgainst = 0
+
+    static List<String> toHeaderList() {
+        ['name', 'value', 'numberOfRulesValidatedAgainst','status', 'reason']
+    }
+
+    List<String> toList() {
+        toHeaderList().collect { String propertyName ->
+            this.getProperty(propertyName)?.toString() ?: ''
+        }
+    }
+
+    String toCsv(String separator = ';') {
+        toList().join(separator)
+    }
 }

@@ -13,6 +13,7 @@ class RecordController implements ValidateableErrorsMessage {
 
     RecordPortionGormService recordPortionGormService
     RecordCollectionMappingGormService recordCollectionMappingGormService
+    RecordCollectionGormService recordCollectionGormService
     RuleFetcherService ruleFetcherService
 
     static allowedMethods = [
@@ -29,11 +30,18 @@ class RecordController implements ValidateableErrorsMessage {
         }
 
         PaginationQuery paginationQuery = cmd.toPaginationQuery()
+
         final Long recordCollectionId = cmd.recordCollectionId
-        List<RecordViewModel> recordList = recordService.findAllByRecordCollectionId(recordCollectionId, cmd.correctness, paginationQuery)
+
         Number allRecordTotal = recordService.countByRecordCollectionIdAndCorrectness(recordCollectionId, RecordCorrectnessDropdown.ALL)
+        if (allRecordTotal == 0 && !recordCollectionGormService.find(recordCollectionId)) {
+            redirect(controller: 'recordCollection', action: 'index')
+            return
+        }
+        List<RecordViewModel> recordList = recordService.findAllByRecordCollectionId(recordCollectionId, cmd.correctness, paginationQuery)
         Number invalidRecordTotal = recordService.countByRecordCollectionIdAndCorrectness(recordCollectionId, RecordCorrectnessDropdown.INVALID)
         Number recordTotal = recordService.countByRecordCollectionIdAndCorrectness(recordCollectionId, cmd.correctness)
+
         [
                 correctness: cmd.correctness,
                 recordCollectionId: cmd.recordCollectionId,

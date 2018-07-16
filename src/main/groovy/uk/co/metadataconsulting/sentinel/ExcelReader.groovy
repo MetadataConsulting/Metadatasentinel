@@ -75,8 +75,8 @@ class ExcelReader {
         Iterator<Cell> cellIterator = row.cellIterator()
         while (cellIterator.hasNext()) {
             Cell cell = cellIterator.next()
-            String cellValue = cellValue(cell) //
-            if (!cellValue.isEmpty() && cellValue != "") {
+            String cellValue = cellValue(cell)
+            if ( !cellValue.isEmpty() && cellValue!="" ) {
                 cellValues << cellValue
             } else {
                 break

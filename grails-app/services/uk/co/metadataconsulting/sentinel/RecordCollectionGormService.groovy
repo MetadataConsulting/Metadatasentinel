@@ -37,9 +37,10 @@ class RecordCollectionGormService implements GormErrorsMessage {
     }
 
     @Transactional
-    RecordCollectionGormEntity save() {
+    RecordCollectionGormEntity save(String datasetName) {
         RecordCollectionGormEntity recordCollection = new RecordCollectionGormEntity()
-        if ( !recordCollection.save() ) {
+        recordCollection.datasetName = datasetName
+        if ( !recordCollection.save(validate:false) ) {
             log.warn '{}', errorsMsg(recordCollection, messageSource)
         }
         recordCollection
@@ -53,6 +54,17 @@ class RecordCollectionGormService implements GormErrorsMessage {
     @Transactional
     void delete(Serializable id) {
         RecordCollectionGormEntity.get(id).delete()
+    }
+
+    @Transactional
+    void deleteByDatasetName(String datasetName) {
+        queryByDatasetName(datasetName).get().delete()
+    }
+
+    DetachedCriteria<RecordCollectionGormEntity> queryByDatasetName(String name) {
+        RecordCollectionGormEntity.where {
+            datasetName == name
+        }
     }
 
     @ReadOnly

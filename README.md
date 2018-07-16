@@ -90,4 +90,24 @@ To run the unit tests:
 
 To run the integration tests:
 
-`./gradlew -DJDBC_DRIVER=com.mysql.jdbc.Driver -DJDBC_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect -DJDBC_CONNECTION_STRING=jdbc:mysql://127.0.0.1:8889/metadatasentinel_dev -DJDBC_USERNAME=root -DJDBC_PASSWORD=root iT`
+`./gradlew -DJDBC_DRIVER=com.mysql.jdbc.Driver -DJDBC_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect -DJDBC_CONNECTION_STRING=jdbc:mysql://127.0.0.1:8889/metadatasentinel_dev -DJDBC_USERNAME=root -DJDBC_PASSWORD=root -Dgeb.env=chromeHeadless -Ddownload.folder=/Users/sdelamo/Downloads iT`
+
+To work comfortably in development you can create a `runTest.sh` script as illustrated with the values matching your system:  
+
+````
+#!/bin/bash
+set -e
+
+export EXIT_STATUS=0
+
+./gradlew -Dgrails.env=test test || EXIT_STATUS=$?
+
+if [[ $EXIT_STATUS -ne 0 ]]; then
+    echo "Unit Tests Failed" 
+    exit $EXIT_STATUS
+fi
+
+./gradlew -Dgrails.env=test -DJDBC_DIALECT=org.hibernate.dialect.MySQL5InnoDBDialect -DJDBC_USERNAME=root -DJDBC_DRIVER=com.mysql.jdbc.Driver  -DJDBC_PASSWORD=root -DJDBC_CONNECTION_STRING=jdbc:mysql://127.0.0.1:8889/metadatasentinel_test -Dgeb.env=chromeHeadless -Ddownload.folder=/Users/sdelamo/Downloads iT || EXIT_STATUS=$?
+
+exit $EXIT_STATUS
+````

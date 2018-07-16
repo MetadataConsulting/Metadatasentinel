@@ -9,6 +9,7 @@ class RecordCollectionIndexPage extends Page {
 
     static content = {
         importFileLink { $('#importfile-link') }
+        rows(required: false) { $('table tbody tr').moduleList(RecordCollectionRowModule) }
     }
 
     void importFile() {

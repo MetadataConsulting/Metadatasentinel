@@ -32,7 +32,7 @@ class CsvImportServiceIntegrationSpec extends Specification {
         expectedNumberOfRows
 
         when:
-        csvImportService.save(f.newInputStream(), 50)
+        csvImportService.save(f.newInputStream(), "DIDS_XMLExample_20", 50)
 
         then:
         recordCollectionGormService.count() == old(recordCollectionGormService.count()) + 1
@@ -41,6 +41,9 @@ class CsvImportServiceIntegrationSpec extends Specification {
             assert recordGormService.count() == old(recordGormService.count()) + expectedNumberOfRows
             assert recordPortionGormService.count() == old(recordPortionGormService.count()) + (expectedNumberOfRows * numberOfItemsPerLine(filename))
         }
+
+        cleanup:
+        recordCollectionGormService.deleteByDatasetName("DIDS_XMLExample_20")
     }
 
     int numberOfItemsPerLine(String filename) {

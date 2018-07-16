@@ -20,8 +20,8 @@ class ExcelImportService implements CsvImport, Benchmark {
     
     @CompileDynamic
     @Override
-    void save(InputStream inputStream, Integer batchSize) {
-        RecordCollectionGormEntity recordCollection = recordCollectionGormService.save()
+    void save(InputStream inputStream, String datasetName,  Integer batchSize) {
+        RecordCollectionGormEntity recordCollection = recordCollectionGormService.save(datasetName)
 
         executorService.submit {
             log.info 'fetching validation rules'

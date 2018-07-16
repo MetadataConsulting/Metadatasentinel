@@ -86,6 +86,13 @@ class RecordGormService implements GormErrorsMessage {
     }
 
     @ReadOnly
+    List<RecordGormEntity> findAllByRecordCollectionId(Long recordCollectionId ) {
+        DetachedCriteria<RecordGormEntity> query = queryByRecordCollectionId(recordCollectionId)
+        return query as List<RecordGormEntity>
+
+    }
+
+    @ReadOnly
     RecordGormEntity findById(Long recordId, List<String> joinProperties = null) {
         DetachedCriteria<RecordGormEntity> query = queryById(recordId)
         if ( joinProperties ) {
@@ -103,5 +110,20 @@ class RecordGormService implements GormErrorsMessage {
     @ReadOnly
     Number count() {
         RecordGormEntity.count()
+    }
+
+    @ReadOnly
+    List<RecordGormEntity> findAllByIds(List<Long> ids, List<String> propertiesToJoin = ['portions']) {
+        DetachedCriteria<RecordGormEntity> query = queryAllByIds(ids)
+        if ( propertiesToJoin ) {
+            for ( String propertyName : propertiesToJoin ) {
+                query.join('portions')
+            }
+        }
+        query.list()
+    }
+
+    DetachedCriteria<RecordGormEntity> queryAllByIds(List<Long> ids) {
+        RecordGormEntity.where { id in ids }
     }
 }

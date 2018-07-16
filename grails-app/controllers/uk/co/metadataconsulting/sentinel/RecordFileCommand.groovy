@@ -8,8 +8,10 @@ import org.springframework.web.multipart.MultipartFile
 class RecordFileCommand implements Validateable {
     MultipartFile csvFile
     Integer batchSize = 100
+    String datasetName
 
     static constraints = {
+        datasetName nullable: false, blank: false
         batchSize nullable: false
         csvFile  validator: { MultipartFile val, RecordFileCommand obj ->
             if ( val == null ) {

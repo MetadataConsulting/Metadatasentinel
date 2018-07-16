@@ -1,14 +1,32 @@
 package uk.co.metadataconsulting.sentinel
 
+import builders.dsl.spreadsheet.api.Color
+import builders.dsl.spreadsheet.builder.api.SpreadsheetBuilder
+import builders.dsl.spreadsheet.builder.poi.PoiSpreadsheetBuilder
 import grails.config.Config
 import grails.core.support.GrailsConfigurationAware
+import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.apache.poi.ss.usermodel.BorderStyle
 import org.springframework.context.MessageSource
+import uk.co.metadataconsulting.sentinel.export.CsvExportService
+import uk.co.metadataconsulting.sentinel.export.ExcelExportService
+import uk.co.metadataconsulting.sentinel.export.ExcelSheet
+import uk.co.metadataconsulting.sentinel.export.ExportFormat
+import uk.co.metadataconsulting.sentinel.export.ExportRecordCollectionCommand
+import uk.co.metadataconsulting.sentinel.export.ExportService
+import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportRowView
+import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportService
+import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportView
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 
-@Slf4j
+import javax.servlet.ServletOutputStream
+
+import static org.springframework.http.HttpStatus.OK
+
 @CompileStatic
+@Slf4j
 class RecordCollectionController implements ValidateableErrorsMessage, GrailsConfigurationAware {
 
     static allowedMethods = [
@@ -20,6 +38,7 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
             headersMapping: 'GET',
             cloneMapping: 'GET',
             cloneSave: 'POST',
+            export: 'GET'
     ]
 
     MessageSource messageSource
@@ -27,6 +46,8 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
     CsvImportService csvImportService
 
     RecordCollectionGormService recordCollectionGormService
+
+    RecordGormService recordGormService
 
     RecordCollectionService recordCollectionService
 
@@ -36,11 +57,21 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
 
     RuleFetcherService ruleFetcherService
 
+    RecordCollectionExportService recordCollectionExportService
+
+    ExportService exportService
+
+    CsvExportService csvExportService
+
+    ExcelExportService excelExportService
+
     int defaultPaginationMax = 25
     int defaultPaginationOffset = 0
+    String separator
 
     @Override
     void setConfiguration(Config co) {
+        separator = co.getProperty('export.csv.separator', String, ',')
         defaultPaginationMax = co.getProperty('sentinel.pagination.max', Integer, 25)
         defaultPaginationOffset = co.getProperty('sentinel.pagination.offset', Integer, 0)
     }
@@ -66,6 +97,44 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
                 paginationQuery: paginationQuery,
                 recordCollectionTotal: recordCollectionListTotal,
         ]
+    }
+
+
+    def export(ExportRecordCollectionCommand cmd) {
+
+        if ( cmd.hasErrors() ) {
+            redirect(controller: 'recordCollection', action: 'index')
+            return
+        }
+
+        RecordCollectionGormEntity collectionGormEntity = recordCollectionGormService.find(cmd.recordCollectionId)
+        if ( !collectionGormEntity ) {
+            redirect(controller: 'recordCollection', action: 'index')
+            return
+        }
+
+        RecordCorrectnessDropdown recordCorrectnessDropdown = RecordCorrectnessDropdown.ALL
+        RecordCollectionExportView view = recordCollectionExportService.export(cmd.recordCollectionId, recordCorrectnessDropdown)
+
+        response.status = OK.value()
+        final String filename = "${collectionGormEntity.datasetName}.${exportService.fileExtensionForFormat(cmd.format)}"
+        response.setHeader "Content-disposition", "attachment; filename=${filename}"
+        response.contentType = exportService.mimeTypeForFormat(cmd.format)
+
+        ServletOutputStream outs = response.outputStream
+        switch (cmd.format) {
+            case ExportFormat.CSV:
+                csvExportService.export(outs, view)
+                break
+            case ExportFormat.XLSX_COMPACT:
+            case ExportFormat.XLSX:
+                excelExportService.export(outs, view, cmd.format, request.locale)
+                break
+        }
+
+
+        outs.flush()
+        outs.close()
     }
 
     def importCsv() {
@@ -98,8 +167,9 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         log.debug 'Content Type {}', cmd.csvFile.contentType
         InputStream inputStream = cmd.csvFile.inputStream
         Integer batchSize = cmd.batchSize
+        String datasetName = cmd.datasetName
         CsvImport importService = csvImportByContentType (ImportContentType.of(cmd.csvFile.contentType))
-        importService.save(inputStream, batchSize)
+        importService.save(inputStream, datasetName, batchSize)
 
         redirect controller: 'recordCollection', action: 'index'
     }
@@ -121,9 +191,9 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         List dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
         if ( !dataModelList ) {
             flash.error = messageSource.getMessage('dataModel.couldNotLoad', [] as Object[], 'Could not load data Models', request.locale)
-        }  
+        }
         [
-                dataModelList: dataModelList, 
+                dataModelList: dataModelList,
                 recordCollectionId: recordCollectionId,
                 recordPortionMappingList: recordCollectionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
         ]
