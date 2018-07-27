@@ -1,15 +1,23 @@
 package uk.co.metadataconsulting.sentinel
 
+import grails.config.Config
+import grails.core.support.GrailsConfigurationAware
 import grails.util.Environment
 import groovy.transform.CompileStatic
+import groovy.util.logging.Slf4j
+import okhttp3.HttpUrl
 
+@Slf4j
 @CompileStatic
 class BootStrap {
 
     CsvImportService csvImportService
+    MetadataServerService metadataServerService
 
     def init = { servletContext ->
         if (Environment.current == Environment.DEVELOPMENT) {
+            metadataServerService.logMetadataServerStatus()
+
             //loadOnStartup()
         }
     }
@@ -128,6 +136,4 @@ class BootStrap {
                     gormUrl: 'gorm://org.modelcatalogue.core.DataElement:77',
             ],
     ] as List<Map<String, String>>
-
-
 }
