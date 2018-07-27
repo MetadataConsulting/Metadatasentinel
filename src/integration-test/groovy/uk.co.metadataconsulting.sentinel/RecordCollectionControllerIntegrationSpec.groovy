@@ -3,22 +3,30 @@ package uk.co.metadataconsulting.sentinel
 import com.stehno.ersatz.ContentType
 import com.stehno.ersatz.Encoders
 import com.stehno.ersatz.ErsatzServer
+import geb.spock.GebSpec
 import grails.testing.mixin.integration.Integration
 import okhttp3.*
+import org.springframework.security.core.Authentication
+import spock.lang.IgnoreIf
 import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
+import uk.co.metadataconsulting.sentinel.geb.LoginPage
+import uk.co.metadataconsulting.sentinel.geb.RecordCollectionIndexPage
+import uk.co.metadataconsulting.sentinel.geb.RecordCollectionShowPage
+import uk.co.metadataconsulting.sentinel.security.MdxAuthenticationProvider
 
 @Integration
-class RecordCollectionControllerIntegrationSpec extends Specification {
+class RecordCollectionControllerIntegrationSpec extends GebSpec implements LoginAs {
 
     RecordPortionMappingGormDataService recordPortionMappingGormDataService
     RecordCollectionGormService recordCollectionGormService
     RecordGormService recordGormService
     RuleFetcherService ruleFetcherService
+    MdxAuthenticationProvider mdxAuthenticationProvider
 
-    @Shared
-    OkHttpClient client = new OkHttpClient()
-
+    @Unroll
+    @IgnoreIf({ !sys['geb.env'] })
     def "validate rules from networks"() {
         given:
         final String gormUrl = 'gorm://org.modelcatalogue.core.DataElement:53'
@@ -46,8 +54,19 @@ class RecordCollectionControllerIntegrationSpec extends Specification {
                     ], ContentType.APPLICATION_JSON)
                 }
             }
+            get('/user/current') {
+                called 1
+                header("Accept", 'application/json')
+                header('Authorization', Credentials.basic('supervisor', 'supervisor'))
+                responder {
+                    encoder(ContentType.APPLICATION_JSON, Map, Encoders.json)
+                    code(200)
+                    content(successLogin(), ContentType.APPLICATION_JSON)
+                }
+            }
         }
         ruleFetcherService.metadataUrl = ersatz.httpUrl
+        mdxAuthenticationProvider.metadataUrl = ersatz.httpUrl
 
         when:
         RecordCollectionGormEntity recordCollection= recordCollectionGormService.save("Test")
@@ -75,19 +94,30 @@ class RecordCollectionControllerIntegrationSpec extends Specification {
         recordPortionMappingGormDataService.count() == old(recordPortionMappingGormDataService.count())
 
         when:
-        RequestBody requestBody = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("recordCollectionId", recordCollection.id as String)
-                .build()
-
-        Request request = new Request.Builder()
-                .url("http://localhost:${serverPort}/recordCollection/validate")
-                .post(requestBody)
-                .build()
-        Response response = client.newCall(request).execute()
+        via RecordCollectionIndexPage
 
         then:
-        response.isSuccessful()
+        at LoginPage
+
+        when:
+        LoginPage loginPage = browser.page LoginPage
+        loginPage.login('supervisor', 'supervisor')
+
+        then:
+        at RecordCollectionIndexPage
+
+        when:
+        browser.to RecordCollectionShowPage, recordCollection.id
+
+        then:
+        at RecordCollectionShowPage
+
+        when:
+        RecordCollectionShowPage recordCollectionShowPage = browser.page(RecordCollectionShowPage)
+        recordCollectionShowPage.validate()
+
+        then:
+        recordCollectionShowPage.alertInfo().contains('Record Collection validation triggered')
 
         when:
         RecordGormEntity recordGormEntity = recordGormService.findById(validRecord.id, ['portions'])

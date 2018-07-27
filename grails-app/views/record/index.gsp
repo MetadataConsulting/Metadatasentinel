@@ -10,6 +10,7 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
     <g:render template="/templates/navbarBrand"/>
+    <g:render template="/templates/logout"/>
     <div class=""collapse navbar-collapse  justify-content-end" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto" >
 

@@ -3,6 +3,7 @@ package uk.co.metadataconsulting.sentinel
 import com.stehno.ersatz.ContentType
 import com.stehno.ersatz.Encoders
 import com.stehno.ersatz.ErsatzServer
+import geb.spock.GebSpec
 import grails.testing.mixin.integration.Integration
 import okhttp3.Credentials
 import okhttp3.HttpUrl
@@ -11,21 +12,26 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
+import spock.lang.IgnoreIf
 import spock.lang.Shared
 import spock.lang.Specification
+import uk.co.metadataconsulting.sentinel.geb.LoginPage
+import uk.co.metadataconsulting.sentinel.geb.RecordCollectionIndexPage
+import uk.co.metadataconsulting.sentinel.geb.RecordCollectionShowPage
+import uk.co.metadataconsulting.sentinel.geb.RecordShowPage
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
+import uk.co.metadataconsulting.sentinel.security.MdxAuthenticationProvider
 
 @Integration
-class RecordControllerIntegrationSpec extends Specification {
+class RecordControllerIntegrationSpec extends GebSpec implements LoginAs {
 
     RecordPortionMappingGormDataService recordPortionMappingGormDataService
     RecordCollectionGormService recordCollectionGormService
     RecordGormService recordGormService
     RuleFetcherService ruleFetcherService
+    MdxAuthenticationProvider mdxAuthenticationProvider
 
-    @Shared
-    OkHttpClient client = new OkHttpClient()
-
+    @IgnoreIf({ !sys['geb.env'] })
     def "validate rules from networks"() {
         given:
         final String gormUrl = 'gorm://org.modelcatalogue.core.DataElement:53'
@@ -53,8 +59,19 @@ class RecordControllerIntegrationSpec extends Specification {
                     ], ContentType.APPLICATION_JSON)
                 }
             }
+            get('/user/current') {
+                called 1
+                header("Accept", 'application/json')
+                header('Authorization', Credentials.basic('supervisor', 'supervisor'))
+                responder {
+                    encoder(ContentType.APPLICATION_JSON, Map, Encoders.json)
+                    code(200)
+                    content(successLogin(), ContentType.APPLICATION_JSON)
+                }
+            }
         }
         ruleFetcherService.metadataUrl = ersatz.httpUrl
+        mdxAuthenticationProvider.metadataUrl = ersatz.httpUrl
 
         when:
         RecordCollectionGormEntity recordCollection= recordCollectionGormService.save("Test")
@@ -82,45 +99,63 @@ class RecordControllerIntegrationSpec extends Specification {
         recordPortionMappingGormDataService.count() == old(recordPortionMappingGormDataService.count())
 
         when:
-        RequestBody requestBody = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("recordId", validRecord.id as String)
-                .addFormDataPart("recordCollectionId", recordCollection.id as String)
-                .build()
-
-        Request request = new Request.Builder()
-                .url("http://localhost:${serverPort}/record/validate")
-                .post(requestBody)
-                .build()
-        Response response = client.newCall(request).execute()
-
-        then:
-        response.isSuccessful()
-
-        when:
         RecordGormEntity recordGormEntity = recordGormService.findById(validRecord.id, ['portions'])
 
         then:
         recordGormEntity
         recordGormEntity.portions.each { RecordPortionGormEntity recordPortionGormEntity ->
+            assert recordPortionGormEntity.status == ValidationStatus.NOT_VALIDATED
+        }
+
+        when:
+        via RecordCollectionIndexPage
+
+        then:
+        at LoginPage
+
+        when:
+        LoginPage loginPage = browser.page LoginPage
+        loginPage.login('supervisor', 'supervisor')
+
+        then:
+        at RecordCollectionIndexPage
+
+        when:
+        browser.to RecordShowPage, recordCollection.id, validRecord.id
+
+        then:
+        at RecordShowPage
+
+        when:
+        RecordShowPage recordShowPage = browser.page(RecordShowPage)
+        recordShowPage.validate()
+        recordGormEntity = recordGormService.findById(validRecord.id, ['portions'])
+
+        then:
+        recordGormEntity.portions.each { RecordPortionGormEntity recordPortionGormEntity ->
             assert recordPortionGormEntity.status == ValidationStatus.VALID
         }
 
         when:
-        requestBody = new MultipartBody.Builder()
-                .setType(MultipartBody.FORM)
-                .addFormDataPart("recordId", invalidRecord.id as String)
-                .addFormDataPart("recordCollectionId", recordCollection.id as String)
-                .build()
-
-        request = new Request.Builder()
-                .url("http://localhost:${serverPort}/record/validate")
-                .post(requestBody)
-                .build()
-        response = client.newCall(request).execute()
+        recordGormEntity = recordGormService.findById(invalidRecord.id, ['portions'])
 
         then:
-        response.isSuccessful()
+        recordGormEntity.portions.each { RecordPortionGormEntity recordPortionGormEntity ->
+            assert recordPortionGormEntity.status == ValidationStatus.NOT_VALIDATED
+        }
+
+        when:
+        browser.to RecordShowPage, recordCollection.id, invalidRecord.id
+
+        then:
+        at RecordShowPage
+
+        when:
+        recordShowPage = browser.page(RecordShowPage)
+        recordShowPage.validate()
+
+        then:
+        noExceptionThrown()
 
         when:
         recordGormEntity = recordGormService.findById(invalidRecord.id, ['portions'])

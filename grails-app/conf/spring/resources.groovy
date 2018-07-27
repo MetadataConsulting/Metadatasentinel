@@ -1,3 +1,5 @@
-// Place your Spring DSL code here
+import uk.co.metadataconsulting.sentinel.security.MdxAuthenticationProvider
+
 beans = {
+    mdxAuthenticationProvider(MdxAuthenticationProvider)
 }

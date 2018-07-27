@@ -36,3 +36,5 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
 root(ERROR, ['STDOUT'])
 logger('uk.co.metadataconsulting.sentinel', DEBUG, ['STDOUT'], false)
 logger('metadata', DEBUG, ['STDOUT'], false)
+//logger 'org.springframework.security', TRACE, ['STDOUT'], false
+//logger 'grails.plugin.springsecurity', TRACE, ['STDOUT'], false

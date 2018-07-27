@@ -5,8 +5,9 @@
     <meta name="layout" content="main" />
 </head>
 <body>
-<nav class="navbar navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
     <g:render template="/templates/navbarBrand"/>
+    <g:render template="/templates/logout"/>
     <g:form controller="record" action="validate" method="POST">
         <g:hiddenField name="recordId" value="${recordId}"/>
         <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>

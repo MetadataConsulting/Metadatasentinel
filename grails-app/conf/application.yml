@@ -87,7 +87,151 @@ grails:
 endpoints:
     jmx:
         unique-names: true
-
+---
+grails:
+    plugin:
+        springsecurity:
+            providerNames:
+                - 'mdxAuthenticationProvider'
+                - 'anonymousAuthenticationProvider'
+            securityConfigType: InterceptUrlMap
+            interceptUrlMap:
+                -
+                    pattern: /
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /error
+                    access:
+                        - permitAll
+                -
+                    pattern: /index
+                    access:
+                        - permitAll
+                -
+                    pattern: /index.gsp
+                    access:
+                        - permitAll
+                -
+                    pattern: /shutdown
+                    access:
+                        - permitAll
+                -
+                    pattern: /assets/**
+                    access:
+                        - permitAll
+                -
+                    pattern: /**/js/**
+                    access:
+                        - permitAll
+                -
+                    pattern: /**/css/**
+                    access:
+                        - permitAll
+                -
+                    pattern: /**/images/**
+                    access:
+                        - permitAll
+                -
+                    pattern: /**/favicon.ico
+                    access:
+                        - permitAll
+                -
+                    pattern: /login/**
+                    access:
+                       - 'permitAll'
+                -
+                    pattern: /logout/**
+                    access:
+                       - 'permitAll'
+                -
+                    pattern: '/logout/**'
+                    access:
+                       - 'permitAll'
+                -
+                    pattern: /recordCollection/cloneMapping
+                    access:
+                       - 'isAuthenticated()'
+                -
+                    pattern: /recordCollection/cloneSave
+                    access:
+                       - 'isAuthenticated()'
+                    httpMethod: POST
+                -
+                    pattern: /recordCollection/validate
+                    access:
+                       - 'isAuthenticated()'
+                -
+                    pattern: /recordCollection/export
+                    access:
+                       - 'isAuthenticated()'
+                -
+                    pattern: /recordCollection/delete
+                    access:
+                       - 'isAuthenticated()'
+                    httpMethod: POST
+                -
+                    pattern: /recordCollection/*/mapping
+                    access:
+                       - 'isAuthenticated()'
+                -
+                    pattern: /recordCollectionMapping/catalogueElements/*
+                    access:
+                       - 'isAuthenticated()'
+                -
+                    pattern: /recordCollectionMapping/update
+                    access:
+                       - 'isAuthenticated()'
+                    httpMethod: POST
+                -
+                    pattern: /import
+                    access:
+                       - 'isAuthenticated()'
+                -
+                    pattern: /upload
+                    access:
+                       - 'isAuthenticated()'
+                -
+                    pattern: /records/*
+                    access:
+                       - 'isAuthenticated()'
+                -
+                    pattern: /record/index
+                    access:
+                       - 'isAuthenticated()'
+                -
+                    pattern: /record/*
+                    access:
+                       - 'isAuthenticated()'
+                -
+                    pattern: /record/validate
+                    access:
+                       - 'isAuthenticated()'
+                    httpMethod: POST
+                -
+                    pattern: /records/*/*
+                    access:
+                       - 'isAuthenticated()'
+            filterChain:
+                chainMap:
+                   -
+                       pattern: /assets/**
+                       filters: none
+                   -
+                       pattern: /**/js/**
+                       filters: none
+                   -
+                       pattern: /**/css/**
+                       filters: none
+                   -
+                       pattern: /**/images/**
+                       filters: none
+                   -
+                       pattern: /**/favicon.ico
+                       filters: none
+                   -
+                       pattern: /**
+                       filters: JOINED_FILTERS
 ---
 hibernate:
     cache:

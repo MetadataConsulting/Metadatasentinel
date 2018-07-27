@@ -1,5 +1,6 @@
 package uk.co.metadataconsulting.sentinel
 
+import grails.util.Environment
 import groovy.transform.CompileStatic
 
 @CompileStatic
@@ -8,7 +9,9 @@ class BootStrap {
     CsvImportService csvImportService
 
     def init = { servletContext ->
-        //loadOnStartup()
+        if (Environment.current == Environment.DEVELOPMENT) {
+            //loadOnStartup()
+        }
     }
     def destroy = {
     }
@@ -23,7 +26,7 @@ class BootStrap {
 
     List<String> mappingGormUrl() {
         MAPPING.collect { Map m ->
-            m.gormUrl
+            m.gormUrl as String
         }
     }
 

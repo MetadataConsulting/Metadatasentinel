@@ -33,7 +33,7 @@ class RuleFetcherService implements GrailsConfigurationAware {
     void setConfiguration(Config co) {
         metadataUrl = co.getProperty('metadata.url', String)
         if ( !metadataUrl || metadataUrl == '${METADATA_URL}') {
-            metadataUrl == 'localhost:8080'
+            metadataUrl = 'localhost:8080'
         }
         metadataUsername = co.getProperty('metadata.username', String)
         if ( !metadataUsername || metadataUsername == '${METADATA_USERNAME}') {

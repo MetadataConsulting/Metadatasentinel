@@ -4,11 +4,17 @@
     <meta name="layout" content="main" />
 </head>
 <body>
-<nav class="navbar navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
     <g:render template="/templates/navbarBrand"/>
-    <g:link id="importfile-link" controller="recordCollection" action="importCsv" class="btn btn-primary">
-        <g:message code="recordCollection.import" default="Import File"/>
-    </g:link>
+    <g:render template="/templates/logout"/>
+    <div class="row justify-content-end">
+        <div style="padding: 10px;">
+            <g:link id="importfile-link" controller="recordCollection" action="importCsv" class="btn btn-primary">
+                <g:message code="recordCollection.import" default="Import File"/>
+            </g:link>
+        </div>
+    </div>
+
 </nav>
 <g:render template="/templates/flashmessage"/>
 <g:render template="/templates/flasherror"/>

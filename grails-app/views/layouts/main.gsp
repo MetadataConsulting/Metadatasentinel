@@ -13,7 +13,7 @@
 <body>
 <g:layoutBody/>
 <footer>
-    <asset:image src="mdc.png" alt="Metadata Consulting"/>
+    <a href="https://metadataconsulting.co.uk"><asset:image src="mdc.png" alt="Metadata Consulting"/></a>
 </footer>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->

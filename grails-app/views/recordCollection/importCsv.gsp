@@ -8,8 +8,9 @@
     </style>
 </head>
 <body>
-<nav class="navbar navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
     <g:render template="/templates/navbarBrand"/>
+    <g:render template="/templates/logout"/>
 </nav>
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
