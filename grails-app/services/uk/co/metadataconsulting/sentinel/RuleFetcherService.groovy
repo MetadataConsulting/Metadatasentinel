@@ -45,7 +45,7 @@ class RuleFetcherService implements GrailsConfigurationAware {
     void setConfiguration(Config co) {
         metadataUrl = co.getProperty('metadata.url', String)
         if ( !metadataUrl || metadataUrl == '${METADATA_URL}') {
-            metadataUrl = 'localhost:8080'
+            metadataUrl = 'http://localhost:8080'
         }
     }
 
