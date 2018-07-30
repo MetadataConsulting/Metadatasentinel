@@ -279,5 +279,3 @@ environments:
 ---
 metadata:
     url: '${METADATA_URL}'
-    username: '${METADATA_USERNAME}'
-    apiKey: '${METADATA_APIKEY}'

@@ -60,15 +60,13 @@ This project is a [Grails 3](http://grails.org) application.
 
 ## Configuration 
 
-You can configure the MDX server URL and credentials using configuration parameters `metadata.url`, `metadata.username`, `metadata.apiKey`. 
+You can configure the MDX server URL  using configuration parameter `metadata.url` 
 
 Add to `grails-app/conf/application.yml`
 
 ```
 metadata:
     url: http://localhost:8080
-    username: john
-    apiKey: X151ABBVC
 ```
 
 ### Persistence

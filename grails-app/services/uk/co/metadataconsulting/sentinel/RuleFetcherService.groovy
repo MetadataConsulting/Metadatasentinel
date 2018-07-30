@@ -4,6 +4,7 @@ import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
 import grails.config.Config
 import grails.core.support.GrailsConfigurationAware
+import grails.plugin.springsecurity.SpringSecurityService
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import okhttp3.Credentials
@@ -14,6 +15,7 @@ import okhttp3.Response
 import uk.co.metadataconsulting.sentinel.modelcatalogue.CatalogueElements
 import uk.co.metadataconsulting.sentinel.modelcatalogue.DataModels
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
+import uk.co.metadataconsulting.sentinel.security.MdxUserDetails
 
 @Slf4j
 @CompileStatic
@@ -25,9 +27,19 @@ class RuleFetcherService implements GrailsConfigurationAware {
     private final JsonAdapter<CatalogueElements> catalogueElementsJsonAdapter = moshi.adapter(CatalogueElements.class)
     private final JsonAdapter<DataModels> dataModelsJsonAdapter = moshi.adapter(DataModels.class)
 
+    SpringSecurityService springSecurityService
+
     String metadataUrl
     String metadataUsername
     String metadataApiKey
+
+    private String basic() {
+        if (springSecurityService.principal instanceof MdxUserDetails) {
+            MdxUserDetails mdxUserDetails = (MdxUserDetails) springSecurityService.principal
+            return Credentials.basic(mdxUserDetails.username, mdxUserDetails.password)
+        }
+        null
+    }
 
     @Override
     void setConfiguration(Config co) {
@@ -35,19 +47,11 @@ class RuleFetcherService implements GrailsConfigurationAware {
         if ( !metadataUrl || metadataUrl == '${METADATA_URL}') {
             metadataUrl = 'localhost:8080'
         }
-        metadataUsername = co.getProperty('metadata.username', String)
-        if ( !metadataUsername || metadataUsername == '${METADATA_USERNAME}') {
-            metadataUsername == 'admin'
-        }
-        metadataApiKey = co.getProperty('metadata.apiKey', String)
-        if ( !metadataApiKey || metadataApiKey == '${METADATA_APIKEY}') {
-            metadataApiKey == '123456'
-        }
     }
 
     DataModels fetchDataModels() {
         final String url = "${metadataUrl}/api/dashboard/dataModels".toString()
-        String credential = Credentials.basic(metadataUsername, metadataApiKey)
+        final String credential = basic()
         HttpUrl.Builder httpBuider = HttpUrl.parse(url).newBuilder()
         Request request = new Request.Builder()
                 .url(httpBuider.build())
@@ -72,7 +76,7 @@ class RuleFetcherService implements GrailsConfigurationAware {
 
     CatalogueElements fetchCatalogueElements(Long dataModelId) {
         final String url = "${metadataUrl}/api/dashboard/${dataModelId}/catalogueElements".toString()
-        String credential = Credentials.basic(metadataUsername, metadataApiKey)
+        final String credential = basic()
         HttpUrl.Builder httpBuider = HttpUrl.parse(url).newBuilder()
         Request request = new Request.Builder()
                 .url(httpBuider.build())
@@ -98,8 +102,7 @@ class RuleFetcherService implements GrailsConfigurationAware {
     ValidationRules fetchValidationRules(String gormUrl) {
 
         final String url = "${metadataUrl}/api/modelCatalogue/core/validationRule/rules?gormUrl=${gormUrl}".toString()
-
-        String credential = Credentials.basic(metadataUsername, metadataApiKey)
+        final String credential = basic()
         HttpUrl.Builder httpBuider = HttpUrl.parse(url).newBuilder()
         Request request = new Request.Builder()
                 .url(httpBuider.build())
