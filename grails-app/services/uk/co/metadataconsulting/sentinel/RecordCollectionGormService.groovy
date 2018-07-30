@@ -6,6 +6,7 @@ import grails.gorm.transactions.Transactional
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.springframework.context.MessageSource
+import uk.co.metadataconsulting.sentinel.modelcatalogue.DataModel
 
 @Slf4j
 @CompileStatic
@@ -45,10 +46,15 @@ class RecordCollectionGormService implements GormErrorsMessage {
     RecordCollectionGormEntity save(String datasetName) {
         RecordCollectionGormEntity recordCollection = new RecordCollectionGormEntity()
         recordCollection.datasetName = datasetName
-        if ( !recordCollection.save(validate:false) ) {
-            log.warn '{}', errorsMsg(recordCollection, messageSource)
+        save(recordCollection)
+    }
+
+    @Transactional
+    RecordCollectionGormEntity save(RecordCollectionGormEntity entity) {
+        if ( !entity.save(validate:false) ) {
+            log.warn '{}', errorsMsg(entity, messageSource)
         }
-        recordCollection
+        entity
     }
 
     @ReadOnly
@@ -82,5 +88,18 @@ class RecordCollectionGormService implements GormErrorsMessage {
 
     DetachedCriteria<RecordCollectionGormEntity> queryAllInIds(Collection<Long> ids) {
         RecordCollectionGormEntity.where { id in ids }
+    }
+
+    @Transactional
+    RecordCollectionGormEntity associateWithDataModel(Long recordCollectionId, DataModel dataModel) {
+        RecordCollectionGormEntity entity = find(recordCollectionId)
+        if (entity) {
+            entity.with {
+                dataModelId = dataModel.id
+                dataModelName = dataModel.name
+            }
+            return save(entity)
+        }
+        null
     }
 }

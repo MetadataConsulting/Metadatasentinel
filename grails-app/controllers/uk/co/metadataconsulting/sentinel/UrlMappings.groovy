@@ -10,6 +10,8 @@ class UrlMappings {
         "/recordCollection/export"(controller: 'recordCollection', action: 'export')
         "/recordCollection/delete"(controller: 'recordCollection', action: 'delete', httpMethod: 'POST')
         "/recordCollection/$recordCollectionId/mapping"(controller: 'recordCollection', action: 'headersMapping')
+        "/recordCollection/edit"(controller: 'recordCollection', action: 'edit')
+        "/recordCollection/update"(controller: 'recordCollection', action: 'update')
         "/recordCollectionMapping/catalogueElements/$dataModelId"(controller: 'recordCollectionMapping', action: 'catalogueElements')
         "/recordCollectionMapping/update"(controller: 'recordCollectionMapping', action: 'update', httpMethod: 'POST')
         "/import"(controller: 'recordCollection', action: 'importCsv')

@@ -139,79 +139,88 @@ grails:
                 -
                     pattern: /login/**
                     access:
-                       - 'permitAll'
+                        - 'permitAll'
                 -
                     pattern: /logout/**
                     access:
-                       - 'permitAll'
+                        - 'permitAll'
                 -
                     pattern: '/logout/**'
                     access:
-                       - 'permitAll'
+                        - 'permitAll'
                 -
                     pattern: /recordCollection/cloneMapping
                     access:
-                       - 'isAuthenticated()'
+                        - 'isAuthenticated()'
+                -
+                    pattern: /recordCollection/edit
+                    access:
+                        - 'isAuthenticated()'
+                -
+                  pattern: /recordCollection/update
+                  access:
+                      - 'isAuthenticated()'
+                  httpMethod: POST
                 -
                     pattern: /recordCollection/cloneSave
                     access:
-                       - 'isAuthenticated()'
+                        - 'isAuthenticated()'
                     httpMethod: POST
                 -
                     pattern: /recordCollection/validate
                     access:
-                       - 'isAuthenticated()'
+                        - 'isAuthenticated()'
                 -
                     pattern: /recordCollection/export
                     access:
-                       - 'isAuthenticated()'
+                        - 'isAuthenticated()'
                 -
                     pattern: /recordCollection/delete
                     access:
-                       - 'isAuthenticated()'
+                        - 'isAuthenticated()'
                     httpMethod: POST
                 -
                     pattern: /recordCollection/*/mapping
                     access:
-                       - 'isAuthenticated()'
+                        - 'isAuthenticated()'
                 -
                     pattern: /recordCollectionMapping/catalogueElements/*
                     access:
-                       - 'isAuthenticated()'
+                        - 'isAuthenticated()'
                 -
                     pattern: /recordCollectionMapping/update
                     access:
-                       - 'isAuthenticated()'
+                        - 'isAuthenticated()'
                     httpMethod: POST
                 -
                     pattern: /import
                     access:
-                       - 'isAuthenticated()'
+                        - 'isAuthenticated()'
                 -
                     pattern: /upload
                     access:
-                       - 'isAuthenticated()'
+                        - 'isAuthenticated()'
                 -
                     pattern: /records/*
                     access:
-                       - 'isAuthenticated()'
+                        - 'isAuthenticated()'
                 -
                     pattern: /record/index
                     access:
-                       - 'isAuthenticated()'
+                        - 'isAuthenticated()'
                 -
                     pattern: /record/*
                     access:
-                       - 'isAuthenticated()'
+                        - 'isAuthenticated()'
                 -
                     pattern: /record/validate
                     access:
-                       - 'isAuthenticated()'
+                        - 'isAuthenticated()'
                     httpMethod: POST
                 -
                     pattern: /records/*/*
                     access:
-                       - 'isAuthenticated()'
+                        - 'isAuthenticated()'
             filterChain:
                 chainMap:
                    -

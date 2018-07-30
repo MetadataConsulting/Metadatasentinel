@@ -19,6 +19,22 @@ class RecordCollectionGormEntityConstraintsSpec extends Specification implements
         !domain.validate(['datasetName'])
     }
 
+    void 'verify dataModelName can be null'() {
+        when:
+        domain.dataModelName = null
+
+        then:
+        domain.validate(['dataModelName'])
+    }
+
+    void 'verify dataModelId can be null'() {
+        when:
+        domain.dataModelId = null
+
+        then:
+        domain.validate(['dataModelId'])
+    }
+
     void 'verify createdBy can be null'() {
         when:
         domain.createdBy = null

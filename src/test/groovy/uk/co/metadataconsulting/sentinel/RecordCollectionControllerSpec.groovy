@@ -33,6 +33,40 @@ class RecordCollectionControllerSpec extends Specification implements Controller
         model.containsKey('toRecordCollectionId')
     }
 
+    def "RecordCollectionController.edit model contains recordCollectionId"() {
+        given:
+        controller.ruleFetcherService = Mock(RuleFetcherService)
+        controller.recordCollectionGormService = Stub(RecordCollectionGormService) {
+            find(_) >> new RecordCollectionGormEntity()
+        }
+
+        when:
+        params.recordCollectionId = 1
+        request.method = 'GET'
+        Map model = controller.edit()
+
+        then:
+        response.status == SC_OK
+        model.containsKey('recordCollectionId')
+    }
+
+    def "RecordCollectionController.edit model contains dataModelList"() {
+        given:
+        controller.ruleFetcherService = Mock(RuleFetcherService)
+        controller.recordCollectionGormService = Stub(RecordCollectionGormService) {
+            find(_) >> new RecordCollectionGormEntity()
+        }
+
+        when:
+        params.recordCollectionId = 1
+        request.method = 'GET'
+        Map model = controller.edit()
+
+        then:
+        response.status == SC_OK
+        model.containsKey('dataModelList')
+    }
+
     def "RecordCollectionController.cloneMapping model contains recordCollectionList"() {
         given:
         controller.recordCollectionGormService = Mock(RecordCollectionGormService)

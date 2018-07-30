@@ -25,6 +25,43 @@ class RecordCollectionControllerAllowedMethodsSpec extends Specification impleme
         method << ['PATCH', 'DELETE', 'POST', 'PUT']
     }
 
+    @Unroll
+    def "test RecordCollectionController.edit does not accept #method requests"(String method) {
+        when:
+        request.method = method
+        controller.edit()
+
+        then:
+        response.status == SC_METHOD_NOT_ALLOWED
+
+        where:
+        method << ['PATCH', 'DELETE', 'POST', 'PUT']
+    }
+
+    @Unroll
+    def "test RecordCollectionController.update does not accept #method requests"(String method) {
+        when:
+        request.method = method
+        controller.update()
+
+        then:
+        response.status == SC_METHOD_NOT_ALLOWED
+
+        where:
+        method << ['PATCH', 'DELETE', 'GET', 'PUT']
+    }
+
+    def "test RecordCollectionController.update accepts POST requests"() {
+        when:
+        params.recordCollectionId = 1
+        params.dataModelId = 123
+        request.method = 'POST'
+        controller.update()
+
+        then:
+        response.status == SC_MOVED_TEMPORARILY
+    }
+
     def "test RecordCollectionController.export accepts GET requests"() {
         given:
         controller.recordCollectionExportService =  Stub(RecordCollectionExportService) {
@@ -39,6 +76,14 @@ class RecordCollectionControllerAllowedMethodsSpec extends Specification impleme
         response.status == SC_MOVED_TEMPORARILY
     }
 
+    def "test RecordCollectionController.edit accepts GET requests"() {
+        when:
+        request.method = 'GET'
+        controller.edit()
+
+        then:
+        response.status == SC_MOVED_TEMPORARILY
+    }
 
     @Unroll
     def "test RecordCollectionController.cloneSave does not accept #method requests"(String method) {

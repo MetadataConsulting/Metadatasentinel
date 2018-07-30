@@ -1,24 +1,19 @@
 package uk.co.metadataconsulting.sentinel
 
-import builders.dsl.spreadsheet.api.Color
-import builders.dsl.spreadsheet.builder.api.SpreadsheetBuilder
-import builders.dsl.spreadsheet.builder.poi.PoiSpreadsheetBuilder
+
 import grails.config.Config
 import grails.core.support.GrailsConfigurationAware
-import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.apache.poi.ss.usermodel.BorderStyle
 import org.springframework.context.MessageSource
 import uk.co.metadataconsulting.sentinel.export.CsvExportService
 import uk.co.metadataconsulting.sentinel.export.ExcelExportService
-import uk.co.metadataconsulting.sentinel.export.ExcelSheet
 import uk.co.metadataconsulting.sentinel.export.ExportFormat
 import uk.co.metadataconsulting.sentinel.export.ExportRecordCollectionCommand
 import uk.co.metadataconsulting.sentinel.export.ExportService
-import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportRowView
 import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportService
 import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportView
+import uk.co.metadataconsulting.sentinel.modelcatalogue.DataModel
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 
 import javax.servlet.ServletOutputStream
@@ -31,6 +26,7 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
 
     static allowedMethods = [
             index: 'GET',
+            edit: 'GET',
             importCsv: 'GET',
             uploadCsv: 'POST',
             validate: 'POST',
@@ -38,7 +34,8 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
             headersMapping: 'GET',
             cloneMapping: 'GET',
             cloneSave: 'POST',
-            export: 'GET'
+            export: 'GET',
+            update: 'POST'
     ]
 
     MessageSource messageSource
@@ -85,6 +82,30 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         indexModel(paginationQuery)
     }
 
+    def edit(EditRecordCollectionCommand cmd) {
+        if ( cmd.hasErrors() ) {
+            flash.error = errorsMsg(cmd, messageSource)
+            redirect action: 'index'
+            return
+        }
+        RecordCollectionGormEntity recordCollectionEntity = recordCollectionGormService.find(cmd.recordCollectionId)
+
+        if (!recordCollectionEntity) {
+            flash.error = messageSource.getMessage('recordCollection.notFound', [] as Object[], "Record collection not found", request.locale)
+            redirect action: 'index'
+            return
+        }
+
+        List<DataModel> dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
+        if ( !dataModelList ) {
+            flash.error = messageSource.getMessage('dataModel.couldNotLoad', [] as Object[], 'Could not load data Models', request.locale)
+        }
+        [
+                dataModelList: dataModelList,
+                recordCollectionId: cmd.recordCollectionId
+        ]
+    }
+
     protected PaginationQuery paginationQueryWithDefaultSettings() {
         new PaginationQuery(max: defaultPaginationMax, offset: defaultPaginationOffset)
     }
@@ -99,6 +120,18 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         ]
     }
 
+    def update(UpdateRecordCollectionCommand cmd) {
+        if ( cmd.hasErrors() ) {
+            redirect(controller: 'recordCollection', action: 'index')
+            return
+        }
+        List<DataModel> dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
+        DataModel dataModel = dataModelList.find { it.id == cmd.dataModelId }
+        recordCollectionGormService.associateWithDataModel(cmd.recordCollectionId, dataModel)
+        redirect controller: 'record',
+                action: 'index',
+                params: [recordCollectionId: cmd.recordCollectionId]
+    }
 
     def export(ExportRecordCollectionCommand cmd) {
 

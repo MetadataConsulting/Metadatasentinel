@@ -25,10 +25,12 @@
             <thead class="thead-dark">
             <tr>
                 <th><g:message code="recordCollection.datasetname" default="Dataset name"/></th>
+                <th><g:message code="recordCollection.dataModelName" default="Data Model name"/></th>
                 <th><g:message code="recordCollection.th.createdBy" default="Created By"/></th>
                 <th><g:message code="recordCollection.th.dateCreated" default="Date Created"/></th>
                 <th><g:message code="recordCollection.th.updatedBy" default="Updated By"/></th>
                 <th><g:message code="recordCollection.th.lastUpdated" default="Last Updated"/></th>
+                <th></th>
                 <th></th>
             </tr>
             </thead>
@@ -36,6 +38,7 @@
             <g:each var="recordCollection" in="${recordCollectionList}">
                 <tr>
                     <td><g:link controller="record" action="index" params="[recordCollectionId: recordCollection?.id]">${recordCollection.datasetName}</g:link></td>
+                    <td>${recordCollection.dataModelName}</td>
                     <td>${recordCollection.createdBy}</td>
                     <td>
                         <g:formatDate date="${recordCollection.dateCreated}" type="datetime" style="LONG" timeStyle="SHORT"/>
@@ -45,7 +48,13 @@
                         <g:formatDate date="${recordCollection.lastUpdated}" type="datetime" style="LONG" timeStyle="SHORT"/>
                     </td>
                     <td>
-                        <g:form controller="recordCollection" action="delete">
+                        <g:form controller="recordCollection" action="edit" method="GET">
+                            <g:hiddenField name="recordCollectionId" value="${recordCollection?.id}"/>
+                            <input type="submit" class="btn btn-default" value="${g.message(code: 'recordCollection.edit', default: 'Edit')}"/>
+                        </g:form>
+                    </td>
+                    <td>
+                    <g:form controller="recordCollection" action="delete">
                             <g:hiddenField name="recordCollectionId" value="${recordCollection?.id}"/>
                             <input type="submit" class="btn btn-danger" value="${g.message(code: 'recordCollection.delete', default: 'Delete')}"/>
                         </g:form>

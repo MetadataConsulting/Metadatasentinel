@@ -15,6 +15,10 @@ class RecordCollectionGormEntity {
 
     String updatedBy
 
+    String dataModelName
+
+    Long dataModelId
+
     static hasMany = [
             mappings: RecordCollectionMappingGormEntity,
             records: RecordGormEntity
@@ -26,6 +30,8 @@ class RecordCollectionGormEntity {
         datasetName nullable: false, blank: false
         createdBy nullable: true
         updatedBy nullable: true
+        dataModelId nullable: true
+        dataModelName nullable: true
     }
 
     static mapping = {
