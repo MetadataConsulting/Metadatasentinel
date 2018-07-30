@@ -7,6 +7,10 @@ class RecordGormEntity {
 
     Date dateCreated
 
+    String createdBy
+
+    String updatedBy
+
     static belongsTo = [recordCollection: RecordCollectionGormEntity]
 
     static hasMany = [portions: RecordPortionGormEntity]
@@ -14,5 +18,10 @@ class RecordGormEntity {
     static mapping = {
         table 'record'
         nullable: false
+    }
+
+    static constraints = {
+        createdBy nullable: true
+        updatedBy nullable: true
     }
 }

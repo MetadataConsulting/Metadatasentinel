@@ -19,6 +19,11 @@ class RecordCollectionGormService implements GormErrorsMessage {
     }
 
     @ReadOnly
+    RecordCollectionGormEntity findByDatasetName(String datasetName) {
+        queryByDatasetName(datasetName).get()
+    }
+
+    @ReadOnly
     List<RecordCollectionGormEntity> findAll(Map args) {
         RecordCollectionGormEntity.where {}.list(args)
     }
@@ -58,7 +63,7 @@ class RecordCollectionGormService implements GormErrorsMessage {
 
     @Transactional
     void deleteByDatasetName(String datasetName) {
-        queryByDatasetName(datasetName).get().delete()
+        queryByDatasetName(datasetName).get()?.delete()
     }
 
     DetachedCriteria<RecordCollectionGormEntity> queryByDatasetName(String name) {

@@ -7,12 +7,14 @@ import geb.spock.GebSpec
 import grails.testing.mixin.integration.Integration
 import okhttp3.*
 import org.springframework.security.core.Authentication
+import org.springframework.security.core.context.SecurityContextHolder
 import spock.lang.IgnoreIf
 import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Unroll
 import uk.co.metadataconsulting.sentinel.geb.LoginPage
 import uk.co.metadataconsulting.sentinel.geb.RecordCollectionIndexPage
+import uk.co.metadataconsulting.sentinel.geb.RecordCollectionRowModule
 import uk.co.metadataconsulting.sentinel.geb.RecordCollectionShowPage
 import uk.co.metadataconsulting.sentinel.security.MdxAuthenticationProvider
 
@@ -29,6 +31,9 @@ class RecordCollectionControllerIntegrationSpec extends GebSpec implements Login
     @IgnoreIf({ !sys['geb.env'] })
     def "validate rules from networks"() {
         given:
+        def authentication = SecurityContextHolder.context.authentication
+        loginAs('supervisor', 'supervisor')
+
         final String gormUrl = 'gorm://org.modelcatalogue.core.DataElement:53'
         ErsatzServer ersatz = new ErsatzServer()
         String creds = Credentials.basic(ruleFetcherService.metadataUsername, ruleFetcherService.metadataApiKey)
@@ -106,6 +111,18 @@ class RecordCollectionControllerIntegrationSpec extends GebSpec implements Login
         then:
         at RecordCollectionIndexPage
 
+        when: 'you check the rows displayed'
+        RecordCollectionIndexPage indexPage = browser.page RecordCollectionIndexPage
+        RecordCollectionRowModule recordCollectionRowModule = indexPage.rows[0]
+
+        then: 'every cell dateCreated, createdBy, updatedBy, lastUpdated is populated '
+        recordCollectionRowModule.datesetname().trim()
+        recordCollectionRowModule.createdBy().trim()
+        recordCollectionRowModule.datesetname().trim()
+        recordCollectionRowModule.dateCreated().trim()
+        recordCollectionRowModule.updatedBy().trim()
+        recordCollectionRowModule.lastUpdated().trim()
+
         when:
         browser.to RecordCollectionShowPage, recordCollection.id
 
@@ -114,6 +131,12 @@ class RecordCollectionControllerIntegrationSpec extends GebSpec implements Login
 
         when:
         RecordCollectionShowPage recordCollectionShowPage = browser.page(RecordCollectionShowPage)
+
+        then:
+        recordCollectionShowPage.createdBy().trim()
+        recordCollectionShowPage.updatedBy().trim()
+
+        when:
         recordCollectionShowPage.validate()
 
         then:
@@ -145,6 +168,7 @@ class RecordCollectionControllerIntegrationSpec extends GebSpec implements Login
         if ( recordCollection ) {
             recordCollectionGormService.delete(recordCollection.id)
         }
+        SecurityContextHolder.context.authentication = authentication
     }
 
 }

@@ -248,11 +248,11 @@ dataSource:
 environments:
     development:
         dataSource:
-            dbCreate: create
+            dbCreate: update
             url: '${JDBC_CONNECTION_STRING}'
     test:
         dataSource:
-            dbCreate: update
+            dbCreate: create-drop
             url: '${JDBC_CONNECTION_STRING}'            
     production:
         dataSource:

@@ -25,15 +25,25 @@
             <thead class="thead-dark">
             <tr>
                 <th><g:message code="recordCollection.datasetname" default="Dataset name"/></th>
-                <th><g:message code="recordCollection.th.lastUpdated" default="Record Collection Creation Date"/></th>
-                <th><g:message code="recordCollection.th.actions" default="Actions"/></th></th>
+                <th><g:message code="recordCollection.th.createdBy" default="Created By"/></th>
+                <th><g:message code="recordCollection.th.dateCreated" default="Date Created"/></th>
+                <th><g:message code="recordCollection.th.updatedBy" default="Updated By"/></th>
+                <th><g:message code="recordCollection.th.lastUpdated" default="Last Updated"/></th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
             <g:each var="recordCollection" in="${recordCollectionList}">
                 <tr>
                     <td><g:link controller="record" action="index" params="[recordCollectionId: recordCollection?.id]">${recordCollection.datasetName}</g:link></td>
-                    <td><g:link controller="record" action="index" params="[recordCollectionId: recordCollection?.id]">${recordCollection.lastUpdated}</g:link></td>
+                    <td>${recordCollection.createdBy}</td>
+                    <td>
+                        <g:formatDate date="${recordCollection.dateCreated}" type="datetime" style="LONG" timeStyle="SHORT"/>
+                    </td>
+                    <td>${recordCollection.updatedBy}</td>
+                    <td>
+                        <g:formatDate date="${recordCollection.lastUpdated}" type="datetime" style="LONG" timeStyle="SHORT"/>
+                    </td>
                     <td>
                         <g:form controller="recordCollection" action="delete">
                             <g:hiddenField name="recordCollectionId" value="${recordCollection?.id}"/>

@@ -6,6 +6,7 @@ import com.stehno.ersatz.ErsatzServer
 import geb.spock.GebSpec
 import grails.testing.mixin.integration.Integration
 import okhttp3.Credentials
+import org.springframework.security.core.context.SecurityContextHolder
 import spock.lang.IgnoreIf
 import spock.lang.Unroll
 import spock.util.concurrent.PollingConditions
@@ -25,6 +26,9 @@ class ExcelExportIntegrationSpec extends GebSpec implements LoginAs {
     @IgnoreIf({ !(sys['geb.env'] == 'chrome' || sys['geb.env'] == 'chromeHeadless') || !sys['download.folder'] } )
     def "verifies a file with #description can be exported for a record collection"(ExportFormat format, String extension, String description) {
         given:
+        def authentication = SecurityContextHolder.context.authentication
+        loginAs('supervisor', 'supervisor')
+
         ErsatzServer ersatz = new ErsatzServer()
         ersatz.expectations {
             get('/user/current') {
@@ -84,6 +88,10 @@ class ExcelExportIntegrationSpec extends GebSpec implements LoginAs {
         cleanup:
         //recordCollectionGormService.deleteByDatasetName("DIDS_XMLExample_20")
         new File(expectedFileDownloadPath).delete()
+
+        ersatz.stop()
+
+        SecurityContextHolder.context.authentication = authentication
 
         where:
         format                     | extension

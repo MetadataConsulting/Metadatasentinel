@@ -73,59 +73,63 @@
 <g:render template="/templates/flashmessage"/>
 <g:render template="/templates/flasherror"/>
 
-
 <article>
-<table class="table table-striped">
-<thead class="thead-dark">
-    <tr>
-        <th>
-
-            <div class="float-right">
-                <a class="nav-link dropdown-toggle" href="#" id="filter" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Filter
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                    <g:each in="${RecordCorrectnessDropdown.values()}">
-                        <g:link class="dropdown-item"  action="index" params='[recordCollectionId: "${recordCollectionId}", correctness: "${it}"]'>${it}</g:link>
-                    </g:each>
-                </div>
-            </div>
-            <g:message code="record.th." default="Record"/>
-
-        </th>
-
-    </tr>
-</thead>
-    <g:if test="${recordList}">
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    <div class="float-right">
+                        <a class="nav-link dropdown-toggle" href="#" id="filter" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Filter
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <g:each in="${RecordCorrectnessDropdown.values()}">
+                                <g:link class="dropdown-item"  action="index" params='[recordCollectionId: "${recordCollectionId}", correctness: "${it}"]'>${it}</g:link>
+                            </g:each>
+                        </div>
+                    </div>
+                    <g:message code="record.th." default="Record"/>
+                </th>
+            </tr>
+        </thead>
         <tbody>
-            <g:each var="record" in="${recordList}" status="i">
-                <g:if test="${record.valid}">
-                    <tr>
-                </g:if>
-                <g:else>
-                    <tr class="alert-danger">
-                </g:else>
-                <td>
-                    <g:link controller="record" action="show" params="[recordCollectionId: recordCollectionId, recordId: record.id]">
-                        <g:message code="record.row" args="${(paginationQuery?.offset ?: 0) + i + 1}" default="Row {0}"/>
-                    </g:link>
-                </td>
-                </tr>
-            </g:each>
+            <g:if test="${recordList}">
+                <g:each var="record" in="${recordList}" status="i">
+                    <g:if test="${record.valid}">
+                        <tr>
+                    </g:if>
+                    <g:else>
+                        <tr class="alert-danger">
+                    </g:else>
+                    <td>
+                        <g:link controller="record" action="show" params="[recordCollectionId: recordCollectionId, recordId: record.id]">
+                            <g:message code="record.row" args="${(paginationQuery?.offset ?: 0) + i + 1}" default="Row {0}"/>
+                        </g:link>
+                    </td>
+                    </tr>
+                </g:each>
+            </g:if>
         </tbody>
     </table>
     <g:if test="${recordTotal > paginationQuery?.max}">
         <div class="pagination">
-        <g:paginate controller="record"
-                    action="index"
-                    total="${recordTotal}"
-                    max="${paginationQuery?.max}"
-                    offset="${paginationQuery?.offset}"
-                    params="[correctness: correctness, recordCollectionId: recordCollectionId]" />
+            <g:paginate controller="record"
+                        action="index"
+                        total="${recordTotal}"
+                        max="${paginationQuery?.max}"
+                        offset="${paginationQuery?.offset}"
+                        params="[correctness: correctness,
+                                 recordCollectionId: recordCollectionId]" />
         </div>
-    </g:if>
         <g:render template="/record/paginationinfo"/>
-    </article>
-</g:if>
+    </g:if>
+    <p><g:message code="record.createdBy" default="Created by"/> <b><span id="createdBy">${createdBy}</span></b>
+        <span id="dateCreated"><g:formatDate date="${dateCreated}" type="datetime" style="LONG" timeStyle="SHORT"/></span>
+    </p>
+    <p><g:message code="record.updatedBy" default="Updated by"/>
+        <b><span id="updatedBy">${updatedBy}</span></b>
+        <span id="lastUpdated"><g:formatDate date="${lastUpdated}" type="datetime" style="LONG" timeStyle="SHORT"/></span>
+    </p>
+</article>
 </body>
 </html>

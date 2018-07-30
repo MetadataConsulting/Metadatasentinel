@@ -14,11 +14,22 @@ class RecordCollectionShowPage extends Page {
         dropdownLink { $('.dropdown-menu a', text: it) }
         validateButton { $(type: 'submit', value: 'Validate')}
         infoDiv { $('div.alert-info', 0) }
+        createdBySpan { $('#createdBy', 0) }
+        updatedBySpan { $('#updatedBy', 0) }
     }
 
     String alertInfo() {
         infoDiv.text()
     }
+
+    String createdBy() {
+        createdBySpan.text()
+    }
+
+    String updatedBy() {
+        updatedBySpan.text()
+    }
+
 
     static at = {
         title == 'Records'

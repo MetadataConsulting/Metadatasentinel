@@ -12,6 +12,7 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
+import org.springframework.security.core.context.SecurityContextHolder
 import spock.lang.IgnoreIf
 import spock.lang.Shared
 import spock.lang.Specification
@@ -34,6 +35,9 @@ class RecordControllerIntegrationSpec extends GebSpec implements LoginAs {
     @IgnoreIf({ !sys['geb.env'] })
     def "validate rules from networks"() {
         given:
+        def authentication = SecurityContextHolder.context.authentication
+        loginAs('supervisor', 'supervisor')
+
         final String gormUrl = 'gorm://org.modelcatalogue.core.DataElement:53'
         ErsatzServer ersatz = new ErsatzServer()
         String creds = Credentials.basic(ruleFetcherService.metadataUsername, ruleFetcherService.metadataApiKey)
@@ -174,6 +178,7 @@ class RecordControllerIntegrationSpec extends GebSpec implements LoginAs {
         if ( recordCollection ) {
             recordCollectionGormService.delete(recordCollection.id)
         }
+        SecurityContextHolder.context.authentication = authentication
     }
 
 }

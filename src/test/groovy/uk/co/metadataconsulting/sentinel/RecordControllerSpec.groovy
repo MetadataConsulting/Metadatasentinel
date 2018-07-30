@@ -18,10 +18,10 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
         view == '/record/index'
     }
 
-
     def "RecordController.index model contains recordCollectionId"() {
         given:
         controller.recordService = Mock(RecordService)
+        controller.recordCollectionGormService = Mock(RecordCollectionGormService)
 
         when:
         params.recordCollectionId = 1
@@ -37,6 +37,7 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
     def "RecordController.index model contains invalidRecordTotal"() {
         given:
         controller.recordService = Mock(RecordService)
+        controller.recordCollectionGormService = Mock(RecordCollectionGormService)
 
         when:
         params.recordCollectionId = 1
@@ -52,6 +53,7 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
     def "RecordController.index model contains allRecordTotal"() {
         given:
         controller.recordService = Mock(RecordService)
+        controller.recordCollectionGormService = Mock(RecordCollectionGormService)
 
         when:
         params.recordCollectionId = 1
@@ -67,6 +69,7 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
     def "RecordController.index model contains recordList"() {
         given:
         controller.recordService = Mock(RecordService)
+        controller.recordCollectionGormService = Mock(RecordCollectionGormService)
 
         when:
         params.recordCollectionId = 1
@@ -82,6 +85,7 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
     def "RecordController.index model contains paginationQuery"() {
         given:
         controller.recordService = Mock(RecordService)
+        controller.recordCollectionGormService = Mock(RecordCollectionGormService)
 
         when:
         params.recordCollectionId = 1
@@ -97,6 +101,7 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
     def "RecordController.recordTotal model contains paginationQuery"() {
         given:
         controller.recordService = Mock(RecordService)
+        controller.recordCollectionGormService = Mock(RecordCollectionGormService)
 
         when:
         params.recordCollectionId = 1
@@ -108,7 +113,6 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
         model
         model.containsKey('recordTotal')
     }
-
 
     def "RecordController.show model contains recordPortionList"() {
         given:
@@ -158,4 +162,46 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
         model.containsKey('recordPortionTotal')
     }
 
+    def "RecordController.index model contains createdBy"() {
+        given:
+        controller.recordPortionGormService = Mock(RecordPortionGormService)
+        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.recordService = Stub(RecordService) {
+            countByRecordCollectionIdAndCorrectness() >> 1
+        }
+        controller.recordCollectionGormService = Stub(RecordCollectionGormService) {
+            find(_) >> new RecordCollectionGormEntity(createdBy: 'username')
+        }
+
+        when:
+        params.recordCollectionId = 1
+        request.method = 'GET'
+        Map model = controller.index()
+
+        then:
+        response.status == SC_OK
+        model
+        model.containsKey('createdBy')
+    }
+
+    def "RecordController.index model contains updatedBy"() {
+        given:
+        controller.recordPortionGormService = Mock(RecordPortionGormService)
+        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.recordService = Stub(RecordService) {
+            countByRecordCollectionIdAndCorrectness() >> 1
+        }
+        controller.recordCollectionGormService = Stub(RecordCollectionGormService) {
+            find(_) >> new RecordCollectionGormEntity(updatedBy: 'username')
+        }
+        when:
+        params.recordCollectionId = 1
+        request.method = 'GET'
+        Map model = controller.index()
+
+        then:
+        response.status == SC_OK
+        model
+        model.containsKey('updatedBy')
+    }
 }

@@ -1,11 +1,15 @@
 package uk.co.metadataconsulting.sentinel
 
 import grails.testing.mixin.integration.Integration
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.AuthorityUtils
+import org.springframework.security.core.context.SecurityContextHolder
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
 @Integration
-class CsvImportServiceIntegrationSpec extends Specification {
+class CsvImportServiceIntegrationSpec extends Specification implements LoginAs {
 
     CsvImportService csvImportService
     RecordCollectionGormService recordCollectionGormService
@@ -14,6 +18,10 @@ class CsvImportServiceIntegrationSpec extends Specification {
     def conditions = new PollingConditions(timeout: 30)
 
     def "save processes an CSV file and imports a record collection"() {
+        given:
+        def authentication = SecurityContextHolder.context.authentication
+        loginAs('supervisor', 'supervisor')
+
         when:
         String filename = 'src/test/resources/DIDS_XMLExample_20.csv'
         File f = new File(filename)
@@ -32,7 +40,8 @@ class CsvImportServiceIntegrationSpec extends Specification {
         expectedNumberOfRows
 
         when:
-        csvImportService.save(f.newInputStream(), "DIDS_XMLExample_20", 50)
+        final String datasetName = "DIDS_XMLExample_20"
+        csvImportService.save(f.newInputStream(), datasetName, 50)
 
         then:
         recordCollectionGormService.count() == old(recordCollectionGormService.count()) + 1
@@ -42,8 +51,19 @@ class CsvImportServiceIntegrationSpec extends Specification {
             assert recordPortionGormService.count() == old(recordPortionGormService.count()) + (expectedNumberOfRows * numberOfItemsPerLine(filename))
         }
 
+        when:
+        RecordCollectionGormEntity recordCollectionGormEntity = recordCollectionGormService.findByDatasetName(datasetName)
+
+        then:
+        recordCollectionGormEntity.dateCreated
+        recordCollectionGormEntity.lastUpdated
+        recordCollectionGormEntity.createdBy
+        recordCollectionGormEntity.updatedBy
+
         cleanup:
-        recordCollectionGormService.deleteByDatasetName("DIDS_XMLExample_20")
+        recordCollectionGormService.deleteByDatasetName(datasetName)
+
+        SecurityContextHolder.context.authentication = authentication
     }
 
     int numberOfItemsPerLine(String filename) {

@@ -34,15 +34,16 @@ class RecordController implements ValidateableErrorsMessage {
         final Long recordCollectionId = cmd.recordCollectionId
 
         Number allRecordTotal = recordService.countByRecordCollectionIdAndCorrectness(recordCollectionId, RecordCorrectnessDropdown.ALL)
-        if (allRecordTotal == 0 && !recordCollectionGormService.find(recordCollectionId)) {
+        RecordCollectionGormEntity recordCollectionGormEntity = recordCollectionGormService.find(recordCollectionId)
+        if (allRecordTotal == 0 && !recordCollectionGormEntity) {
             redirect(controller: 'recordCollection', action: 'index')
             return
         }
+
         List<RecordViewModel> recordList = recordService.findAllByRecordCollectionId(recordCollectionId, cmd.correctness, paginationQuery)
         Number invalidRecordTotal = recordService.countByRecordCollectionIdAndCorrectness(recordCollectionId, RecordCorrectnessDropdown.INVALID)
         Number recordTotal = recordService.countByRecordCollectionIdAndCorrectness(recordCollectionId, cmd.correctness)
-
-        [
+        Map model = [
                 correctness: cmd.correctness,
                 recordCollectionId: cmd.recordCollectionId,
                 recordList: recordList,
@@ -51,6 +52,13 @@ class RecordController implements ValidateableErrorsMessage {
                 allRecordTotal: allRecordTotal,
                 invalidRecordTotal: invalidRecordTotal,
         ]
+        if (recordCollectionGormEntity) {
+            model['dateCreated'] = recordCollectionGormEntity.dateCreated
+            model['createdBy'] = recordCollectionGormEntity.createdBy
+            model['lastUpdated'] = recordCollectionGormEntity.lastUpdated
+            model['updatedBy'] = recordCollectionGormEntity.updatedBy
+        }
+        model
     }
 
     def validate(Long recordId, Long recordCollectionId) {
