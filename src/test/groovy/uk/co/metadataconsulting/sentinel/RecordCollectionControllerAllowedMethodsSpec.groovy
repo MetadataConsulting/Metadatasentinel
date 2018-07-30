@@ -52,6 +52,9 @@ class RecordCollectionControllerAllowedMethodsSpec extends Specification impleme
     }
 
     def "test RecordCollectionController.update accepts POST requests"() {
+        given:
+        controller.ruleFetcherService = Mock(RuleFetcherService)
+
         when:
         params.recordCollectionId = 1
         params.dataModelId = 123

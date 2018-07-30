@@ -126,7 +126,11 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
             return
         }
         List<DataModel> dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
-        DataModel dataModel = dataModelList.find { it.id == cmd.dataModelId }
+        DataModel dataModel = dataModelList?.find { it.id == cmd.dataModelId }
+        if (!dataModel) {
+            redirect(controller: 'recordCollection', action: 'edit', params: [recordCollectionId: cmd.recordCollectionId])
+            return
+        }
         recordCollectionGormService.associateWithDataModel(cmd.recordCollectionId, dataModel)
         redirect controller: 'record',
                 action: 'index',

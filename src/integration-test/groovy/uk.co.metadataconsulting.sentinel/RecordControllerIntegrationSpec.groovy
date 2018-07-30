@@ -40,7 +40,7 @@ class RecordControllerIntegrationSpec extends GebSpec implements LoginAs {
 
         final String gormUrl = 'gorm://org.modelcatalogue.core.DataElement:53'
         ErsatzServer ersatz = new ErsatzServer()
-        String creds = Credentials.basic(ruleFetcherService.metadataUsername, ruleFetcherService.metadataApiKey)
+        String creds = Credentials.basic('supervisor', 'supervisor')
         ersatz.expectations {
             get('/api/modelCatalogue/core/validationRule/rules') {
                 query('gormUrl', "${gormUrl}")

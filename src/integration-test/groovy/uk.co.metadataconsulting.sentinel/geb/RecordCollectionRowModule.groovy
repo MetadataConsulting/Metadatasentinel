@@ -6,11 +6,16 @@ class RecordCollectionRowModule extends Module {
 
     static content = {
         datasetnameCell { $('td', 0) }
-        createdByCell { $('td', 1) }
-        dateCreatedCell { $('td', 2) }
-        updatedByCell { $('td', 3) }
-        lastUpdatedCell { $('td', 4) }
+        dataModelNameCell { $('td', 1) }
+        createdByCell { $('td', 2) }
+        dateCreatedCell { $('td', 3) }
+        updatedByCell { $('td', 4) }
+        lastUpdatedCell { $('td', 5) }
         deleteInputSubmit { $('input', value: 'Delete', type: 'submit') }
+    }
+
+    String dataModelName() {
+        dataModelNameCell.text()
     }
 
     String datesetname() {

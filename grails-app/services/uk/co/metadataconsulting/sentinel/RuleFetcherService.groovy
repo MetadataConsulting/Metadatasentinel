@@ -30,8 +30,6 @@ class RuleFetcherService implements GrailsConfigurationAware {
     SpringSecurityService springSecurityService
 
     String metadataUrl
-    String metadataUsername
-    String metadataApiKey
 
     private String basic() {
         if (springSecurityService.principal instanceof MdxUserDetails) {
