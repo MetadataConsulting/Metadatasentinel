@@ -78,7 +78,7 @@ class RecordControllerIntegrationSpec extends GebSpec implements LoginAs {
         mdxAuthenticationProvider.metadataUrl = ersatz.httpUrl
 
         when:
-        RecordCollectionGormEntity recordCollection= recordCollectionGormService.save("Test")
+        RecordCollectionGormEntity recordCollection= recordCollectionGormService.save(new RecordCollectionMetadataImpl(datasetName: "Test"))
 
         then:
         recordCollectionGormService.count() == old(recordCollectionGormService.count()) + 1

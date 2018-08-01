@@ -19,6 +19,14 @@ class RecordFileCommandConstraintsSpec extends Specification {
         cmd.errors['batchSize'].code == 'nullable'
     }
 
+    void 'test about can be null'() {
+        when:
+        cmd.about = null
+
+        then:
+        cmd.validate(['about'])
+    }
+
     void 'verify datasetName is required and cannot be null'() {
         when:
         cmd.datasetName = null

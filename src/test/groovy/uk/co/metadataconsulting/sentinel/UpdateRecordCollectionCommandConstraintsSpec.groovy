@@ -27,4 +27,20 @@ class UpdateRecordCollectionCommandConstraintsSpec extends Specification {
         !cmd.validate(['dataModelId'])
         cmd.errors['dataModelId'].code == 'nullable'
     }
+
+    void 'test datasetName can be null'() {
+        when:
+        cmd.datasetName = null
+
+        then:
+        cmd.validate(['datasetName'])
+    }
+
+    void 'test about can be null'() {
+        when:
+        cmd.about = null
+
+        then:
+        cmd.validate(['about'])
+    }
 }

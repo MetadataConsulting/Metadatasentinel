@@ -43,10 +43,16 @@
             </select>
         </div>
         <div class="form-group">
+            <label for="about"><g:message code="recordCollection.about" default="About"/></label>
+            <trix:editor name="about" id="about"/>
+        </div>
+        <div class="form-group">
             <input type="submit" class="btn btn-primary" value="${message(code: 'recordCollection.import.submit', default: 'Submit')}"/>
         </div>
     </g:uploadForm>
 </div>
 </article>
+<asset:stylesheet src="trix.css"/>
+<asset:javascript src="trix.js"/>
 </body>
 </html>

@@ -17,22 +17,35 @@
     </ol>
 </nav>
 
+<article>
 <g:render template="/templates/flashmessage"/>
 <g:render template="/templates/flasherror"/>
 
 <g:form action="update" controller="recordCollection">
     <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
     <div class="form-group">
+        <label for="datasetName"><g:message code="recordCollection.datasetName" default="Dataset Name"/>
+            <g:textField name="datasetName" value="${recordCollectionEntity.datasetName}" id="datasetName" /></label>
+    </div>
+    <div class="form-group">
         <g:select noSelection="${['null':'Select One...']}"
                   optionKey="id"
                   optionValue="name"
                   name="dataModelId"
-                  from="${dataModelList}"/>
+                  from="${dataModelList}"
+                  value="${recordCollectionEntity.dataModelId}" />
     </div>
+    <div class="form-group">
+        <label for="about"><g:message code="recordCollection.about" default="About"/></label>
+        <trix:editor name="about" value="${recordCollectionEntity.about}"/>
+    </div>
+
     <div class="form-group">
         <input type="submit" class="btn btn-primary" value="${message(code: 'recordCollection.update.submit', default: 'Update')}"/>
     </div>
 </g:form>
-
+</article>
+<asset:stylesheet src="trix.css"/>
+<asset:javascript src="trix.js"/>
 </body>
 </html>

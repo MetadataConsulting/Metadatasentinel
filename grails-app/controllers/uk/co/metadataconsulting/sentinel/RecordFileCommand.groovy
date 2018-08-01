@@ -5,13 +5,15 @@ import grails.validation.Validateable
 import org.springframework.web.multipart.MultipartFile
 
 @GrailsCompileStatic
-class RecordFileCommand implements Validateable {
+class RecordFileCommand implements Validateable, RecordCollectionMetadata {
     MultipartFile csvFile
     Integer batchSize = 100
     String datasetName
+    String about
 
     static constraints = {
         datasetName nullable: false, blank: false
+        about nullable: true, blank: true
         batchSize nullable: false
         csvFile  validator: { MultipartFile val, RecordFileCommand obj ->
             if ( val == null ) {

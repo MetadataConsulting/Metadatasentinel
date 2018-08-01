@@ -7,6 +7,8 @@ class RecordCollectionGormEntity {
 
     String datasetName
 
+    String about
+
     Date dateCreated
 
     Date lastUpdated
@@ -32,9 +34,11 @@ class RecordCollectionGormEntity {
         updatedBy nullable: true
         dataModelId nullable: true
         dataModelName nullable: true
+        about nullable: true, blank: true
     }
 
     static mapping = {
         table 'recordcollection'
+        about type: 'text'
     }
 }

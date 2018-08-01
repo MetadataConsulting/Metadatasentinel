@@ -53,10 +53,7 @@ class RecordController implements ValidateableErrorsMessage {
                 invalidRecordTotal: invalidRecordTotal,
         ]
         if (recordCollectionGormEntity) {
-            model['dateCreated'] = recordCollectionGormEntity.dateCreated
-            model['createdBy'] = recordCollectionGormEntity.createdBy
-            model['lastUpdated'] = recordCollectionGormEntity.lastUpdated
-            model['updatedBy'] = recordCollectionGormEntity.updatedBy
+            model['recordCollectionEntity'] = recordCollectionGormEntity
         }
         model
     }

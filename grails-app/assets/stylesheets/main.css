@@ -57,3 +57,7 @@ footer {
     margin-left: 10px;
     list-style-type: none;
 }
+
+.nav-item {
+    padding: 3px 10px;
+}

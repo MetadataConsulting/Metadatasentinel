@@ -162,7 +162,7 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
         model.containsKey('recordPortionTotal')
     }
 
-    def "RecordController.index model contains createdBy"() {
+    def "RecordController.index model contains recordCollectionEntity"() {
         given:
         controller.recordPortionGormService = Mock(RecordPortionGormService)
         controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
@@ -170,7 +170,7 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
             countByRecordCollectionIdAndCorrectness() >> 1
         }
         controller.recordCollectionGormService = Stub(RecordCollectionGormService) {
-            find(_) >> new RecordCollectionGormEntity(createdBy: 'username')
+            find(_) >> new RecordCollectionGormEntity()
         }
 
         when:
@@ -181,27 +181,6 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
         then:
         response.status == SC_OK
         model
-        model.containsKey('createdBy')
-    }
-
-    def "RecordController.index model contains updatedBy"() {
-        given:
-        controller.recordPortionGormService = Mock(RecordPortionGormService)
-        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
-        controller.recordService = Stub(RecordService) {
-            countByRecordCollectionIdAndCorrectness() >> 1
-        }
-        controller.recordCollectionGormService = Stub(RecordCollectionGormService) {
-            find(_) >> new RecordCollectionGormEntity(updatedBy: 'username')
-        }
-        when:
-        params.recordCollectionId = 1
-        request.method = 'GET'
-        Map model = controller.index()
-
-        then:
-        response.status == SC_OK
-        model
-        model.containsKey('updatedBy')
+        model.containsKey('recordCollectionEntity')
     }
 }

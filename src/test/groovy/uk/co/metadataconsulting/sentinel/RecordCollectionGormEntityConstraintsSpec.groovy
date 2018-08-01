@@ -27,6 +27,22 @@ class RecordCollectionGormEntityConstraintsSpec extends Specification implements
         domain.validate(['dataModelName'])
     }
 
+    void 'verify about can be null'() {
+        when:
+        domain.about = null
+
+        then:
+        domain.validate(['about'])
+    }
+
+    void 'verify about can be blank'() {
+        when:
+        domain.about = ''
+
+        then:
+        domain.validate(['about'])
+    }
+
     void 'verify dataModelId can be null'() {
         when:
         domain.dataModelId = null

@@ -43,9 +43,12 @@ class RecordCollectionGormService implements GormErrorsMessage {
     }
 
     @Transactional
-    RecordCollectionGormEntity save(String datasetName) {
+    RecordCollectionGormEntity save(RecordCollectionMetadata recordCollectionMetadata) {
         RecordCollectionGormEntity recordCollection = new RecordCollectionGormEntity()
-        recordCollection.datasetName = datasetName
+        recordCollection.with {
+            datasetName = recordCollectionMetadata.datasetName
+            about = recordCollectionMetadata.about
+        }
         save(recordCollection)
     }
 
@@ -55,6 +58,19 @@ class RecordCollectionGormService implements GormErrorsMessage {
             log.warn '{}', errorsMsg(entity, messageSource)
         }
         entity
+    }
+
+    @Transactional
+    RecordCollectionGormEntity update(Serializable id, RecordCollectionMetadata recordCollectionMetadata) {
+        RecordCollectionGormEntity entity = RecordCollectionGormEntity.get(id)
+        if (!entity) {
+            return null
+        }
+        entity.with {
+            datasetName = recordCollectionMetadata.datasetName
+            about = recordCollectionMetadata.about
+        }
+        save(entity)
     }
 
     @ReadOnly

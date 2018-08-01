@@ -62,6 +62,8 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
 
     ExcelExportService excelExportService
 
+    UpdateRecordCollectionService updateRecordCollectionService
+
     int defaultPaginationMax = 25
     int defaultPaginationOffset = 0
     String separator
@@ -102,7 +104,9 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         }
         [
                 dataModelList: dataModelList,
-                recordCollectionId: cmd.recordCollectionId
+                recordCollectionId: cmd.recordCollectionId,
+                recordCollectionEntity: recordCollectionEntity,
+
         ]
     }
 
@@ -131,7 +135,8 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
             redirect(controller: 'recordCollection', action: 'edit', params: [recordCollectionId: cmd.recordCollectionId])
             return
         }
-        recordCollectionGormService.associateWithDataModel(cmd.recordCollectionId, dataModel)
+        updateRecordCollectionService.update(cmd)
+
         redirect controller: 'record',
                 action: 'index',
                 params: [recordCollectionId: cmd.recordCollectionId]
@@ -204,9 +209,8 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         log.debug 'Content Type {}', cmd.csvFile.contentType
         InputStream inputStream = cmd.csvFile.inputStream
         Integer batchSize = cmd.batchSize
-        String datasetName = cmd.datasetName
-        CsvImport importService = csvImportByContentType (ImportContentType.of(cmd.csvFile.contentType))
-        importService.save(inputStream, datasetName, batchSize)
+        CsvImport importService = csvImportByContentType(ImportContentType.of(cmd.csvFile.contentType))
+        importService.save(inputStream, batchSize, cmd)
 
         redirect controller: 'recordCollection', action: 'index'
     }

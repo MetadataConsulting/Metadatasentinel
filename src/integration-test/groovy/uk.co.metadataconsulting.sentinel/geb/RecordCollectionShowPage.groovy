@@ -13,9 +13,16 @@ class RecordCollectionShowPage extends Page {
         exportDropdownLink { $('a#export') }
         dropdownLink { $('.dropdown-menu a', text: it) }
         validateButton { $(type: 'submit', value: 'Validate')}
+        deleteButton { $(type: 'submit', value: 'Delete')}
         infoDiv { $('div.alert-info', 0) }
         createdBySpan { $('#createdBy', 0) }
         updatedBySpan { $('#updatedBy', 0) }
+    }
+
+    void delete() {
+        withConfirm(true) {
+            deleteButton.click()
+        }
     }
 
     String alertInfo() {
