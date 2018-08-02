@@ -36,7 +36,7 @@ class RecordCollectionMappingGormService {
     void updateGormUrls(List<UpdateGormUrlRequest> updateGormUrlCommands) {
         if ( updateGormUrlCommands ) {
             for ( UpdateGormUrlRequest req : updateGormUrlCommands ) {
-                recordPortionMappingGormDataService.update(req.id, req.gormUrl, req.dataModelId)
+                recordPortionMappingGormDataService.update(req.id, req.gormUrl)
             }
         }
     }
@@ -50,7 +50,6 @@ class RecordCollectionMappingGormService {
             RecordCollectionMappingGormEntity fromEntity = fromEntities.find { it.header.equalsIgnoreCase(toEntity.header) }
             if ( fromEntity ) {
                 toEntity.with {
-                    dataModelId = fromEntity.dataModelId
                     gormUrl = fromEntity.gormUrl
                 }
                 toEntity.save()
@@ -63,5 +62,10 @@ class RecordCollectionMappingGormService {
     Set<Long> findAllRecordCollectionIdByGormUrlNotNull() {
         // TODO implement this efficiently
         RecordCollectionMappingGormEntity.findAllByGormUrlIsNotNull()?.collect { it.recordCollection.id } as Set<Long>
+    }
+
+    @Transactional
+    RecordCollectionMappingGormEntity updateGormUrl(Long recordPortionId, String gormUrl) {
+        recordPortionMappingGormDataService.update(recordPortionId, gormUrl)
     }
 }

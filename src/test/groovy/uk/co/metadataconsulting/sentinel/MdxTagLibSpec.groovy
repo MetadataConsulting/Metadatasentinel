@@ -8,12 +8,13 @@ class MdxTagLibSpec extends Specification implements TagLibUnitTest<MdxTagLib> {
 
     def "mdx:link taglib generates correct anchor tag"() {
         given:
+        final Long dataModelId = 3
         tagLib.metadataUrl = 'http://localhost:8080'
-        RecordPortionMapping mapping = new RecordPortionMapping(header: 'NHS Number', gormUrl: 'gorm://org.modelcatalogue.core.DataElement:45', dataModelId: 3)
+        RecordPortionMapping mapping = new RecordPortionMapping(header: 'NHS Number', gormUrl: 'gorm://org.modelcatalogue.core.DataElement:45')
         RecordPortionGormEntity recordPortion = new RecordPortionGormEntity(header: 'NHS Number')
 
         expect:
-        "<a href='http://localhost:8080/#/3/dataElement/45'>NHS Number</a>" == tagLib.link(recordPortion: recordPortion, recordPortionMappingList: [mapping]).toString()
+        "<a href='http://localhost:8080/#/3/dataElement/45'>NHS Number</a>" == tagLib.link(dataModelId: dataModelId, recordPortion: recordPortion, recordPortionMappingList: [mapping]).toString()
     }
 
     def "mdx:link taglib generates no link if gormUrl for mapping is null"() {

@@ -8,6 +8,7 @@ import org.hibernate.Session
 import org.modelcatalogue.core.scripting.Validating
 import org.modelcatalogue.core.scripting.ValueValidator
 import org.springframework.context.MessageSource
+import uk.co.metadataconsulting.sentinel.modelcatalogue.GormUrlName
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 
 @Slf4j
@@ -18,6 +19,10 @@ class CsvImportService implements CsvImport, Benchmark {
 
     RecordCollectionGormService recordCollectionGormService
 
+    ReconciliationService reconciliationService
+
+    CatalogueElementsService catalogueElementsService
+
     ImportService importService
 
     SessionFactory sessionFactory
@@ -26,7 +31,7 @@ class CsvImportService implements CsvImport, Benchmark {
     
     @CompileDynamic
     @Override
-    void save(InputStream inputStream, Integer batchSize, RecordCollectionMetadata recordCollectionMetadata) {
+    RecordCollectionGormEntity save(InputStream inputStream, Integer batchSize, RecordCollectionMetadata recordCollectionMetadata) {
 
         RecordCollectionGormEntity recordCollection = recordCollectionGormService.save(recordCollectionMetadata)
 
@@ -35,7 +40,10 @@ class CsvImportService implements CsvImport, Benchmark {
             MappingMetadata metadata = new MappingMetadata()
             Closure headerListClosure = { List<String> l ->
                 metadata.setHeaderLineList(l)
-                recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollection, l)
+
+                List<GormUrlName> calogueElements = catalogueElementsService.findAllByDataModelId(recordCollection.dataModelId)
+                Map<String, List<GormUrlName>> suggestions = reconciliationService.reconcile(calogueElements, l)
+                recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollection, l, suggestions)
             }
 
             log.info 'processing input stream'
@@ -45,6 +53,8 @@ class CsvImportService implements CsvImport, Benchmark {
                 cleanUpGorm()
             }
         }
+
+        recordCollection
     }
 
 

@@ -10,21 +10,26 @@ class RecordFileCommand implements Validateable, RecordCollectionMetadata {
     Integer batchSize = 100
     String datasetName
     String about
+    Long dataModelId
 
     static constraints = {
         datasetName nullable: false, blank: false
         about nullable: true, blank: true
+        dataModelId nullable: false
         batchSize nullable: false
         csvFile  validator: { MultipartFile val, RecordFileCommand obj ->
             if ( val == null ) {
-                return false
+                return 'nofile'
             }
             if ( val.empty ) {
-                return false
+                return 'nofile'
             }
-            allowedExtensions().any { String extension ->
+            if (!allowedExtensions().any { String extension ->
                 val.originalFilename?.toLowerCase()?.endsWith(extension)
+            }) {
+                return 'invalidextension'
             }
+            return true
         }
     }
 

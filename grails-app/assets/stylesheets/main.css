@@ -61,3 +61,28 @@ footer {
 .nav-item {
     padding: 3px 10px;
 }
+
+@keyframes greenfade {
+  from {
+      background: #64b448;
+  }
+  to {
+      background: transparent;
+  }
+}
+@keyframes yellowfade {
+    from {
+        background: yellow;
+    }
+    to {
+        background: transparent;
+    }
+}
+.greenhighlighted {
+    animation-name: greenfade;
+    animation-duration: 1.5s;
+}
+.highlighted {
+    animation-name: yellowfade;
+    animation-duration: 1.5s;
+}

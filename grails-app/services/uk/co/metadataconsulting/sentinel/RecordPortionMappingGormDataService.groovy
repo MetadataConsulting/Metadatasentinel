@@ -11,7 +11,7 @@ interface RecordPortionMappingGormDataService {
     RecordCollectionMappingGormEntity save(String header, RecordCollectionGormEntity recordCollection)
 
     @Transactional
-    RecordCollectionMappingGormEntity update(Serializable id, String gormUrl, Long dataModelId)
+    RecordCollectionMappingGormEntity update(Serializable id, String gormUrl)
 
     @ReadOnly
     Number count()

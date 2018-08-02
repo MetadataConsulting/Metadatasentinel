@@ -21,12 +21,4 @@ class RecordCollectionMappingGormEntityConstraintsSpec extends Specification
         then:
         domain.validate(['gormUrl'])
     }
-
-    void 'test dataModelId can be null'() {
-        when:
-        domain.dataModelId = null
-
-        then:
-        domain.validate(['dataModelId'])
-    }
 }

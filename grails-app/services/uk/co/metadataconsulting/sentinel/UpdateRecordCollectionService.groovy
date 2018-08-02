@@ -17,14 +17,14 @@ class UpdateRecordCollectionService {
     @Transactional
     RecordCollectionGormEntity update(UpdateRecordCollectionCommand cmd) throws ValidationException {
 
-        List<DataModel> dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
-        DataModel dataModel = dataModelList?.find { it.id == cmd.dataModelId }
-        if (!dataModel) {
+        RecordCollectionGormEntity recordCollectionGormEntity = recordCollectionGormService.update(cmd.recordCollectionId, cmd)
+        if (!recordCollectionGormEntity || recordCollectionGormEntity.hasErrors()) {
             transactionStatus.setRollbackOnly()
             return null
         }
-        RecordCollectionGormEntity recordCollectionGormEntity = recordCollectionGormService.update(cmd.recordCollectionId, cmd)
-        if (!recordCollectionGormEntity || recordCollectionGormEntity.hasErrors()) {
+        List<DataModel> dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
+        DataModel dataModel = dataModelList?.find { it.id == cmd.dataModelId }
+        if (!dataModel) {
             transactionStatus.setRollbackOnly()
             return null
         }

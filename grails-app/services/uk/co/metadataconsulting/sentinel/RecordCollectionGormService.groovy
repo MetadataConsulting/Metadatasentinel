@@ -7,6 +7,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.springframework.context.MessageSource
 import uk.co.metadataconsulting.sentinel.modelcatalogue.DataModel
+import uk.co.metadataconsulting.sentinel.modelcatalogue.GormUrlName
 
 @Slf4j
 @CompileStatic
@@ -30,10 +31,16 @@ class RecordCollectionGormService implements GormErrorsMessage {
     }
 
     @Transactional
-    void saveRecordCollectionMappingWithHeaders(RecordCollectionGormEntity recordCollection, List<String> headers) {
+    void saveRecordCollectionMappingWithHeaders(RecordCollectionGormEntity recordCollection,
+                                                List<String> headers,
+                                                Map<String, List<GormUrlName>> suggestions) {
         if ( headers ) {
             for ( String header : headers ) {
                 RecordCollectionMappingGormEntity recordPortionMapping = new RecordCollectionMappingGormEntity(header: header)
+                List<GormUrlName> suggestion = suggestions[header]
+                if (suggestion ) {
+                    recordPortionMapping.gormUrl = suggestion.first().gormUrl
+                }
                 recordCollection.addToMappings(recordPortionMapping)
             }
         }
@@ -109,6 +116,11 @@ class RecordCollectionGormService implements GormErrorsMessage {
     @Transactional
     RecordCollectionGormEntity associateWithDataModel(Long recordCollectionId, DataModel dataModel) {
         RecordCollectionGormEntity entity = find(recordCollectionId)
+
+    }
+
+    @Transactional
+    RecordCollectionGormEntity associateWithDataModel(RecordCollectionGormEntity entity, DataModel dataModel) {
         if (entity) {
             entity.with {
                 dataModelId = dataModel.id

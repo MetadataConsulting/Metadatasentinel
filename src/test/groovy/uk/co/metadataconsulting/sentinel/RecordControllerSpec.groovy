@@ -118,6 +118,7 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
         given:
         controller.recordPortionGormService = Mock(RecordPortionGormService)
         controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.recordCollectionGormService = Mock(RecordCollectionGormService)
 
         when:
         params.recordId = 1
@@ -134,6 +135,7 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
         given:
         controller.recordPortionGormService = Mock(RecordPortionGormService)
         controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.recordCollectionGormService = Mock(RecordCollectionGormService)
 
         when:
         params.recordId = 1
@@ -150,6 +152,7 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
         given:
         controller.recordPortionGormService = Mock(RecordPortionGormService)
         controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.recordCollectionGormService = Mock(RecordCollectionGormService)
 
         when:
         params.recordId = 1

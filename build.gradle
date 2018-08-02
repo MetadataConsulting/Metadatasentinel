@@ -91,6 +91,9 @@ dependencies {
     compile "builders.dsl:spreadsheet-builder-poi:$spreadsheetBuilderVersion"
     compile "builders.dsl:spreadsheet-builder-groovy:$spreadsheetBuilderVersion"
     compile "org.grails.plugins:spring-security-core:$springSecurityCoreVersion"
+
+    compile "com.github.mpkorstanje:simmetrics-core:$simmetricsVersion"
+
 }
 
 bootRun {

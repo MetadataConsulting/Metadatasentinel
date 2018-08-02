@@ -13,6 +13,7 @@ class UrlMappings {
         "/recordCollection/edit"(controller: 'recordCollection', action: 'edit')
         "/recordCollection/update"(controller: 'recordCollection', action: 'update')
         "/recordCollectionMapping/catalogueElements/$dataModelId"(controller: 'recordCollectionMapping', action: 'catalogueElements')
+        "/recordCollectionMapping/$recordPortionMappingId/save"(controller: 'recordCollectionMapping', action: 'saveMapping')
         "/recordCollectionMapping/update"(controller: 'recordCollectionMapping', action: 'update', httpMethod: 'POST')
         "/import"(controller: 'recordCollection', action: 'importCsv')
         "/upload"(controller: 'recordCollection', action: 'uploadCsv', httpMethod: 'POST')

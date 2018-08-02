@@ -9,6 +9,9 @@ import static javax.servlet.http.HttpServletResponse.SC_MOVED_TEMPORARILY
 class RecordCollectionControllerSpec extends Specification implements ControllerUnitTest<RecordCollectionController> {
 
     void "invoking uploadCsv with invalid parameters renders importCsv again"() {
+        given:
+        controller.ruleFetcherService = Mock(RuleFetcherService)
+
         when:
         request.method = 'POST'
         controller.uploadCsv()
@@ -124,6 +127,10 @@ class RecordCollectionControllerSpec extends Specification implements Controller
         given:
         controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
         controller.ruleFetcherService = Mock(RuleFetcherService)
+        controller.recordCollectionGormService = Stub(RecordCollectionGormService) {
+            find(_) >> new RecordCollectionGormEntity()
+        }
+        controller.catalogueElementsService = Mock(CatalogueElementsService)
 
         when:
         request.method = 'GET'
@@ -137,8 +144,12 @@ class RecordCollectionControllerSpec extends Specification implements Controller
 
     def "test RecordCollectionController.headersMapping model contains recordCollectionId"() {
         given:
+        controller.recordCollectionGormService = Stub(RecordCollectionGormService) {
+            find(_) >> new RecordCollectionGormEntity()
+        }
         controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
         controller.ruleFetcherService = Mock(RuleFetcherService)
+        controller.catalogueElementsService = Mock(CatalogueElementsService)
 
         when:
         request.method = 'GET'

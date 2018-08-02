@@ -97,7 +97,7 @@ class RecordControllerIntegrationSpec extends GebSpec implements LoginAs {
         recordPortionMappingGormDataService.count() == old(recordPortionMappingGormDataService.count()) + 1
 
         when:
-        recordPortionMappingGormDataService.update(mapping.id, gormUrl, null)
+        recordPortionMappingGormDataService.update(mapping.id, gormUrl)
 
         then:
         recordPortionMappingGormDataService.count() == old(recordPortionMappingGormDataService.count())

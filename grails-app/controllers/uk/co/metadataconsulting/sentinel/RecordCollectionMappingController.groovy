@@ -10,12 +10,15 @@ class RecordCollectionMappingController {
 
     static allowedMethods = [
             update: 'POST',
-            catalogueElements: 'GET'
+            catalogueElements: 'GET',
+            saveMapping: 'GET'
     ]
 
     MessageSource messageSource
-    RuleFetcherService ruleFetcherService
     RecordCollectionMappingGormService recordCollectionMappingGormService
+    CatalogueElementsService catalogueElementsService
+    ReconciliationService reconciliationService
+    RecordPortionGormService recordPortionGormService
 
     def update() {
         Long recordCollectionId = params.long('recordCollectionId')
@@ -35,31 +38,26 @@ class RecordCollectionMappingController {
         redirect uri: "/recordCollection/$recordCollectionId/mapping".toString()
     }
 
-    def catalogueElements(Long dataModelId) {
-        CatalogueElements catalogueElements = ruleFetcherService.fetchCatalogueElements(dataModelId)
-        List<GormUrlName> catalogueElementList = []
-        if ( catalogueElements ) {
-            if ( catalogueElements.dataElements ) {
-                catalogueElementList.addAll(catalogueElements.dataElements)
-            }
-            if ( catalogueElements.dataClasses ) {
-                catalogueElementList.addAll(catalogueElements.dataClasses)
-            }
-            if ( catalogueElements.enumeratedTypes ) {
-                catalogueElementList.addAll(catalogueElements.enumeratedTypes)
-            }
-            if ( catalogueElements.dataTypes ) {
-                catalogueElementList.addAll(catalogueElements.dataTypes)
-            }
-            if ( catalogueElements.measurementUnits  ) {
-                catalogueElementList.addAll(catalogueElements.measurementUnits)
-            }
-            if ( catalogueElements.businessRules ) {
-                catalogueElementList.addAll(catalogueElements.businessRules)
-            }
-            if ( catalogueElements.tags ) {
-                catalogueElementList.addAll(catalogueElements.tags)
-            }
+    def saveMapping(SaveMappingCommand cmd) {
+        if(cmd.hasErrors()) {
+            response.status = 422
+            return
+        }
+        RecordCollectionMappingGormEntity recordCollectionMappingEntity =
+                recordCollectionMappingGormService.updateGormUrl(cmd.recordPortionMappingId,
+                                                                 cmd.gormUrl)
+        [recordCollectionMappingEntity: recordCollectionMappingEntity]
+    }
+
+    def catalogueElements(CatalogueElementsCommand cmd) {
+        if(cmd.hasErrors()) {
+            response.status = 400
+            return
+        }
+        List<GormUrlName> catalogueElementList = catalogueElementsService.findAllByDataModelId(cmd.dataModelId)
+        if ( cmd.query ) {
+            Map<String, List<GormUrlName>> suggestions = reconciliationService.reconcile(catalogueElementList, [cmd.query], cmd.threshold)
+            catalogueElementList = suggestions.values().flatten() as List<GormUrlName>
         }
 
         [catalogueElements: catalogueElementList]

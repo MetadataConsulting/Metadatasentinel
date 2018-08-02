@@ -5,12 +5,17 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.hibernate.Session
 import org.hibernate.SessionFactory
+import uk.co.metadataconsulting.sentinel.modelcatalogue.GormUrlName
 
 @Slf4j
 @CompileStatic
 class ExcelImportService implements CsvImport, Benchmark {
 
     RecordCollectionGormService recordCollectionGormService
+
+    CatalogueElementsService catalogueElementsService
+
+    ReconciliationService reconciliationService
 
     ImportService importService
 
@@ -20,7 +25,7 @@ class ExcelImportService implements CsvImport, Benchmark {
     
     @CompileDynamic
     @Override
-    void save(InputStream inputStream, Integer batchSize, RecordCollectionMetadata recordCollectionMetadata) {
+    RecordCollectionGormEntity save(InputStream inputStream, Integer batchSize, RecordCollectionMetadata recordCollectionMetadata) {
         RecordCollectionGormEntity recordCollection = recordCollectionGormService.save(recordCollectionMetadata)
 
         executorService.submit {
@@ -28,7 +33,11 @@ class ExcelImportService implements CsvImport, Benchmark {
             MappingMetadata metadata = new MappingMetadata()
             Closure headerListClosure = { List<String> l ->
                 metadata.setHeaderLineList(l)
-                recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollection, l)
+
+                List<GormUrlName> calogueElements = catalogueElementsService.findAllByDataModelId(recordCollection.dataModelId)
+                Map<String, List<GormUrlName>> suggestions = reconciliationService.reconcile(calogueElements, l)
+                recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollection, l, suggestions)
+
             }
             log.info 'processing input stream'
             ExcelReader.read(inputStream, 0, true, headerListClosure) { List<String> values ->
@@ -36,6 +45,7 @@ class ExcelImportService implements CsvImport, Benchmark {
                 cleanUpGorm()
             }
         }
+        recordCollection
     }
 
     def cleanUpGorm() {

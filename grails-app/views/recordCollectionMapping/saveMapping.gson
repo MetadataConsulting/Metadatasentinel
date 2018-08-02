@@ -1,0 +1,12 @@
+import uk.co.metadataconsulting.sentinel.RecordCollectionMappingGormEntity
+
+model {
+    RecordCollectionMappingGormEntity recordCollectionMappingEntity
+}
+response.status(recordCollectionMappingEntity ? 200 : 404)
+if (recordCollectionMappingEntity) {
+    json {
+        gormUrl recordCollectionMappingEntity.gormUrl
+        name recordCollectionMappingEntity.header
+    }
+}

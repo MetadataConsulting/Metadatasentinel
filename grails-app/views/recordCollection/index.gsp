@@ -54,9 +54,14 @@
                         </g:form>
                     </td>
                     <td>
+
                     <g:form controller="recordCollection" action="delete">
                             <g:hiddenField name="recordCollectionId" value="${recordCollection?.id}"/>
-                            <input type="submit" class="btn btn-danger" value="${g.message(code: 'recordCollection.delete', default: 'Delete')}"/>
+                            <input onclick="return confirm('${g.message(code: "recordCollection.delete.confirmation",
+                                                                        default: "Are you sure you want to delete this record collection?")}');"
+                                   type="submit"
+                                   class="btn btn-danger"
+                                   value="${g.message(code: 'recordCollection.delete', default: 'Delete')}"/>
                         </g:form>
                     </td>
                 </tr>

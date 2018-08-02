@@ -26,7 +26,16 @@
     <g:uploadForm action="uploadCsv" controller="recordCollection">
         <div class="form-group">
             <label for="datasetName"><g:message code="recordCollection.csv.import.datasetName" default="Dataset Name"/>
-                <g:textField name="datasetName" value="" id="datasetName" /></label>
+                <g:textField name="datasetName" value="${datasetName}" id="datasetName" /></label>
+        </div>
+        <div class="form-group">
+            <g:select noSelection="${['null':'Select One...']}"
+                      optionKey="id"
+                      optionValue="name"
+                      name="dataModelId"
+                      from="${dataModelList}"
+                      value="${dataModelId}"
+                      />
         </div>
         <div class="form-group">
             <label for="csvFile"><g:message code="recordCollection.import.file" args="${[RecordFileCommand.allowedExtensions().join(',')]}" default="File ({0})"/></label>
@@ -44,7 +53,7 @@
         </div>
         <div class="form-group">
             <label for="about"><g:message code="recordCollection.about" default="About"/></label>
-            <trix:editor name="about" id="about"/>
+            <trix:editor name="about" id="about" value="${about}"/>
         </div>
         <div class="form-group">
             <input type="submit" class="btn btn-primary" value="${message(code: 'recordCollection.import.submit', default: 'Submit')}"/>

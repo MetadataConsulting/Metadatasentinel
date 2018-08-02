@@ -184,6 +184,10 @@ grails:
                     access:
                         - 'isAuthenticated()'
                 -
+                    pattern: /recordCollectionMapping/*/save
+                    access:
+                        - 'isAuthenticated()'
+                -
                     pattern: /recordCollectionMapping/catalogueElements/*
                     access:
                         - 'isAuthenticated()'

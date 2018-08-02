@@ -75,8 +75,9 @@ class RecordController implements ValidateableErrorsMessage {
 
         List<RecordPortionGormEntity> recordPortionList = recordPortionGormService.findAllByRecordId(recordId)
         Number recordPortionTotal = recordPortionGormService.countByRecordId(recordId)
-
+        RecordCollectionGormEntity recordCollectionGormEntity = recordCollectionGormService.find(recordCollectionId)
         [
+                recordCollectionEntity: recordCollectionGormEntity,
                 recordId: recordId,
                 recordPortionList: recordPortionList,
                 recordPortionTotal: recordPortionTotal,

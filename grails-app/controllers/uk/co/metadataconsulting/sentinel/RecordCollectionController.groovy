@@ -14,6 +14,7 @@ import uk.co.metadataconsulting.sentinel.export.ExportService
 import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportService
 import uk.co.metadataconsulting.sentinel.export.RecordCollectionExportView
 import uk.co.metadataconsulting.sentinel.modelcatalogue.DataModel
+import uk.co.metadataconsulting.sentinel.modelcatalogue.GormUrlName
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 
 import javax.servlet.ServletOutputStream
@@ -40,15 +41,9 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
 
     MessageSource messageSource
 
-    CsvImportService csvImportService
-
     RecordCollectionGormService recordCollectionGormService
 
-    RecordGormService recordGormService
-
     RecordCollectionService recordCollectionService
-
-    ExcelImportService excelImportService
 
     RecordCollectionMappingGormService recordCollectionMappingGormService
 
@@ -63,6 +58,10 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
     ExcelExportService excelExportService
 
     UpdateRecordCollectionService updateRecordCollectionService
+
+    SaveRecordCollectionService saveRecordCollectionService
+
+    CatalogueElementsService catalogueElementsService
 
     int defaultPaginationMax = 25
     int defaultPaginationOffset = 0
@@ -174,13 +173,13 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
                 break
         }
 
-
         outs.flush()
         outs.close()
     }
 
     def importCsv() {
-        [:]
+        List dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
+        [dataModelList: dataModelList]
     }
 
     def validate(Long recordCollectionId) {
@@ -202,17 +201,20 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
     def uploadCsv(RecordFileCommand cmd) {
         if ( cmd.hasErrors() ) {
             flash.error = errorsMsg(cmd, messageSource)
-            render view: 'importCsv'
+            List dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
+            render view: 'importCsv', model: [
+                    dataModelList: dataModelList,
+                    datasetName: cmd.datasetName,
+                    dataModelId: cmd.dataModelId,
+                    about: cmd.about,
+            ]
             return
         }
 
         log.debug 'Content Type {}', cmd.csvFile.contentType
-        InputStream inputStream = cmd.csvFile.inputStream
-        Integer batchSize = cmd.batchSize
-        CsvImport importService = csvImportByContentType(ImportContentType.of(cmd.csvFile.contentType))
-        importService.save(inputStream, batchSize, cmd)
+        RecordCollectionGormEntity recordCollectionGormEntity = saveRecordCollectionService.save(cmd)
 
-        redirect controller: 'recordCollection', action: 'index'
+        redirect controller: 'recordCollection', action: 'headersMapping', params: [recordCollectionId: recordCollectionGormEntity.id]
     }
 
     def delete(Long recordCollectionId) {
@@ -229,11 +231,20 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
     }
 
     def headersMapping(Long recordCollectionId) {
+        RecordCollectionGormEntity recordCollectionGormEntity = recordCollectionGormService.find(recordCollectionId)
+        if (!recordCollectionGormEntity) {
+            redirect controller: 'recordCollection', action: 'index'
+            return
+        }
+        List<GormUrlName> catalogueElementList = catalogueElementsService.findAllByDataModelId(recordCollectionGormEntity.dataModelId)
+
         List dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
         if ( !dataModelList ) {
             flash.error = messageSource.getMessage('dataModel.couldNotLoad', [] as Object[], 'Could not load data Models', request.locale)
         }
         [
+                catalogueElementList: catalogueElementList,
+                recordCollectionEntity: recordCollectionGormEntity,
                 dataModelList: dataModelList,
                 recordCollectionId: recordCollectionId,
                 recordPortionMappingList: recordCollectionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
@@ -260,13 +271,4 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         redirect action: 'headersMapping', params: [recordCollectionId: cmd.toRecordCollectionId]
     }
 
-    protected CsvImport csvImportByContentType(ImportContentType contentType) {
-        if ( contentType == ImportContentType.XSLX ) {
-            return excelImportService
-        }
-        if ( contentType == ImportContentType.CSV ) {
-            return csvImportService
-        }
-        null
-    }
 }

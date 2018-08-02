@@ -7,10 +7,11 @@ import org.springframework.context.MessageSource
 trait ValidateableErrorsMessage {
 
     String errorsMsg(def bean, MessageSource messageSource, Locale locale = Locale.getDefault()) {
-        StringBuilder message = new StringBuilder("${bean.class.simpleName}: $bean")
+        StringBuilder message = new StringBuilder()
         for (fieldErrors in bean.errors) {
             for (error in fieldErrors.allErrors) {
-                message.append("\n\t").append(messageSource.getMessage(error, locale))
+                message.append(messageSource.getMessage(error, locale))
+                message.append("<br/>")
             }
         }
         message.toString()

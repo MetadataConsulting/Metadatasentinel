@@ -50,7 +50,7 @@
             </g:else>
             <td>
                 <g:if test="${recordPortion.header}">
-                    <mdx:link recordPortionMappingList="${recordPortionMappingList}" recordPortion="${recordPortion}"/>
+                    <mdx:link dataModelId="${recordCollectionEntity.dataModelId}" recordPortionMappingList="${recordPortionMappingList}" recordPortion="${recordPortion}"/>
                 </g:if>
             </td>
             <td>${recordPortion.value}</td>

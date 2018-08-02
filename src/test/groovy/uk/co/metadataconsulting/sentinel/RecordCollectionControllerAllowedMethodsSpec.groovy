@@ -179,6 +179,9 @@ class RecordCollectionControllerAllowedMethodsSpec extends Specification impleme
     }
 
     def "test RecordCollectionController.importCsv accepts GET requests"() {
+        given:
+        controller.ruleFetcherService = Mock(RuleFetcherService)
+
         when:
         request.method = 'GET'
         controller.importCsv()
@@ -201,6 +204,9 @@ class RecordCollectionControllerAllowedMethodsSpec extends Specification impleme
     }
 
     def "test RecordCollectionController.uploadCsv accepts POST requests"() {
+        given:
+        controller.ruleFetcherService = Mock(RuleFetcherService)
+
         when:
         request.method = 'POST'
         controller.uploadCsv()
@@ -249,7 +255,11 @@ class RecordCollectionControllerAllowedMethodsSpec extends Specification impleme
         given:
         controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
         controller.ruleFetcherService = Mock(RuleFetcherService)
-        
+        controller.catalogueElementsService = Mock(CatalogueElementsService)
+        controller.recordCollectionGormService = Stub(RecordCollectionGormService) {
+            find(_) >> new RecordCollectionGormEntity()
+        }
+
         when:
         request.method = 'GET'
         controller.headersMapping()

@@ -6,7 +6,6 @@ import grails.compiler.GrailsCompileStatic
 class RecordCollectionMappingGormEntity {
     String header
     String gormUrl
-    Long dataModelId
     Date dateCreated
     Date lastUpdated
 
@@ -15,7 +14,6 @@ class RecordCollectionMappingGormEntity {
     static constraints = {
         header nullable: false
         gormUrl nullable: true
-        dataModelId nullable: true
     }
 
     static mapping = {

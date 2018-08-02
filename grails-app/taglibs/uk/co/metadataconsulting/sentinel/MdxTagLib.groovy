@@ -20,12 +20,13 @@ class MdxTagLib implements GrailsConfigurationAware {
     }
 
     def link = { attrs, body ->
+        Long dataModelId = attrs.dataModelId
         RecordPortionGormEntity recordPortion = attrs.recordPortion
         RecordPortionMapping recordPortionMapping = attrs.recordPortionMappingList.find {
             it.header == recordPortion.header && it.gormUrl
         }
         if ( recordPortionMapping ) {
-            out << "<a href='${linkFromGormUrl(recordPortionMapping.dataModelId, recordPortionMapping.gormUrl)}'>"
+            out << "<a href='${linkFromGormUrl(dataModelId, recordPortionMapping.gormUrl)}'>"
             out << header(recordPortion)
             out << "</a>"
         } else {
