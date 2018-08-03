@@ -63,6 +63,8 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
 
     CatalogueElementsService catalogueElementsService
 
+    UploadFileService uploadFileService
+
     int defaultPaginationMax = 25
     int defaultPaginationOffset = 0
     String separator
@@ -226,7 +228,14 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
             return
         }
 
+        RecordCollectionGormEntity recordCollectionEntity = recordCollectionGormService.find(recordCollectionId)
+        if (!recordCollectionEntity) {
+            redirect controller: 'recordCollection', action: 'index'
+            return
+        }
+        final String fileKey = recordCollectionEntity.fileKey
         recordCollectionGormService.delete(recordCollectionId)
+        uploadFileService.deleteFile(fileKey)
         flash.message = messageSource.getMessage('recordCollection.deleted', [] as Object[],'Record Collection deleted', request.locale)
 
         redirect controller: 'recordCollection', action: 'index'

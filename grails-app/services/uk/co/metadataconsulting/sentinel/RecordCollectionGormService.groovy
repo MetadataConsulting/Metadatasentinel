@@ -132,12 +132,16 @@ class RecordCollectionGormService implements GormErrorsMessage {
     }
 
     @Transactional
-    RecordCollectionGormEntity updateFileUrl(Long recordCollectionId, String fileUrl) {
+    RecordCollectionGormEntity updateFileMetadata(Long recordCollectionId,
+                                                  UploadFileResult uploadFileResult) {
         RecordCollectionGormEntity entity = find(recordCollectionId)
         if (!entity) {
             return entity
         }
-        entity.fileUrl = fileUrl
+        entity.with {
+            fileUrl = uploadFileResult.fileUrl
+            fileKey = uploadFileResult.path
+        }
         save(entity)
     }
 }

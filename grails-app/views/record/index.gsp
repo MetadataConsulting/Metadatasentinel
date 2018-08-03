@@ -61,7 +61,7 @@
 
         <li class="nav-item">
             <g:form controller="recordCollection" action="delete">
-                <g:hiddenField name="recordCollectionId" value="${recordCollection?.id}"/>
+                <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
                 <input onclick="return confirm('${g.message(code: "recordCollection.delete.confirmation",
                                                             default: "Are you sure you want to delete this record collection?")}');"
                        type="submit"

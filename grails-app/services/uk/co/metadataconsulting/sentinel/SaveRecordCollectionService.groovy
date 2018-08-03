@@ -30,7 +30,7 @@ class SaveRecordCollectionService {
         RecordCollectionGormEntity recordCollectionEntity = importService.save(inputStream, batchSize, cmd)
         executorService.submit {
             UploadFileResult uploadFileResult = uploadFileService.uploadFile(recordCollectionEntity.id, cmd.csvFile)
-            recordCollectionGormService.updateFileUrl(recordCollectionEntity.id, uploadFileResult.fileUrl)
+            recordCollectionGormService.updateFileMetadata(recordCollectionEntity.id, uploadFileResult)
         }
         List<DataModel> dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
         DataModel dataModel = dataModelList?.find { it.id == cmd.dataModelId }
