@@ -27,6 +27,12 @@
         <label for="datasetName"><g:message code="recordCollection.datasetName" default="Dataset Name"/>
             <g:textField name="datasetName" value="${recordCollectionEntity.datasetName}" id="datasetName" /></label>
     </div>
+    <g:if test="${recordCollectionEntity.fileUrl}">
+    <div class="form-group">
+        <label for="fileUrl"><g:message code="recordCollection.fileUrl" default="File URL"/></label>
+            <input type="text" name="fileUrl" disabled="disabled" value="${recordCollectionEntity.fileUrl}" style="width: 100%;"/>
+    </div>
+    </g:if>
     <div class="form-group">
         <g:select noSelection="${['null':'Select One...']}"
                   optionKey="id"

@@ -16,6 +16,10 @@ class SaveRecordCollectionService {
 
     RecordCollectionGormService recordCollectionGormService
 
+    UploadFileService uploadFileService
+
+    def executorService
+
     @CompileDynamic
     @Transactional
     RecordCollectionGormEntity save(RecordFileCommand cmd) {
@@ -23,16 +27,20 @@ class SaveRecordCollectionService {
         final Integer batchSize = cmd.batchSize
         CsvImport importService = csvImportByContentType(ImportContentType.of(cmd.csvFile.contentType))
 
-        RecordCollectionGormEntity recordCollectionGormEntity = importService.save(inputStream, batchSize, cmd)
+        RecordCollectionGormEntity recordCollectionEntity = importService.save(inputStream, batchSize, cmd)
+        executorService.submit {
+            UploadFileResult uploadFileResult = uploadFileService.uploadFile(recordCollectionEntity.id, cmd.csvFile)
+            recordCollectionGormService.updateFileUrl(recordCollectionEntity.id, uploadFileResult.fileUrl)
+        }
         List<DataModel> dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
         DataModel dataModel = dataModelList?.find { it.id == cmd.dataModelId }
         if (!dataModel) {
             transactionStatus.setRollbackOnly()
             return null
         }
-        recordCollectionGormService.associateWithDataModel(recordCollectionGormEntity, dataModel)
+        recordCollectionGormService.associateWithDataModel(recordCollectionEntity, dataModel)
 
-        recordCollectionGormEntity
+        recordCollectionEntity
     }
 
     protected CsvImport csvImportByContentType(ImportContentType contentType) {

@@ -109,3 +109,18 @@ fi
 
 exit $EXIT_STATUS
 ````
+
+# Upload to S3
+
+[Grails AWS SDK S3 Plugin](https://github.com/agorapulse/grails-aws-sdk/tree/master/grails-aws-sdk-s3) is used to upload files to AWS S3.
+
+You must provide either:
+
+Environment Variables - `AWS_ACCESS_KEY_ID` and `AWS_SECRET_KEY`
+Java System Properties - `aws.accessKeyId` and `aws.secretKey`
+
+Also you must provide values for: 
+
+Environment Variables - `S3_BUCKET` and `S3_REGION`
+
+An example of a value for `S3_REGION` could be `eu-west-1` for Ireland buckets.

@@ -292,3 +292,10 @@ environments:
 ---
 metadata:
     url: '${METADATA_URL}'
+---
+grails:
+    plugins:
+        awssdk:
+            s3:
+                region: '${S3_REGION}'
+                bucket: '${S3_BUCKET}'

@@ -214,7 +214,9 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         log.debug 'Content Type {}', cmd.csvFile.contentType
         RecordCollectionGormEntity recordCollectionGormEntity = saveRecordCollectionService.save(cmd)
 
-        redirect controller: 'recordCollection', action: 'headersMapping', params: [recordCollectionId: recordCollectionGormEntity.id]
+        redirect controller: 'recordCollection',
+                action: 'headersMapping',
+                params: [recordCollectionId: recordCollectionGormEntity.id]
     }
 
     def delete(Long recordCollectionId) {

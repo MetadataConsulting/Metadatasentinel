@@ -35,6 +35,14 @@ class RecordCollectionGormEntityConstraintsSpec extends Specification implements
         domain.validate(['about'])
     }
 
+    void 'verify fileUrl can be null'() {
+        when:
+        domain.fileUrl = null
+
+        then:
+        domain.validate(['fileUrl'])
+    }
+
     void 'verify about can be blank'() {
         when:
         domain.about = ''

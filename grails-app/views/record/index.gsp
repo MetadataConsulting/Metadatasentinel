@@ -92,6 +92,9 @@
 <article>
     <g:if test="${recordCollectionEntity}">
         <h1>${recordCollectionEntity.datasetName}</h1>
+        <g:if test="${recordCollectionEntity.fileUrl}">
+            <h3><a href="${recordCollectionEntity.fileUrl}">s3 file</a></h3>
+        </g:if>
         ${recordCollectionEntity.about.encodeAsRaw()}
     </g:if>
     <hr/>

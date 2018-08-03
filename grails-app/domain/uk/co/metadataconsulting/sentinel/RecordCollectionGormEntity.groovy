@@ -21,6 +21,8 @@ class RecordCollectionGormEntity {
 
     Long dataModelId
 
+    String fileUrl
+
     static hasMany = [
             mappings: RecordCollectionMappingGormEntity,
             records: RecordGormEntity
@@ -35,6 +37,7 @@ class RecordCollectionGormEntity {
         dataModelId nullable: true
         dataModelName nullable: true
         about nullable: true, blank: true
+        fileUrl nullable: true
     }
 
     static mapping = {
