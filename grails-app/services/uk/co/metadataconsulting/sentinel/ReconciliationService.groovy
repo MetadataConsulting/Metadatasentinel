@@ -86,7 +86,7 @@ class ReconciliationService implements GrailsConfigurationAware {
             return []
         }
 
-        if (l.size() < 10) {
+        if (l.size() < max.intValue()) {
             return l as List<GormUrlName>
         }
         l.subList(0, max.intValue()) as List<GormUrlName>
