@@ -116,7 +116,7 @@ class RecordCollectionGormService implements GormErrorsMessage {
     @Transactional
     RecordCollectionGormEntity associateWithDataModel(Long recordCollectionId, DataModel dataModel) {
         RecordCollectionGormEntity entity = find(recordCollectionId)
-
+        associateWithDataModel(entity, dataModel)
     }
 
     @Transactional
