@@ -33,9 +33,13 @@ class ExcelImportService implements CsvImport, Benchmark {
             MappingMetadata metadata = new MappingMetadata()
             Closure headerListClosure = { List<String> l ->
                 metadata.setHeaderLineList(l)
+                Map<String, List<GormUrlName>> suggestions = [:]
 
-                List<GormUrlName> calogueElements = catalogueElementsService.findAllByDataModelId(recordCollection.dataModelId)
-                Map<String, List<GormUrlName>> suggestions = reconciliationService.reconcile(calogueElements, l)
+                if (recordCollection.dataModelId ) {
+                    List<GormUrlName> calogueElements = catalogueElementsService.findAllByDataModelId(recordCollection.dataModelId)
+                    suggestions = reconciliationService.reconcile(calogueElements, l)
+                }
+
                 recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollection, l, suggestions)
 
             }
