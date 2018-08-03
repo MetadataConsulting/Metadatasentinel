@@ -82,7 +82,7 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><g:link controller="recordCollection" action="index"><g:message code="nav.home" default="Home"/></g:link></li>
-        <li class="breadcrumb-item active" aria-current="page"><g:message code="nav.recordCollection" args="${[recordCollectionId]}" default="Record Collection {0}"/></li>
+        <li class="breadcrumb-item active" aria-current="page">${recordCollectionEntity.datasetName}</li>
     </ol>
 </nav>
 
