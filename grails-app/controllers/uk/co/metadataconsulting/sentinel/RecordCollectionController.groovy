@@ -252,8 +252,10 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
     }
 
     def cloneMapping(Long recordCollectionId) {
+        RecordCollectionGormEntity recordCollectionEntity = recordCollectionGormService.find(recordCollectionId)
         Set<Long> recordCollectionIdList = recordCollectionMappingGormService.findAllRecordCollectionIdByGormUrlNotNull()
         [
+                recordCollectionEntity: recordCollectionEntity,
                 toRecordCollectionId: recordCollectionId,
                 recordCollectionList: recordCollectionGormService.findAllInIds(recordCollectionIdList)
         ]

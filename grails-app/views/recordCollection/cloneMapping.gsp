@@ -12,7 +12,7 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><g:link controller="recordCollection" action="index" ><g:message code="nav.home" default="Home"/></g:link></li>
-        <li class="breadcrumb-item"><g:link controller="record" action="index" params="[recordCollectionId: toRecordCollectionId]"><g:message code="nav.recordCollection" default="Record Collection"/></g:link></li>
+        <li class="breadcrumb-item"><g:link controller="record" action="index" params="[recordCollectionId: toRecordCollectionId]">${recordCollectionEntity.datasetName}</g:link></li>
         <li class="breadcrumb-item active" aria-current="page"><g:message code="recordCollection.mapping.clone" default="Clone Mapping"/></li>
     </ol>
 </nav>

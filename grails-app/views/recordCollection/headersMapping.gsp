@@ -138,7 +138,7 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><g:link controller="recordCollection" action="index" ><g:message code="nav.home" default="Home"/></g:link></li>
-        <li class="breadcrumb-item"><g:link controller="record" action="index" params="[recordCollectionId: recordCollectionId]"><g:message code="nav.recordCollection" default="Record Collection"/></g:link></li>
+        <li class="breadcrumb-item"><g:link controller="record" action="index" params="[recordCollectionId: recordCollectionId]">${recordCollectionEntity.datasetName}</g:link></li>
         <li class="breadcrumb-item active" aria-current="page"><g:message code="recordCollection.mapping" default="Record Collection Mapping"/></li>
     </ol>
 </nav>
@@ -149,7 +149,7 @@
 <g:if test="${dataModelList}">
     <article>
     <h1>${recordCollectionEntity.datasetName}</h1>
-    <h2><g:message code="recordCollection.dataModelName" default="DataModel" />${recordCollectionEntity.dataModelName}</h2>
+    <h2><g:message code="recordCollection.dataModelName" default="DataModel" />: ${recordCollectionEntity.dataModelName}</h2>
     <g:if test="${recordPortionMappingList}">
             <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
             <g:hiddenField name="dataModelId" id="dataModelId" value="${recordCollectionEntity.dataModelId}"/>
