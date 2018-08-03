@@ -4,5 +4,7 @@ import groovy.transform.CompileStatic
 
 @CompileStatic
 interface CsvImport {
-    RecordCollectionGormEntity save(InputStream inputStream, Integer batchSize, RecordCollectionMetadata recordCollectionMetadata)
+    void save(InputStream inputStream,
+              Integer batchSize,
+              RecordCollectionGormEntity recordCollectionEntity)
 }

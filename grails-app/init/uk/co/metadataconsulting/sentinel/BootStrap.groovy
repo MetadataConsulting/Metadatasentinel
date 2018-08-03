@@ -13,6 +13,7 @@ class BootStrap {
 
     CsvImportService csvImportService
     MetadataServerService metadataServerService
+    RecordCollectionGormService recordCollectionGormService
 
     def init = { servletContext ->
         if (Environment.current == Environment.DEVELOPMENT) {
@@ -25,10 +26,12 @@ class BootStrap {
     }
 
     void loadOnStartup () {
+        RecordCollectionGormEntity recordCollectionEntity =
+                recordCollectionGormService.save(new RecordCollectionMetadataImpl(datasetName: "SampleDataset"))
         List<String> mapping = mappingGormUrl()
         File f = new File('src/test/resources/DIDS_XMLExample_01.csv')
         InputStream inputStream = f.newInputStream()
-        csvImportService.save(inputStream, 100, new RecordCollectionMetadataImpl(datasetName: "SampleDataset"))
+        csvImportService.save(inputStream, 100, recordCollectionEntity)
     }
 
     List<String> mappingGormUrl() {

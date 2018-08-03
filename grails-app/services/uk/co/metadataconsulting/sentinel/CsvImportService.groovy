@@ -31,9 +31,9 @@ class CsvImportService implements CsvImport, Benchmark {
     
     @CompileDynamic
     @Override
-    RecordCollectionGormEntity save(InputStream inputStream, Integer batchSize, RecordCollectionMetadata recordCollectionMetadata) {
-
-        RecordCollectionGormEntity recordCollection = recordCollectionGormService.save(recordCollectionMetadata)
+    void save(InputStream inputStream,
+              Integer batchSize,
+              RecordCollectionGormEntity recordCollectionEntity) {
 
         executorService.submit {
             log.info 'fetching validation rules'
@@ -41,22 +41,23 @@ class CsvImportService implements CsvImport, Benchmark {
             Closure headerListClosure = { List<String> l ->
                 metadata.setHeaderLineList(l)
                 Map<String, List<GormUrlName>> suggestions = [:]
-                if (recordCollection.dataModelId) {
-                    List<GormUrlName> calogueElements = catalogueElementsService.findAllByDataModelId(recordCollection.dataModelId)
+                log.info '#dataModel {}', recordCollectionEntity.dataModelId
+
+                if (recordCollectionEntity.dataModelId) {
+                    List<GormUrlName> calogueElements = catalogueElementsService.findAllByDataModelId(recordCollectionEntity.dataModelId)
+                    log.info '#headers {} #catalogueElements {}', l.size(), calogueElements.size()
                     suggestions = reconciliationService.reconcile(calogueElements, l)
                 }
-                recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollection, l, suggestions)
+                recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollectionEntity, l, suggestions)
             }
 
             log.info 'processing input stream'
             csvImportProcessorService.processInputStream(inputStream, batchSize, headerListClosure) { List<List<String>> valuesList ->
                 log.info ('inside closure block')
-                importService.saveListOfValues(recordCollection, valuesList, metadata)
+                importService.saveListOfValues(recordCollectionEntity, valuesList, metadata)
                 cleanUpGorm()
             }
         }
-
-        recordCollection
     }
 
 

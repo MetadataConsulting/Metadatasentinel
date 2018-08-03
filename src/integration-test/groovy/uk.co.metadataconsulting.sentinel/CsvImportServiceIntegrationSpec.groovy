@@ -42,7 +42,8 @@ class CsvImportServiceIntegrationSpec extends Specification implements LoginAs {
         when:
         final String datasetName = "DIDS_XMLExample_20"
         final RecordCollectionMetadata recordCollectionMetadata = new RecordCollectionMetadataImpl(datasetName: datasetName)
-        csvImportService.save(f.newInputStream(), 50, recordCollectionMetadata)
+        RecordCollectionGormEntity recordCollectionEntity =  recordCollectionGormService.save(recordCollectionMetadata)
+        csvImportService.save(f.newInputStream(), 50, recordCollectionEntity)
 
         then:
         recordCollectionGormService.count() == old(recordCollectionGormService.count()) + 1

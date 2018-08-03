@@ -20,6 +20,7 @@ import uk.co.metadataconsulting.sentinel.security.MdxAuthenticationProvider
 class ExcelExportIntegrationSpec extends GebSpec implements LoginAs {
     CsvImportService csvImportService
     MdxAuthenticationProvider mdxAuthenticationProvider
+    RecordCollectionGormService recordCollectionGormService
 
     @Unroll
     @IgnoreIf({ !(sys['geb.env'] == 'chrome' || sys['geb.env'] == 'chromeHeadless') || !sys['download.folder'] } )
@@ -53,7 +54,8 @@ class ExcelExportIntegrationSpec extends GebSpec implements LoginAs {
         f.exists()
 
         when:
-        csvImportService.save(f.newInputStream(), 50, new RecordCollectionMetadataImpl(datasetName: "DIDS_XMLExample_20"))
+        RecordCollectionGormEntity recordCollectionEntity =  recordCollectionGormService.save(new RecordCollectionMetadataImpl(datasetName: "DIDS_XMLExample_20"))
+        csvImportService.save(f.newInputStream(), 50, recordCollectionEntity)
 
         then:
         noExceptionThrown()

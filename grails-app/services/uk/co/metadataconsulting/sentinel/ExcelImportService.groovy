@@ -25,8 +25,9 @@ class ExcelImportService implements CsvImport, Benchmark {
     
     @CompileDynamic
     @Override
-    RecordCollectionGormEntity save(InputStream inputStream, Integer batchSize, RecordCollectionMetadata recordCollectionMetadata) {
-        RecordCollectionGormEntity recordCollection = recordCollectionGormService.save(recordCollectionMetadata)
+    void save(InputStream inputStream,
+              Integer batchSize,
+              RecordCollectionGormEntity recordCollectionEntity) {
 
         executorService.submit {
             log.info 'fetching validation rules'
@@ -35,21 +36,20 @@ class ExcelImportService implements CsvImport, Benchmark {
                 metadata.setHeaderLineList(l)
                 Map<String, List<GormUrlName>> suggestions = [:]
 
-                if (recordCollection.dataModelId ) {
-                    List<GormUrlName> calogueElements = catalogueElementsService.findAllByDataModelId(recordCollection.dataModelId)
+                if (recordCollectionEntity.dataModelId ) {
+                    List<GormUrlName> calogueElements = catalogueElementsService.findAllByDataModelId(recordCollectionEntity.dataModelId)
                     suggestions = reconciliationService.reconcile(calogueElements, l)
                 }
 
-                recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollection, l, suggestions)
+                recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollectionEntity, l, suggestions)
 
             }
             log.info 'processing input stream'
             ExcelReader.read(inputStream, 0, true, headerListClosure) { List<String> values ->
-                importService.save(recordCollection, values, metadata)
+                importService.save(recordCollectionEntity, values, metadata)
                 cleanUpGorm()
             }
         }
-        recordCollection
     }
 
     def cleanUpGorm() {
