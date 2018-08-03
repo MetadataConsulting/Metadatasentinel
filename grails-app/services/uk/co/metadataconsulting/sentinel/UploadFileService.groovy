@@ -16,13 +16,15 @@ class UploadFileService {
             log.warn('You must provide either: Environment Variables - AWS_ACCESS_KEY_ID and AWS_SECRET_KEY or Java System Properties - aws.accessKeyId and aws.secretKey')
             return null
         }
-        final String path = "${multipartFile.originalFilename}".toString()
+        final String path = "${recordCollectionId}_${multipartFile.originalFilename}".toString()
         return new UploadFileResult(fileUrl: amazonS3Service.storeMultipartFile(path, multipartFile),
                 path: path)
     }
 
     boolean deleteFile(String path) {
-        amazonS3Service.deleteFile(path)
+        if (path) {
+            amazonS3Service.deleteFile(path)
+        }
     }
 
     boolean areAWSCredsAvailable() {
