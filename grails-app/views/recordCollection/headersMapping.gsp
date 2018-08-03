@@ -2,7 +2,10 @@
 <head>
     <title><g:message code="recordCollection.mapping" default="Record Collection Mapping"/></title>
     <meta name="layout" content="main" />
-</head>
+    <g:if test="${!recordPortionMappingList}">
+        <meta http-equiv="refresh" content="2" />
+    </g:if>
+    </head>
 <body>
 <g:javascript>
     var getJSON = function(url, callback) {
