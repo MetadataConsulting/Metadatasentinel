@@ -186,6 +186,9 @@
                 </tbody>
             </table>
     </g:if>
+    <g:else>
+        <div class="loader"></div>
+    </g:else>
     <article>
 </g:if>
 </body>
