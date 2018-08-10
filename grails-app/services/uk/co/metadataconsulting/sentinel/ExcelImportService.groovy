@@ -57,6 +57,9 @@ class ExcelImportService implements CsvImport, Benchmark {
         p.onComplete {
             log.info 'excel import finished'
         }
+        p.onError { Throwable t ->
+            log.error 'error while importing excel', t.message
+        }
     }
 
     def cleanUpGorm() {

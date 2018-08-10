@@ -35,22 +35,18 @@ class SaveRecordCollectionService {
 
         RecordCollectionGormEntity recordCollectionEntity = recordCollectionGormService.save(cmd)
 
+        final Long recordCollectionEntityId = recordCollectionEntity.id
+
         recordCollectionGormService.associateWithDataModel(recordCollectionEntity, dataModel)
 
         CsvImport importService = csvImportByContentType(ImportContentType.of(cmd.csvFile.contentType))
         importService.save(inputStream, batchSize, recordCollectionEntity)
 
-        Promise p = task {
+        UploadFileResult uploadFileResult = uploadFileService.uploadFile(recordCollectionEntityId, cmd.csvFile)
+        if (uploadFileResult != null) {
             RecordCollectionGormEntity.withNewSession {
-                UploadFileResult uploadFileResult = uploadFileService.uploadFile(recordCollectionEntity.id, cmd.csvFile)
-                recordCollectionGormService.updateFileMetadata(recordCollectionEntity.id, uploadFileResult)
+                recordCollectionGormService.updateFileMetadata(recordCollectionEntityId, uploadFileResult)
             }
-        }
-        p.onComplete { RecordCollectionGormEntity updatedEntity ->
-            log.info 'file uploaded {}', updatedEntity.fileUrl
-        }
-        p.onError {
-            log.info 'error while uploading file'
         }
 
         recordCollectionEntity
