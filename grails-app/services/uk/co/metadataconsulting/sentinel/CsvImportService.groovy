@@ -4,13 +4,9 @@ import grails.async.Promise
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
-import org.hibernate.SessionFactory
 import org.hibernate.Session
-import org.modelcatalogue.core.scripting.Validating
-import org.modelcatalogue.core.scripting.ValueValidator
-import org.springframework.context.MessageSource
+import org.hibernate.SessionFactory
 import uk.co.metadataconsulting.sentinel.modelcatalogue.GormUrlName
-import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 
 import static grails.async.Promises.task
 
