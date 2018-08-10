@@ -1,11 +1,14 @@
 package uk.co.metadataconsulting.sentinel
 
+import grails.async.Promise
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import uk.co.metadataconsulting.sentinel.modelcatalogue.GormUrlName
+
+import static grails.async.Promises.task
 
 @Slf4j
 @CompileStatic
@@ -21,15 +24,13 @@ class ExcelImportService implements CsvImport, Benchmark {
 
     SessionFactory sessionFactory
 
-    def executorService
-    
     @CompileDynamic
     @Override
     void save(InputStream inputStream,
               Integer batchSize,
               RecordCollectionGormEntity recordCollectionEntity) {
 
-        executorService.submit {
+        Promise p = task {
             log.info 'fetching validation rules'
             MappingMetadata metadata = new MappingMetadata()
             Closure headerListClosure = { List<String> l ->
@@ -49,6 +50,9 @@ class ExcelImportService implements CsvImport, Benchmark {
                 importService.save(recordCollectionEntity, values, metadata)
                 cleanUpGorm()
             }
+        }
+        p.onComplete {
+            log.info 'excel import finished'
         }
     }
 

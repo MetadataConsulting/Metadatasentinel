@@ -76,8 +76,6 @@ dependencies {
     compile "com.squareup.okhttp3:okhttp:$okHttpVersion"
     compile "com.squareup.moshi:moshi:$moshiVersion"
 
-    compile "org.grails.plugins:grails-executor:$grailsExecutorVersion"
-
     // Excel
     compile "org.apache.poi:poi:$poiVersion"
     compile "org.apache.poi:poi-ooxml:$poiVersion"

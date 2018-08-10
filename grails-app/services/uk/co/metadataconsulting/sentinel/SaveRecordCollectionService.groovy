@@ -1,9 +1,11 @@
 package uk.co.metadataconsulting.sentinel
 
+import grails.async.Promise
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import uk.co.metadataconsulting.sentinel.modelcatalogue.DataModel
+import static grails.async.Promises.*
 
 @Slf4j
 @CompileStatic
@@ -18,8 +20,6 @@ class SaveRecordCollectionService {
     RecordCollectionGormService recordCollectionGormService
 
     UploadFileService uploadFileService
-
-    def executorService
 
     @CompileDynamic
     RecordCollectionGormEntity save(RecordFileCommand cmd) {
@@ -40,9 +40,12 @@ class SaveRecordCollectionService {
         CsvImport importService = csvImportByContentType(ImportContentType.of(cmd.csvFile.contentType))
         importService.save(inputStream, batchSize, recordCollectionEntity)
 
-        executorService.submit {
+        Promise p = task {
             UploadFileResult uploadFileResult = uploadFileService.uploadFile(recordCollectionEntity.id, cmd.csvFile)
             recordCollectionGormService.updateFileMetadata(recordCollectionEntity.id, uploadFileResult)
+        }
+        p.onComplete { RecordCollectionGormEntity updatedEntity ->
+            log.info 'file uploaded {}', updatedEntity.fileUrl
         }
 
         recordCollectionEntity
