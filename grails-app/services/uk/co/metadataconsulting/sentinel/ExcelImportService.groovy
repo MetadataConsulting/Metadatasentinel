@@ -31,25 +31,28 @@ class ExcelImportService implements CsvImport, Benchmark {
               RecordCollectionGormEntity recordCollectionEntity) {
 
         Promise p = task {
-            log.info 'fetching validation rules'
-            MappingMetadata metadata = new MappingMetadata()
-            Closure headerListClosure = { List<String> l ->
-                metadata.setHeaderLineList(l)
-                Map<String, List<GormUrlName>> suggestions = [:]
+            RecordCollectionGormEntity.withNewSession {
+                log.info 'fetching validation rules'
+                MappingMetadata metadata = new MappingMetadata()
+                Closure headerListClosure = { List<String> l ->
+                    metadata.setHeaderLineList(l)
+                    Map<String, List<GormUrlName>> suggestions = [:]
 
-                if (recordCollectionEntity.dataModelId ) {
-                    List<GormUrlName> calogueElements = catalogueElementsService.findAllByDataModelId(recordCollectionEntity.dataModelId)
-                    suggestions = reconciliationService.reconcile(calogueElements, l)
+                    if (recordCollectionEntity.dataModelId ) {
+                        List<GormUrlName> calogueElements = catalogueElementsService.findAllByDataModelId(recordCollectionEntity.dataModelId)
+                        suggestions = reconciliationService.reconcile(calogueElements, l)
+                    }
+
+                    recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollectionEntity, l, suggestions)
+
                 }
-
-                recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollectionEntity, l, suggestions)
-
+                log.info 'processing input stream'
+                ExcelReader.read(inputStream, 0, true, headerListClosure) { List<String> values ->
+                    importService.save(recordCollectionEntity, values, metadata)
+                    cleanUpGorm()
+                }
             }
-            log.info 'processing input stream'
-            ExcelReader.read(inputStream, 0, true, headerListClosure) { List<String> values ->
-                importService.save(recordCollectionEntity, values, metadata)
-                cleanUpGorm()
-            }
+
         }
         p.onComplete {
             log.info 'excel import finished'

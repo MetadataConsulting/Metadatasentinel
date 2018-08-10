@@ -33,26 +33,28 @@ class CsvImportService implements CsvImport, Benchmark {
               RecordCollectionGormEntity recordCollectionEntity) {
 
         Promise p = task {
-            log.info 'fetching validation rules'
-            MappingMetadata metadata = new MappingMetadata()
-            Closure headerListClosure = { List<String> l ->
-                metadata.setHeaderLineList(l)
-                Map<String, List<GormUrlName>> suggestions = [:]
-                log.info '#dataModel {}', recordCollectionEntity.dataModelId
+            RecordCollectionGormEntity.withNewSession {
+                log.info 'fetching validation rules'
+                MappingMetadata metadata = new MappingMetadata()
+                Closure headerListClosure = { List<String> l ->
+                    metadata.setHeaderLineList(l)
+                    Map<String, List<GormUrlName>> suggestions = [:]
+                    log.info '#dataModel {}', recordCollectionEntity.dataModelId
 
-                if (recordCollectionEntity.dataModelId) {
-                    List<GormUrlName> calogueElements = catalogueElementsService.findAllByDataModelId(recordCollectionEntity.dataModelId)
-                    log.info '#headers {} #catalogueElements {}', l.size(), calogueElements.size()
-                    suggestions = reconciliationService.reconcile(calogueElements, l)
+                    if (recordCollectionEntity.dataModelId) {
+                        List<GormUrlName> calogueElements = catalogueElementsService.findAllByDataModelId(recordCollectionEntity.dataModelId)
+                        log.info '#headers {} #catalogueElements {}', l.size(), calogueElements.size()
+                        suggestions = reconciliationService.reconcile(calogueElements, l)
+                    }
+                    recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollectionEntity, l, suggestions)
                 }
-                recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollectionEntity, l, suggestions)
-            }
 
-            log.info 'processing input stream'
-            csvImportProcessorService.processInputStream(inputStream, batchSize, headerListClosure) { List<List<String>> valuesList ->
-                log.info ('inside closure block')
-                importService.saveListOfValues(recordCollectionEntity, valuesList, metadata)
-                cleanUpGorm()
+                log.info 'processing input stream'
+                csvImportProcessorService.processInputStream(inputStream, batchSize, headerListClosure) { List<List<String>> valuesList ->
+                    log.info('inside closure block')
+                    importService.saveListOfValues(recordCollectionEntity, valuesList, metadata)
+                    cleanUpGorm()
+                }
             }
         }
         p.onComplete {
