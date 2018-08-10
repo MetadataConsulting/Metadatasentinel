@@ -8,7 +8,7 @@ import org.simmetrics.metrics.StringMetrics
 class CompareByNameService {
 
     Float distance(String source, String destination) {
-        StringMetric metric = StringMetrics.levenshtein()
+        StringMetric metric = StringMetrics.jaroWinkler()
         new Float(metric.compare(source, destination))
     }
 }
