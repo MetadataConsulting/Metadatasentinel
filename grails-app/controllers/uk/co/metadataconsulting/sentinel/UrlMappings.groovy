@@ -4,6 +4,7 @@ class UrlMappings {
 
     static mappings = {
         "/"(controller: 'recordCollection', action: 'index')
+
         "/recordCollection/cloneMapping"(controller: 'recordCollection', action: 'cloneMapping')
         "/recordCollection/cloneSave"(controller: 'recordCollection', action: 'cloneSave', httpMethod: 'POST')
         "/recordCollection/validate"(controller: 'recordCollection', action: 'validate')
@@ -16,9 +17,12 @@ class UrlMappings {
         "/recordCollectionMapping/$recordPortionMappingId/save"(controller: 'recordCollectionMapping', action: 'saveMapping')
         "/recordCollectionMapping/update"(controller: 'recordCollectionMapping', action: 'update', httpMethod: 'POST')
         "/import"(controller: 'recordCollection', action: 'importCsv')
-        "/importForNewValidationTask"(controller: 'validationTask', action: 'importCsv')
         "/upload"(controller: 'recordCollection', action: 'uploadCsv', httpMethod: 'POST')
+
+        "/importForNewValidationTask"(controller: 'validationTask', action: 'importCsv')
         "/uploadForNewValidationTask"(controller: 'validationTask', action: 'uploadCsv', httpMethod: 'POST')
+        "/validationTask/index"(controller: 'validationTask', action: 'index')
+
         "/records/$recordCollectionId"(controller: 'record', action: 'index')
         "/record/index"(controller: 'record', action: 'index')
         "/record/show"(controller: 'record', action: 'show')

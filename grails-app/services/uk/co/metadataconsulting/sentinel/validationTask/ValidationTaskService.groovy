@@ -7,7 +7,7 @@ import uk.co.metadataconsulting.sentinel.RecordCollectionGormEntity
 class ValidationTaskService {
 
     ValidationTask newValidationTaskFromRecordCollection(RecordCollectionGormEntity recordCollectionGormEntity) {
-        ValidationTask validationTask = new ValidationTask(name: recordCollectionGormEntity.datasetName, validationPasses: [])
+        ValidationTask validationTask = new ValidationTask(name: "${recordCollectionGormEntity.datasetName} Validation Task", validationPasses: [])
         validationTask.addToValidationPasses(position: 0, recordCollection: recordCollectionGormEntity)
         validationTask.save(flush:true)
         return validationTask

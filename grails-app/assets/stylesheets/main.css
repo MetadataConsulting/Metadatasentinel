@@ -24,6 +24,10 @@ footer {
     background-color: #EFEFEF;
 }
 
+.border-collapse {border-collapse: collapse;}
+.right-border { border-right: 1px dashed black; }
+.right-border-white { border-right: 1px dashed white; }
+
 .pagination a,
 .pagination .currentStep {
     color: #666666;

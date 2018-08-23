@@ -205,6 +205,10 @@ grails:
                     access:
                         - 'isAuthenticated()'
                 -
+                    pattern: /validationTask/index
+                    access:
+                        - 'isAuthenticated()'
+                -
                     pattern: /importForNewValidationTask
                     access:
                         - 'isAuthenticated()'

@@ -1,6 +1,7 @@
 package uk.co.metadataconsulting.sentinel.validationTask
 
 import grails.gorm.DetachedCriteria
+import grails.gorm.transactions.ReadOnly
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
@@ -38,9 +39,20 @@ class ValidationTaskGormService {
 //        return queryByRecordCollection(getValidationTask(validationTaskId)).list()
 //    }
 //
+
     Long countValidationPasses(Long validationTaskId) {
         return queryByRecordCollection(getValidationTask(validationTaskId)).count() as Long
     }
 
+    @ReadOnly
+    List<ValidationTask> findAll(Map args) {
+        ValidationTask.where {}.list(args)
+    }
+
+
+    @ReadOnly
+    Number count() {
+        ValidationTask.count()
+    }
 
 }

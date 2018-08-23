@@ -1,6 +1,7 @@
 package uk.co.metadataconsulting.sentinel.validationTask
 
 import org.springframework.context.MessageSource
+import uk.co.metadataconsulting.sentinel.PaginationQuery
 import uk.co.metadataconsulting.sentinel.RecordCollectionGormEntity
 import uk.co.metadataconsulting.sentinel.RecordFileCommand
 import uk.co.metadataconsulting.sentinel.RuleFetcherService
@@ -10,7 +11,7 @@ import uk.co.metadataconsulting.sentinel.ValidateableErrorsMessage
 class ValidationTaskController implements ValidateableErrorsMessage {
 
     static allowedMethods = [
-//            index: 'GET',
+            index: 'GET',
 //            edit: 'GET',
             importCsv: 'GET',
             uploadCsv: 'POST',
@@ -31,7 +32,29 @@ class ValidationTaskController implements ValidateableErrorsMessage {
 
     ValidationTaskService validationTaskService
 
-    def index() { }
+    ValidationTaskGormService validationTaskGormService
+
+    int defaultPaginationMax = 25
+    int defaultPaginationOffset = 0
+
+    def index() {
+
+        Integer max = params.int('max') ?: defaultPaginationMax
+        Integer offset = params.int('offset') ?: defaultPaginationOffset
+        PaginationQuery paginationQuery = new PaginationQuery(max: max, offset: offset)
+
+        indexModel(paginationQuery)
+    }
+
+    protected Map indexModel(PaginationQuery paginationQuery) {
+        List<ValidationTask> validationTaskList = validationTaskGormService.findAll(paginationQuery.toMap())
+        Number validationTaskListTotal = validationTaskGormService.count()
+        [
+                validationTaskList: validationTaskList,
+                paginationQuery: paginationQuery,
+                validationTaskTotal: validationTaskListTotal,
+        ]
+    }
 
     /**
      * Copied from RecordCollectionController
