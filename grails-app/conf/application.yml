@@ -205,6 +205,14 @@ grails:
                     access:
                         - 'isAuthenticated()'
                 -
+                    pattern: /importForNewValidationTask
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /uploadForNewValidationTask
+                    access:
+                        - 'isAuthenticated()'
+                -
                     pattern: /records/*
                     access:
                         - 'isAuthenticated()'

@@ -8,16 +8,18 @@
     <g:render template="/templates/navbarBrand"/>
     <g:render template="/templates/logout"/>
     <div class="row justify-content-end">
-        <div style="padding: 10px;">
-            <g:link id="importfile-link" controller="recordCollection" action="importCsv" class="btn btn-primary">
-                <g:message code="recordCollection.import" default="Import File"/>
-            </g:link>
-        </div>
     </div>
 
 </nav>
 <g:render template="/templates/flashmessage"/>
 <g:render template="/templates/flasherror"/>
+<center><h1>Record Collections</h1>
+    <div style="padding: 10px;">
+        <g:link id="importfile-link" controller="validationTask" action="importCsv" class="btn btn-primary">
+            <g:message code="validationTask.start" default="Start New Validation Task"/>
+        </g:link>
+    </div></center>
+
 
 <g:if test="${recordCollectionList}">
     <article>

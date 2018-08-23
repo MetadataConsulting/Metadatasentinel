@@ -3,6 +3,9 @@ package uk.co.metadataconsulting.sentinel
 import grails.compiler.GrailsCompileStatic
 
 @GrailsCompileStatic
+/**
+ * = A DataItem or Cell in a Spreadsheet.
+ */
 class RecordPortionGormEntity {
 
     String header

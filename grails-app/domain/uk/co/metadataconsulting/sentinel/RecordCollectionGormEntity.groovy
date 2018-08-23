@@ -3,6 +3,9 @@ package uk.co.metadataconsulting.sentinel
 import grails.compiler.GrailsCompileStatic
 
 @GrailsCompileStatic
+/**
+ * = A DataSet or a Spreadsheet. A tabular set of data.
+ */
 class RecordCollectionGormEntity {
 
     String datasetName

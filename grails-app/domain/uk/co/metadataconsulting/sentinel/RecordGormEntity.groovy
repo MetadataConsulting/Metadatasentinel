@@ -3,6 +3,9 @@ package uk.co.metadataconsulting.sentinel
 import grails.compiler.GrailsCompileStatic
 
 @GrailsCompileStatic
+/**
+ * = A DataEntry or Row in a Spreadsheet.
+ */
 class RecordGormEntity {
 
     Date dateCreated
