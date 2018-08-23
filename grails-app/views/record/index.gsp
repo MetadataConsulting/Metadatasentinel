@@ -37,7 +37,7 @@
             <div class="dropdown-menu">
                 <a class="dropdown-item" >
                     <g:link class="nav-link" controller="recordCollection" action="headersMapping" params="[recordCollectionId: recordCollectionId]">
-                        <g:message code="recordCollection.headersMapping" default="New Mapping"/>
+                        <g:message code="recordCollection.headersMapping" default="Edit Mapping"/>
                     </g:link>
                 </a>
                 <a class="dropdown-item" >
@@ -91,7 +91,7 @@
 
 <article>
     <g:if test="${recordCollectionEntity}">
-        <h1>${recordCollectionEntity.datasetName}</h1>
+        <h1 class="center">Record Collection: ${recordCollectionEntity.datasetName}</h1>
         <g:if test="${recordCollectionEntity.fileUrl}">
             <h3><a href="${recordCollectionEntity.fileUrl}">s3 file</a></h3>
         </g:if>

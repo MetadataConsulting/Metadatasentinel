@@ -24,6 +24,18 @@ footer {
     background-color: #EFEFEF;
 }
 
+.big-btn {
+    width: 800px;
+    height: 40px;
+}
+.center {
+    margin: auto;
+    text-align:center;
+    /*width: 50%;*/
+    /*border: 3px solid green;*/
+    /*padding: 10px;*/
+}
+
 .border-collapse {border-collapse: collapse;}
 .right-border { border-right: 1px dashed black; }
 .right-border-white { border-right: 1px dashed white; }

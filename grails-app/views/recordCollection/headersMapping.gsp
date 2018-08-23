@@ -151,8 +151,23 @@
 
 <g:if test="${dataModelList}">
     <article>
-    <h1>${recordCollectionEntity.datasetName}</h1>
-    <h2><g:message code="recordCollection.dataModelName" default="DataModel" />: ${recordCollectionEntity.dataModelName}</h2>
+
+
+    <h1 class="center">Mapping for Record Collection: ${recordCollectionEntity.datasetName}</h1>
+
+    <h2 class="center"><g:message code="recordCollection.dataModelName" default="DataModel" />: ${recordCollectionEntity.dataModelName}</h2>
+
+
+    <br/>
+    <g:form controller="recordCollection" action="validate" method="POST" class="form-inline my-2 my-lg-0">
+        <g:hiddenField name="recordId" value="${recordId}"/>
+        <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
+        <g:hiddenField name="datasetName" value="${datasetName}"/>
+        <input type="submit" class="center big-btn btn btn-outline-success my-2 my-sm-0" value="${g.message(code: 'record.validate', default: 'Validate!')}"/>
+    </g:form>
+    <br/>
+
+
     <g:if test="${recordPortionMappingList}">
             <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
             <g:hiddenField name="dataModelId" id="dataModelId" value="${recordCollectionEntity.dataModelId}"/>
