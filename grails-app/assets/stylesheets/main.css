@@ -11,18 +11,7 @@ footer {
 .table-striped tbody tr.alert-danger {
     background-color: #f8d7da !important;
 }
-/* PAGINATION */
 
-.pagination {
-    border-top: 0;
-    margin: 0.8em 1em 0.3em;
-    padding: 0.3em 0.2em;
-    text-align: center;
-    -moz-box-shadow: 0 0 3px 1px #AAAAAA;
-    -webkit-box-shadow: 0 0 3px 1px #AAAAAA;
-    box-shadow: 0 0 3px 1px #AAAAAA;
-    background-color: #EFEFEF;
-}
 
 .big-btn {
     width: 800px;
@@ -39,6 +28,20 @@ footer {
 .border-collapse {border-collapse: collapse;}
 .right-border { border-right: 1px dashed black; }
 .right-border-white { border-right: 1px dashed white; }
+
+
+/* PAGINATION */
+
+.pagination {
+    border-top: 0;
+    margin: 0.8em 1em 0.3em;
+    padding: 0.3em 0.2em;
+    text-align: center;
+    -moz-box-shadow: 0 0 3px 1px #AAAAAA;
+    -webkit-box-shadow: 0 0 3px 1px #AAAAAA;
+    box-shadow: 0 0 3px 1px #AAAAAA;
+    background-color: #EFEFEF;
+}
 
 .pagination a,
 .pagination .currentStep {
