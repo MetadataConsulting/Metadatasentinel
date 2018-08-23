@@ -1,12 +1,17 @@
 <html>
 <head>
     <title><g:message code="recordCollection.mapping" default="Record Collection Mapping"/></title>
+
     <meta name="layout" content="main" />
+
+
     <g:if test="${!recordPortionMappingList}">
         <meta http-equiv="refresh" content="2" />
     </g:if>
-    </head>
+
+</head>
 <body>
+
 <g:javascript>
     var getJSON = function(url, callback) {
         var xhr = new XMLHttpRequest();
@@ -194,12 +199,21 @@
                             from="${catalogueElementList}"
                             value="${recordPortionMapping.gormUrl}"
                             onChange="onCatalogueElementChanged(${recordPortionMapping.id});"/>
+                        %{--<select id="catalogueElement${recordPortionMapping.id}">--}%
+                            %{--<g:each var="catalogueElement" in="${catalogueElementList}">--}%
+                                %{--<option value="${catalogueElement.gormUrl}">${catalogueElement.name}</option>--}%
+                            %{--</g:each>--}%
+                        %{--</select>--}%
                             <input type="hidden" disabled="disabled" id="gormUrl${recordPortionMapping.id}" name="gormUrl${recordPortionMapping.id}" value="${recordPortionMapping.gormUrl}" />
                             <span>
                                 <button  id="saveButton${recordPortionMapping.id}" type="button" onclick="onSaveMapping('${recordPortionMapping.id}')" class="btn btn-save"><g:message code="headerMapping.save" default="Save"/></button>
                             </span>
                     </td>
                     </tr>
+                    %{--<g:javascript>--}%
+                        %{--console.log("#catalogueElement${recordPortionMapping.id}")--}%
+                        %{--jQuery("#catalogueElement${recordPortionMapping.id}").selectize()--}%
+                    %{--</g:javascript>--}%
                 </g:each>
                 </tbody>
             </table>

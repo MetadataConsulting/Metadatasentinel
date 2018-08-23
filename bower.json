@@ -1,0 +1,22 @@
+{
+  "name": "Metadatasentinel",
+  "homepage": "https://github.com/MetadataConsulting/Metadatasentinel",
+  "authors": [
+    "James Dai <james.dai@metadataconsulting.co.uk>"
+  ],
+  "description": "Metadata Sentinel",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "selectize": "^0.12.6",
+    "jquery": "^3.3.1",
+    "microplugin": "^0.0.3"
+  }
+}
