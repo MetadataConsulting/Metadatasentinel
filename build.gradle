@@ -62,6 +62,10 @@ task npmPackages(type: NpmTask, dependsOn: npmCacheConfig) {
     outputs.files file('node_modules')
 }
 
+task copyCSS(type: Copy) {
+    from "grails-app/assets/javascripts/bower_components/selectize/dist/css/selectize.css", "grails-app/assets/javascripts/bower_components/bootstrap/dist/css/bootstrap.css"
+    into "grails-app/assets/stylesheets/css_bower_components"
+}
 task bowerInstall(type: NodeTask) {
     description = "Resolves Bower dependencies"
     script = file('node_modules/bower/bin/bower')
@@ -72,7 +76,9 @@ task bowerInstall(type: NodeTask) {
     inputs.files file('bower.json')
     outputs.files file('grails-app/assets/javascripts/bower_components')
     dependsOn npmPackages
+    finalizedBy copyCSS
 }
+
 
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-logging"

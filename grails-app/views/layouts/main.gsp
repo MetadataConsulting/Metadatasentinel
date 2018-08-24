@@ -15,10 +15,16 @@
 
     <asset:javascript src="bower_components/jquery/dist/jquery.min.js"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    %{--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>--}%
+
+    <asset:javascript src="bootstrap/dist/js/bootstrap.js"/>
+    <asset:stylesheet src="css_bower_components/bootstrap.css"/>
+
     <asset:javascript src="bootstrap3-typeahead.min.js"/>
-    %{--<asset:javascript src="microplugin/src/microplugin.js"/>--}%
-    <asset:javascript src="bower_components/selectize/dist/js/standalone/selectize.min.js"/>
+    <asset:javascript src="bower_components/remarkable-bootstrap-notify/dist/bootstrap-notify.js"/>
+
+    <asset:javascript src="bower_components/selectize/dist/js/standalone/selectize.js"/>
+    <asset:stylesheet src="css_bower_components/selectize.css"/>
 
 
     %{--<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"/>--}%

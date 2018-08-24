@@ -17,6 +17,7 @@
   "dependencies": {
     "selectize": "^0.12.6",
     "jquery": "^3.3.1",
-    "microplugin": "^0.0.3"
+    "microplugin": "^0.0.3",
+    "remarkable-bootstrap-notify": "^3.1.3"
   }
 }
