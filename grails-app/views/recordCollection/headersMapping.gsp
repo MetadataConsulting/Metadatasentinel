@@ -12,6 +12,7 @@
 </head>
 <body>
 
+
 <g:javascript>
     var getJSON = function(url, callback) {
         var xhr = new XMLHttpRequest();
@@ -49,9 +50,9 @@
         getJSON(url, function(err, data) {
             if (err != null) {
                 console.log('Something went wrong: Error code '+err);
-                $.notify({message: "Error saving mapping for header "+headerName+"!"}, {type: 'danger'})
+                $.notify({message: "Error saving mapping for column "+headerName+"!"}, {type: 'danger'})
             } else {
-                $.notify({message: "Saved mapping for header "+headerName+"!"}, {type: 'success'})
+                $.notify({message: "Saved mapping for column "+headerName+"!"}, {type: 'success'})
 
             }
         });
@@ -73,11 +74,23 @@
 <g:render template="/templates/flashmessage"/>
 <g:render template="/templates/flasherror"/>
 
+
 <g:if test="${dataModelList}">
     <article>
-    <h1 class="center">Mapping for Record Collection: ${recordCollectionEntity.datasetName}</h1>
-    <h2 class="center"><g:message code="recordCollection.dataModelName" default="DataModel" />: ${recordCollectionEntity.dataModelName}</h2>
 
+    <h1 class="center">Mapping From Record Collection: <i>${recordCollectionEntity.datasetName}</i> <g:if test="${recordCollectionEntity.dataModelName}"><g:message code="recordCollection.dataModelName" default="to DataModel" />: <i>${recordCollectionEntity.dataModelName}</i></g:if><g:else>to MDX Elements</g:else></h1>
+
+    <br/>
+    <div class="center" id="mapping-explanation">
+        <h3 class="collapse-heading">What is a Mapping?</h3>
+        <p>A Mapping specifies, for each Column of your Spreadsheet, an Element from the Model Catalogue, which contains Rules which will be used to Validate Entries under that Column.</p>
+    </div>
+
+    <g:javascript>
+        $("#mapping-explanation").collapse({
+            query: '.collapse-heading'
+        })
+    </g:javascript>
 
     <br/>
     <g:form controller="recordCollection" action="validate" method="POST" class="form-inline my-2 my-lg-0">
@@ -95,8 +108,8 @@
         <table class="table table-striped">
             <thead class="thead-dark">
             <tr>
-                <th><g:message code="recordPortionMapping.header" default="Header"/></th>
-                <th><g:message code="recordPortionMapping.catalogueElement" default="Catalogue Element"/></th>
+                <th><g:message code="recordPortionMapping.header" default="Column"/></th>
+                <th><g:message code="recordPortionMapping.catalogueElement" default="Validates Against"/></th>
             </tr>
             </thead>
             <tbody>

@@ -25,7 +25,7 @@
 
     <asset:javascript src="bower_components/selectize/dist/js/standalone/selectize.js"/>
     <asset:stylesheet src="css_bower_components/selectize.css"/>
-
+    <asset:javascript src="bower_components/jQuery-Collapse/src/jquery.collapse.js"/>
 
     %{--<script src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.12.6/js/standalone/selectize.min.js"/>--}%
 
