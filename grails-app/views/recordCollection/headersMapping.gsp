@@ -45,17 +45,19 @@
     function saveMapping(recordPortionMappingId, headerName) {
         var targetId = 'catalogueElementSelectionForMapping'+recordPortionMappingId;
         var gormUrl = getSelectValue(targetId);
-        var url = '/recordCollectionMapping/'+recordPortionMappingId+'/save?gormUrl='+gormUrl;
-        // Call this URL. This triggers a save of the mapping for this header and returns a RecordCollectionMappingGormEntity.
-        getJSON(url, function(err, data) {
-            if (err != null) {
-                console.log('Something went wrong: Error code '+err);
-                $.notify({message: "Error saving mapping for column "+headerName+"!"}, {type: 'danger'})
-            } else {
-                $.notify({message: "Saved mapping for column "+headerName+"!"}, {type: 'success'})
+        if (gormUrl != 'null') {
+            var url = '/recordCollectionMapping/'+recordPortionMappingId+'/save?gormUrl='+gormUrl;
+            // Call this URL. This triggers a save of the mapping for this header and returns a RecordCollectionMappingGormEntity.
+            getJSON(url, function(err, data) {
+                if (err != null) {
+                    console.log('Something went wrong: Error code '+err);
+                    $.notify({message: "Error saving mapping for column "+headerName+"!"}, {type: 'danger'})
+                } else {
+                    $.notify({message: "Saved mapping for column "+headerName+"!"}, {type: 'success'})
 
-            }
-        });
+                }
+            });
+        }
     }
 </g:javascript>
 <nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
