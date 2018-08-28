@@ -56,6 +56,32 @@ class RuleFetcherService implements GrailsConfigurationAware {
         }
     }
 
+    def mdxSearch(MDXSearchCommand cmd) {
+        final String url = "${metadataUrl}/api/modelCatalogue/core/catalogueElement/search"//?search=${cmd.query}&dataModel=${cmd.dataModelId}&searchImports=${cmd.searchImports.toString()}".toString()
+        final String credential = basic()
+        HttpUrl.Builder httpBuider = HttpUrl.parse(url).newBuilder()
+        Request request = new Request.Builder()
+                .url(httpBuider.build())
+                .header("Authorization", credential)
+                .header("Accept", 'application/json')
+                .build()
+//        DataModels dataModels
+        try {
+            Response response = client.newCall(request).execute()
+
+            if ( response.isSuccessful()  ) {
+//                dataModels = dataModelsJsonAdapter.fromJson(response.body().source())
+                return response.body().source()
+            } else {
+                log.warn 'Response {}. Could not fetch Data Models at {}', response.code(), url
+            }
+            response.close()
+        } catch (IOException ioexception) {
+            log.warn('unable to connect to server {}', metadataUrl)
+        }
+//        dataModels
+    }
+
     DataModels fetchDataModels() {
         final String url = "${metadataUrl}/api/dashboard/dataModels".toString()
         final String credential = basic()

@@ -217,6 +217,10 @@ grails:
                     access:
                         - 'isAuthenticated()'
                 -
+                    pattern: /fetch/mdxSearch
+                    access:
+                        - 'isAuthenticated()'
+                -
                     pattern: /records/*
                     access:
                         - 'isAuthenticated()'

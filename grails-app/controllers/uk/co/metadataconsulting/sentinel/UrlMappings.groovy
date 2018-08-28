@@ -23,6 +23,8 @@ class UrlMappings {
         "/uploadForNewValidationTask"(controller: 'validationTask', action: 'uploadCsv', httpMethod: 'POST')
         "/validationTask/index"(controller: 'validationTask', action: 'index')
 
+        "/fetch/mdxSearch"(controller: 'MDXFetch', action: 'mdxSearch')
+
         "/records/$recordCollectionId"(controller: 'record', action: 'index')
         "/record/index"(controller: 'record', action: 'index')
         "/record/show"(controller: 'record', action: 'show')
