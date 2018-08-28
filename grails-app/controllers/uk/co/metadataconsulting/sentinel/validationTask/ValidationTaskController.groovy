@@ -67,6 +67,7 @@ class ValidationTaskController implements ValidateableErrorsMessage {
 
     /**
      * Copied from RecordCollectionController. Called from importCsv view when CSV and accompanying details are submitted to create new Validation Task.
+     * Creates a new RecordCollection and makes it part of a ValidationTask.
      * @param cmd
      * @return
      */

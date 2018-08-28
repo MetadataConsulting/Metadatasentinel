@@ -5,6 +5,9 @@ import org.simmetrics.StringMetric
 import org.simmetrics.metrics.StringMetrics
 
 @CompileStatic
+/**
+ * Compares two strings with a fuzzy matching algorithm
+ */
 class CompareByNameService {
 
     Float distance(String source, String destination) {

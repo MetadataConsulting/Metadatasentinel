@@ -13,11 +13,20 @@ import org.modelcatalogue.stringtransformer.ToLowerCaseTransformer
 import uk.co.metadataconsulting.sentinel.modelcatalogue.GormUrlName
 
 @CompileStatic
+/**
+ * "Reconciles" a list of headers with a list of GormUrlNames using normalization + fuzzy matching.
+ */
 class ReconciliationService implements GrailsConfigurationAware {
 
     CompareByNameService compareByNameService
 
+    /**
+     * Threshold over which fuzzy matching succeeds
+     */
     Float threshold
+    /**
+     * Maximum number of results to be returned from reconciliation
+     */
     Integer max
 
     @Override
@@ -25,7 +34,9 @@ class ReconciliationService implements GrailsConfigurationAware {
         threshold = co.getProperty('reconciliation.threshold', Float, 0.6f)
         max = co.getProperty('reconciliation.max', Integer, 10)
     }
-
+    /**
+     * StringTransformers that normalize a string. Applied in the order listed.
+     */
     List<StringTransformer> stringTransformerList = [
             new LeadingTrailingDoubleQuotesRemovalTransformer(),
             new DuplicatedDoubleQuotesToOneDoubleQuoteTransformer(),
@@ -36,6 +47,11 @@ class ReconciliationService implements GrailsConfigurationAware {
 
     ] as List<StringTransformer>
 
+    /**
+     * Apply the StringTransformers
+     * @param word
+     * @return
+     */
     String cleanup(String word) {
         String result = word
         for (StringTransformer transformer : stringTransformerList) {
@@ -44,10 +60,23 @@ class ReconciliationService implements GrailsConfigurationAware {
         result
     }
 
+    /**
+     * Reconcile a list of GormUrlNames with a list of headers
+     * @param catalogueElements
+     * @param headers
+     * @return
+     */
     Map<String, List<GormUrlName>> reconcile(List<GormUrlName> catalogueElements, List<String> headers) {
         reconcile(catalogueElements, headers, this.threshold)
     }
 
+    /**
+     * Reconcile a list of GormUrlNames with a list of headers given a threshold
+     * @param catalogueElements
+     * @param headers
+     * @param threshold
+     * @return
+     */
     Map<String, List<GormUrlName>> reconcile(List<GormUrlName> catalogueElements, List<String> headers, Float threshold) {
         Map m = [:]
 
@@ -66,6 +95,13 @@ class ReconciliationService implements GrailsConfigurationAware {
         m
     }
 
+    /**
+     * Return the first {@link #max} elements of the list of GormUrlNames, which has been filtered by: whether their fuzzy match score with the header value is over the threshold, and sorted by: that score.
+     * @param l
+     * @param value
+     * @param threshold
+     * @return
+     */
     List<GormUrlName> reconcile(List<GormUrlNameWithDistance> l, String value, Float threshold) {
 
         l?.each {GormUrlNameWithDistance gormUrlName ->

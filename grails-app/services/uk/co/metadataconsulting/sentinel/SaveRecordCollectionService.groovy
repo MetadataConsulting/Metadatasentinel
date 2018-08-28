@@ -9,6 +9,9 @@ import static grails.async.Promises.*
 
 @Slf4j
 @CompileStatic
+/**
+ * Service to save (create new) a RecordCollection and populate it with Records from an file (InputStream) using the CSV import service.
+ */
 class SaveRecordCollectionService {
 
     CsvImportService csvImportService
@@ -22,6 +25,9 @@ class SaveRecordCollectionService {
     UploadFileService uploadFileService
 
     @CompileDynamic
+    /**
+     * Create a new RecordCollection and populate it with Records from an file (InputStream) using the CSV import service.
+     */
     RecordCollectionGormEntity save(RecordFileCommand cmd) {
         List<DataModel> dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
         DataModel dataModel = dataModelList?.find { it.id == cmd.dataModelId }

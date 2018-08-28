@@ -28,6 +28,9 @@ class CsvImportService implements CsvImport, Benchmark {
     
     @CompileDynamic
     @Override
+    /**
+     * Save a CSV file as the Records of a given (should be newly created) RecordCollection. A preliminary "default" mapping is made here.
+     */
     void save(InputStream inputStream,
               Integer batchSize,
               RecordCollectionGormEntity recordCollectionEntity) {

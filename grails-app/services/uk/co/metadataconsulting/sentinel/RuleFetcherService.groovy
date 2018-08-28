@@ -19,6 +19,9 @@ import uk.co.metadataconsulting.sentinel.security.MdxUserDetails
 
 @Slf4j
 @CompileStatic
+/**
+ * Fetches not just ValidationRules but DataModels and CatalogueElements from the MDX.
+ */
 class RuleFetcherService implements GrailsConfigurationAware {
 
     private final Moshi moshi = new Moshi.Builder().build()
@@ -29,6 +32,9 @@ class RuleFetcherService implements GrailsConfigurationAware {
 
     SpringSecurityService springSecurityService
 
+    /**
+     * URL of the associated MDX instance.
+     */
     String metadataUrl
 
     private String basic() {
@@ -40,6 +46,9 @@ class RuleFetcherService implements GrailsConfigurationAware {
     }
 
     @Override
+    /**
+     * Set metadataUrl from config
+     */
     void setConfiguration(Config co) {
         metadataUrl = co.getProperty('metadata.url', String)
         if ( !metadataUrl || metadataUrl == '${METADATA_URL}') {

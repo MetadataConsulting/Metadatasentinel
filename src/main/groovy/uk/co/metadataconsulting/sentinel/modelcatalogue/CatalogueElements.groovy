@@ -3,6 +3,9 @@ package uk.co.metadataconsulting.sentinel.modelcatalogue
 import groovy.transform.CompileStatic
 
 @CompileStatic
+/**
+ * Collections of GormUrlNames (representations of CatalogueElements), one for each Domain class of the MDX (roughly).
+ */
 class CatalogueElements {
     List<GormUrlName> dataElements = []
     List<GormUrlName> dataClasses = []
