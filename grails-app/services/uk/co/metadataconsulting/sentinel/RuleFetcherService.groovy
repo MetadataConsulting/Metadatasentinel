@@ -57,7 +57,7 @@ class RuleFetcherService implements GrailsConfigurationAware {
     }
 
     def mdxSearch(MDXSearchCommand cmd) {
-        final String url = "${metadataUrl}/api/modelCatalogue/core/catalogueElement/search"//?search=${cmd.query}&dataModel=${cmd.dataModelId}&searchImports=${cmd.searchImports.toString()}".toString()
+        final String url = "${metadataUrl}/api/modelCatalogue/core/catalogueElement/search?search=${cmd.query}&dataModel=${cmd.dataModelId}&searchImports=${cmd.searchImports.toString()}".toString()
         final String credential = basic()
         HttpUrl.Builder httpBuider = HttpUrl.parse(url).newBuilder()
         Request request = new Request.Builder()
