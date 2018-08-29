@@ -10,11 +10,16 @@
     </g:if>
 
 
-    <asset:javascript src="bower_components/remarkable-bootstrap-notify/dist/bootstrap-notify.js"/>
+    %{--<asset:javascript src="bower_components/remarkable-bootstrap-notify/dist/bootstrap-notify.js"/>--}%
+    %{--<asset:javascript src="bower_components/selectize/dist/js/standalone/selectize.js"/>--}%
+    %{--<asset:stylesheet src="css_bower_components/selectize.css"/>--}%
+    %{--<asset:javascript src="bower_components/jQuery-Collapse/src/jquery.collapse.js"/>--}%
 
-    <asset:javascript src="bower_components/selectize/dist/js/standalone/selectize.js"/>
-    <asset:stylesheet src="css_bower_components/selectize.css"/>
-    <asset:javascript src="bower_components/jQuery-Collapse/src/jquery.collapse.js"/>
+    <asset:javascript src="bootstrap-notify.js"/>
+    <asset:javascript src="selectize.js"/>
+    <asset:stylesheet src="selectize.css"/>
+    <asset:javascript src="jquery.collapse.js"/>
+
 
 
 </head>

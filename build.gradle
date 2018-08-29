@@ -146,7 +146,6 @@ dependencies {
 }
 
 bootRun {
-    dependsOn bowerInstall
     systemProperties System.properties
     jvmArgs('-Dspring.output.ansi.enabled=always')
     addResources = true
