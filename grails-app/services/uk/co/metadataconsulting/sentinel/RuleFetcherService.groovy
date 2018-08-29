@@ -14,6 +14,7 @@ import okhttp3.Request
 import okhttp3.Response
 import uk.co.metadataconsulting.sentinel.modelcatalogue.CatalogueElements
 import uk.co.metadataconsulting.sentinel.modelcatalogue.DataModels
+import uk.co.metadataconsulting.sentinel.modelcatalogue.MDXSearchResponse
 import uk.co.metadataconsulting.sentinel.modelcatalogue.ValidationRules
 import uk.co.metadataconsulting.sentinel.security.MdxUserDetails
 
@@ -29,6 +30,7 @@ class RuleFetcherService implements GrailsConfigurationAware {
     private final JsonAdapter<ValidationRules> validationRulesJsonAdapter = moshi.adapter(ValidationRules.class)
     private final JsonAdapter<CatalogueElements> catalogueElementsJsonAdapter = moshi.adapter(CatalogueElements.class)
     private final JsonAdapter<DataModels> dataModelsJsonAdapter = moshi.adapter(DataModels.class)
+    private final JsonAdapter<MDXSearchResponse> mdxSearchResponseJsonAdapter = moshi.adapter(MDXSearchResponse.class)
 
     SpringSecurityService springSecurityService
 
@@ -56,7 +58,7 @@ class RuleFetcherService implements GrailsConfigurationAware {
         }
     }
 
-    def mdxSearch(MDXSearchCommand cmd) {
+    MDXSearchResponse mdxSearch(MDXSearchCommand cmd) {
         final String url = "${metadataUrl}/api/modelCatalogue/core/catalogueElement/search?search=${cmd.query}&dataModel=${cmd.dataModelId}&searchImports=${cmd.searchImports.toString()}".toString()
         final String credential = basic()
         HttpUrl.Builder httpBuider = HttpUrl.parse(url).newBuilder()
@@ -71,7 +73,8 @@ class RuleFetcherService implements GrailsConfigurationAware {
 
             if ( response.isSuccessful()  ) {
 //                dataModels = dataModelsJsonAdapter.fromJson(response.body().source())
-                return response.body().source()
+                MDXSearchResponse mdxSearchResponse = mdxSearchResponseJsonAdapter.fromJson(response.body().source())
+                return mdxSearchResponse
             } else {
                 log.warn 'Response {}. Could not fetch Data Models at {}', response.code(), url
             }

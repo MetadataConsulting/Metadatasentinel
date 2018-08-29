@@ -1,6 +1,9 @@
 package uk.co.metadataconsulting.sentinel
 
+import grails.converters.JSON
 import groovy.transform.CompileStatic
+import uk.co.metadataconsulting.sentinel.modelcatalogue.MDXSearchResponse
+import uk.co.metadataconsulting.sentinel.modelcatalogue.MDXSearchResponseProjection
 
 @CompileStatic
 class MDXFetchController {
@@ -17,6 +20,7 @@ class MDXFetchController {
             log.info("Bad request made for mdxSearch action")
             return
         }
-        return ruleFetcherService.mdxSearch(cmd)
+        MDXSearchResponse mdxSearchResponse = ruleFetcherService.mdxSearch(cmd)
+        respond MDXSearchResponseProjection.of(mdxSearchResponse)
     }
 }

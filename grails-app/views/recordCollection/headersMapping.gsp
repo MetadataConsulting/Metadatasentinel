@@ -9,6 +9,14 @@
         <meta http-equiv="refresh" content="2" />
     </g:if>
 
+
+    <asset:javascript src="bower_components/remarkable-bootstrap-notify/dist/bootstrap-notify.js"/>
+
+    <asset:javascript src="bower_components/selectize/dist/js/standalone/selectize.js"/>
+    <asset:stylesheet src="css_bower_components/selectize.css"/>
+    <asset:javascript src="bower_components/jQuery-Collapse/src/jquery.collapse.js"/>
+
+
 </head>
 <body>
 
@@ -45,7 +53,8 @@
     function saveMapping(recordPortionMappingId, headerName) {
         var targetId = 'catalogueElementSelectionForMapping'+recordPortionMappingId;
         var gormUrl = getSelectValue(targetId);
-        if (gormUrl != 'null') {
+        console.log(gormUrl)
+        if (gormUrl != 'null' && gormUrl != '') {
             var url = '/recordCollectionMapping/'+recordPortionMappingId+'/save?gormUrl='+gormUrl;
             // Call this URL. This triggers a save of the mapping for this header and returns a RecordCollectionMappingGormEntity.
             getJSON(url, function(err, data) {
@@ -137,14 +146,14 @@
                     <g:javascript>
                       console.log("#catalogueElementSelectionForMapping${recordPortionMapping.id}")
                         jQuery("#catalogueElementSelectionForMapping${recordPortionMapping.id}").selectize({
-                            valueField: 'title',
-                            labelField: 'title',
-                            searchField: 'title',
+                            valueField: 'gormUrl',
+                            labelField: 'name',
+                            searchField: 'name',
                             options: [],
                             create: false,
                             render: {
                                 option: function(item, escape) {
-                                    return '<div>Hi</div>'
+                                    return '<div>'+escape(item.name)+'</div>'
                                     // var actors = [];
                                     // for (var i = 0, n = item.abridged_cast.length; i < n; i++) {
                                     //     actors.push('<span>' + escape(item.abridged_cast[i].name) + '</span>');
@@ -162,20 +171,28 @@
                             },
                             load: function(query, callback) {
                                 if (!query.length) return callback();
+                                var url = "/fetch/mdxSearch?dataModelId=${recordCollectionEntity.dataModelId}&query="+query+"&searchImports=false"
+                                // getJSON(url, function(errStatus, response) {
+                                //     if (errStatus != null) {
+                                //         console.log('Something went wrong: Error code '+errStatus);
+                                //         $.notify({message: "Request at "+url+" went wrong!"}, {type: 'danger'})
+                                //     } else {
+                                //         // $.notify({message: "Saved mapping for column "+headerName+"!"}, {type: 'success'})
+                                //         callback(response.list)
+                                //
+                                //     }
+                                // })
+
                                 $.ajax({
-                                    url: "/fetch/mdxSearch?dataModelId=${recordCollectionEntity.dataModelId}&query="+query+"&searchImports=false",
+                                    url: url,
                                     type: 'GET',
-                                    dataType: 'jsonp',
-                                    data: {
-                                        q: query,
-                                        page_limit: 10,
-                                        apikey: 'w82gs68n8m2gur98m6du5ugc'
-                                    },
-                                    error: function() {
+                                    dataType: 'json',
+                                    error: function(jqXHR, textStatus, errorThrown) {
+                                        $.notify({message: "Request failed with textStatus "+textStatus+"!"}, {type: 'danger'})
                                         callback();
                                     },
-                                    success: function(res) {
-                                        callback(res);
+                                    success: function(mdxSearchResponse /*: MDXSearchResponse */) {
+                                        callback(mdxSearchResponse.list);
                                     }
                                 });
                             }
