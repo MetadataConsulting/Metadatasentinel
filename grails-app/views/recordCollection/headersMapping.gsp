@@ -157,36 +157,18 @@
                             options: [],
                             create: false,
                             render: {
-                                option: function(item, escape) {
-                                    return '<div>'+escape(item.name)+'</div>'
-                                    // var actors = [];
-                                    // for (var i = 0, n = item.abridged_cast.length; i < n; i++) {
-                                    //     actors.push('<span>' + escape(item.abridged_cast[i].name) + '</span>');
-                                    // }
-                                    //
-                                    // return '<div>' +
-                                    //         '<img src="' + escape(item.posters.thumbnail) + '" alt="">' +
-                                    //         '<span class="title">' +
-                                    //         '<span class="name">' + escape(item.title) + '</span>' +
-                                    //         '</span>' +
-                                    //         '<span class="description">' + escape(item.synopsis || 'No synopsis available at this time.') + '</span>' +
-                                    //         '<span class="actors">' + (actors.length ? 'Starring ' + actors.join(', ') : 'Actors unavailable') + '</span>' +
-                                    //         '</div>';
+                                option: function(item /*: ElasticSearchCatalogueElementDocumentProjection */, escape) {
+                                    var description = ""
+                                    if (item.description) {
+                                        description = "<br/><ul><li><i>"+escape(item.description)+"</i></li></ul>"
+                                    }
+                                    return '<div>'+escape(item.name)+description+'</div>'
                                 }
                             },
                             load: function(query, callback) {
                                 if (!query.length) return callback();
                                 var url = "/fetch/mdxSearch?dataModelId=${recordCollectionEntity.dataModelId}&query="+query+"&searchImports=false"
-                                // getJSON(url, function(errStatus, response) {
-                                //     if (errStatus != null) {
-                                //         console.log('Something went wrong: Error code '+errStatus);
-                                //         $.notify({message: "Request at "+url+" went wrong!"}, {type: 'danger'})
-                                //     } else {
-                                //         // $.notify({message: "Saved mapping for column "+headerName+"!"}, {type: 'success'})
-                                //         callback(response.list)
-                                //
-                                //     }
-                                // })
+
 
                                 $.ajax({
                                     url: url,

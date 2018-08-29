@@ -13,10 +13,14 @@ class ElasticSearchCatalogueElementDocumentProjection {
     String name
     String gormUrl
 
+    String description
+
     static ElasticSearchCatalogueElementDocumentProjection of(ElasticSearchCatalogueElementDocument elasticSearchCatalogueElementDocument) {
         return new ElasticSearchCatalogueElementDocumentProjection(
                 name: elasticSearchCatalogueElementDocument.name,
-                gormUrl: "gorm://${elasticSearchCatalogueElementDocument.elementType}:${elasticSearchCatalogueElementDocument.id}")
+                gormUrl: "gorm://${elasticSearchCatalogueElementDocument.elementType}:${elasticSearchCatalogueElementDocument.id}",
+
+                description: elasticSearchCatalogueElementDocument.description)
 
     }
 }
