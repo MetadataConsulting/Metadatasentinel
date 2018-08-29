@@ -1,5 +1,8 @@
 package uk.co.metadataconsulting.sentinel.modelcatalogue
 
+/**
+ * Projection of MDXSearchResponse for use in mapping
+ */
 class MDXSearchResponseProjection {
     List<ElasticSearchCatalogueElementDocumentProjection> list
 
@@ -15,12 +18,18 @@ class ElasticSearchCatalogueElementDocumentProjection {
 
     String description
 
+    String combinedGormUrlName
+
     static ElasticSearchCatalogueElementDocumentProjection of(ElasticSearchCatalogueElementDocument elasticSearchCatalogueElementDocument) {
+        String gormUrl = "gorm://${elasticSearchCatalogueElementDocument.elementType}:${elasticSearchCatalogueElementDocument.id}"
+        String name = elasticSearchCatalogueElementDocument.name
         return new ElasticSearchCatalogueElementDocumentProjection(
-                name: elasticSearchCatalogueElementDocument.name,
-                gormUrl: "gorm://${elasticSearchCatalogueElementDocument.elementType}:${elasticSearchCatalogueElementDocument.id}",
+                name: name,
+                gormUrl: gormUrl,
+                combinedGormUrlName: gormUrl + GormUrlName.gormUrlNameSeparator + name,
 
                 description: elasticSearchCatalogueElementDocument.description)
 
     }
+
 }

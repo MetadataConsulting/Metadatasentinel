@@ -68,4 +68,9 @@ class RecordCollectionMappingGormService {
     RecordCollectionMappingGormEntity updateGormUrl(Long recordPortionId, String gormUrl) {
         recordPortionMappingGormDataService.update(recordPortionId, gormUrl)
     }
+
+    @Transactional
+    RecordCollectionMappingGormEntity updateGormUrlName(Long recordPortionId, String gormUrl, String name) {
+        recordPortionMappingGormDataService.update(recordPortionId, gormUrl, name)
+    }
 }

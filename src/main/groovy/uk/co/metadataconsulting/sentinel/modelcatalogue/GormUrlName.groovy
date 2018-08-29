@@ -2,6 +2,7 @@ package uk.co.metadataconsulting.sentinel.modelcatalogue
 
 import groovy.transform.CompileStatic
 import groovy.transform.ToString
+import uk.co.metadataconsulting.sentinel.RecordPortionMapping
 
 @ToString(includes = ['name', 'gormUrl'], includePackage = false, includeNames = false)
 @CompileStatic
@@ -13,4 +14,21 @@ class GormUrlName {
     String gormUrl
     String name
     Long dataModelId
+    String combinedGormUrlName
+
+    static String gormUrlNameSeparator = "####"
+
+    String getCombinedGormUrlName() {
+        return combineGormUrlName(gormUrl, name)
+    }
+
+    static String combineGormUrlName(String gormUrl, String name) {
+        return gormUrl + gormUrlNameSeparator + name
+    }
+
+    static GormUrlName from(RecordPortionMapping recordPortionMapping, Long dataModelId) {
+        return new GormUrlName(gormUrl: recordPortionMapping.gormUrl, name: recordPortionMapping.name, dataModelId: dataModelId)
+    }
 }
+
+

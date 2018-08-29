@@ -249,6 +249,14 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         }
         List<GormUrlName> catalogueElementList = catalogueElementsService.findAllByDataModelId(recordCollectionGormEntity.dataModelId)
 
+        List<RecordPortionMapping> recordPortionMappingList = recordCollectionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
+
+        if (catalogueElementList.size() == 0) {
+            catalogueElementList = recordPortionMappingList.collect {
+                GormUrlName.from(it, recordCollectionGormEntity.dataModelId)
+            }
+        }
+
         List dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
         if ( !dataModelList ) {
             flash.error = messageSource.getMessage('dataModel.couldNotLoad', [] as Object[], 'Could not load data Models', request.locale)
@@ -258,7 +266,7 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
                 recordCollectionEntity: recordCollectionGormEntity,
                 dataModelList: dataModelList,
                 recordCollectionId: recordCollectionId,
-                recordPortionMappingList: recordCollectionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
+                recordPortionMappingList: recordPortionMappingList
         ]
     }
 

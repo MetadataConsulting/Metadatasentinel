@@ -44,8 +44,8 @@ class RecordCollectionMappingController {
             return
         }
         RecordCollectionMappingGormEntity recordCollectionMappingEntity =
-                recordCollectionMappingGormService.updateGormUrl(cmd.recordPortionMappingId,
-                                                                 cmd.gormUrl)
+                recordCollectionMappingGormService.updateGormUrlName(cmd.recordPortionMappingId,
+                                                                 cmd.gormUrl, cmd.name)
         [recordCollectionMappingEntity: recordCollectionMappingEntity]
     }
 

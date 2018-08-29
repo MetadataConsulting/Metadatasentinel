@@ -57,10 +57,13 @@
 
     function saveMapping(recordPortionMappingId, headerName) {
         var targetId = 'catalogueElementSelectionForMapping'+recordPortionMappingId;
-        var gormUrl = getSelectValue(targetId);
-        console.log(gormUrl)
-        if (gormUrl != 'null' && gormUrl != '') {
-            var url = '/recordCollectionMapping/'+recordPortionMappingId+'/save?gormUrl='+gormUrl;
+        var combinedGormUrlName = getSelectValue(targetId);
+        console.log(combinedGormUrlName)
+        if (combinedGormUrlName != 'null' && combinedGormUrlName != '') {
+            var gormUrlNameArray = combinedGormUrlName.split("####")
+            var gormUrl = gormUrlNameArray[0]
+            var name = gormUrlNameArray[1]
+            var url = '/recordCollectionMapping/'+recordPortionMappingId+'/save?gormUrl='+gormUrl+'&name='+name;
             // Call this URL. This triggers a save of the mapping for this header and returns a RecordCollectionMappingGormEntity.
             getJSON(url, function(err, data) {
                 if (err != null) {
@@ -138,10 +141,10 @@
                             <g:select
                                     name="catalogueElementSelectionForMapping${recordPortionMapping.id}"
                                     noSelection="${['null':'Select One...']}"
-                                    optionKey="gormUrl"
+                                    optionKey="combinedGormUrlName"
                                     optionValue="name"
                                     from="${catalogueElementList}"
-                                    value="${recordPortionMapping.gormUrl}"
+                                    value="${recordPortionMapping.combinedGormUrlName}"
                                     onChange="saveMapping(${recordPortionMapping.id}, '${recordPortionMapping.header}');"/>
 
                         <input type="hidden" disabled="disabled" id="gormUrl${recordPortionMapping.id}" name="gormUrl${recordPortionMapping.id}" value="${recordPortionMapping.gormUrl}" />
@@ -151,7 +154,7 @@
                     <g:javascript>
                       console.log("#catalogueElementSelectionForMapping${recordPortionMapping.id}")
                         jQuery("#catalogueElementSelectionForMapping${recordPortionMapping.id}").selectize({
-                            valueField: 'gormUrl',
+                            valueField: 'combinedGormUrlName',
                             labelField: 'name',
                             searchField: 'name',
                             options: [],
