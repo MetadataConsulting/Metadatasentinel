@@ -23,40 +23,38 @@ import uk.co.metadataconsulting.sentinel.security.MdxUserDetails
 /**
  * Fetches not just ValidationRules but DataModels and CatalogueElements from the MDX.
  */
-class RuleFetcherService implements GrailsConfigurationAware {
+class RuleFetcherService extends MDXApiService {//implements GrailsConfigurationAware {
 
-    private final Moshi moshi = new Moshi.Builder().build()
-    private final OkHttpClient client = new OkHttpClient()
     private final JsonAdapter<ValidationRules> validationRulesJsonAdapter = moshi.adapter(ValidationRules.class)
     private final JsonAdapter<CatalogueElements> catalogueElementsJsonAdapter = moshi.adapter(CatalogueElements.class)
     private final JsonAdapter<DataModels> dataModelsJsonAdapter = moshi.adapter(DataModels.class)
     private final JsonAdapter<MDXSearchResponse> mdxSearchResponseJsonAdapter = moshi.adapter(MDXSearchResponse.class)
-
-    SpringSecurityService springSecurityService
-
-    /**
-     * URL of the associated MDX instance.
-     */
-    String metadataUrl
-
-    private String basic() {
-        if (springSecurityService.principal instanceof MdxUserDetails) {
-            MdxUserDetails mdxUserDetails = (MdxUserDetails) springSecurityService.principal
-            return Credentials.basic(mdxUserDetails.username, mdxUserDetails.password)
-        }
-        null
-    }
-
-    @Override
-    /**
-     * Set metadataUrl from config
-     */
-    void setConfiguration(Config co) {
-        metadataUrl = co.getProperty('metadata.url', String)
-        if ( !metadataUrl || metadataUrl == '${METADATA_URL}') {
-            metadataUrl = 'http://localhost:8080'
-        }
-    }
+//
+//    SpringSecurityService springSecurityService
+//
+//    /**
+//     * URL of the associated MDX instance.
+//     */
+//    String metadataUrl
+//
+//    private String basic() {
+//        if (springSecurityService.principal instanceof MdxUserDetails) {
+//            MdxUserDetails mdxUserDetails = (MdxUserDetails) springSecurityService.principal
+//            return Credentials.basic(mdxUserDetails.username, mdxUserDetails.password)
+//        }
+//        null
+//    }
+//
+//    @Override
+//    /**
+//     * Set metadataUrl from config
+//     */
+//    void setConfiguration(Config co) {
+//        metadataUrl = co.getProperty('metadata.url', String)
+//        if ( !metadataUrl || metadataUrl == '${METADATA_URL}') {
+//            metadataUrl = 'http://localhost:8080'
+//        }
+//    }
 
     MDXSearchResponse mdxSearch(MDXSearchCommand cmd) {
         final String url = "${metadataUrl}/api/modelCatalogue/core/catalogueElement/search?search=${cmd.query}&dataModel=${cmd.dataModelId}&searchImports=${cmd.searchImports.toString()}".toString()
@@ -67,14 +65,15 @@ class RuleFetcherService implements GrailsConfigurationAware {
                 .header("Authorization", credential)
                 .header("Accept", 'application/json')
                 .build()
-//        DataModels dataModels
+
         try {
             Response response = client.newCall(request).execute()
 
             if ( response.isSuccessful()  ) {
-//                dataModels = dataModelsJsonAdapter.fromJson(response.body().source())
+
                 MDXSearchResponse mdxSearchResponse = mdxSearchResponseJsonAdapter.fromJson(response.body().source())
                 return mdxSearchResponse
+
             } else {
                 log.warn 'Response {}. Could not fetch Data Models at {}', response.code(), url
             }
@@ -82,7 +81,6 @@ class RuleFetcherService implements GrailsConfigurationAware {
         } catch (IOException ioexception) {
             log.warn('unable to connect to server {}', metadataUrl)
         }
-//        dataModels
     }
 
     DataModels fetchDataModels() {

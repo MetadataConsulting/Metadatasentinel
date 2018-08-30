@@ -31,6 +31,7 @@
 
                 <div class="form-group">
                     <input type="submit" class="btn btn-primary" id="submit" value="${message(code: 'springSecurity.login.button')}"/>
+                    <g:link controller="register" action="index" class="btn btn-primary">Register</g:link>
                 </div>
             </form>        </div>
         <div class="col">

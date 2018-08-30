@@ -34,6 +34,9 @@ class UrlMappings {
         "/login/$action?/$id?(.$format)?"(controller: 'login')
         "/login/$action?/$id?(.$format)?"(controller: 'logout')
 
+        "/register/index"(controller: 'register', action: 'index')
+        "/register/register"(controller: 'register', action: 'register')
+
         "500"(view:'/error')
         "404"(view:'/notFound')
     }

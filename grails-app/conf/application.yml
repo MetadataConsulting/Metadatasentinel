@@ -145,7 +145,7 @@ grails:
                     access:
                         - 'permitAll'
                 -
-                    pattern: '/logout/**'
+                    pattern: /register/**
                     access:
                         - 'permitAll'
                 -
