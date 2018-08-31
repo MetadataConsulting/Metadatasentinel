@@ -1,143 +1,86 @@
 package uk.co.metadataconsulting.sentinel.security
 
-import com.squareup.moshi.Json
 import com.squareup.moshi.JsonAdapter
-import grails.validation.ValidationErrors
+import com.squareup.moshi.Moshi
+import grails.config.Config
+import grails.core.support.GrailsConfigurationAware
+import grails.plugin.json.builder.JsonOutput
+import groovy.json.JsonSlurper
+import groovy.util.logging.Slf4j
 import okhttp3.HttpUrl
 import okhttp3.MediaType
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
-import uk.co.metadataconsulting.sentinel.MDXApiService
+import org.grails.web.json.JSONException
+import org.grails.web.json.JSONObject
 
-class RegisterService extends MDXApiService {
+@Slf4j
+class RegisterService implements GrailsConfigurationAware {
+    private final OkHttpClient client = new OkHttpClient()
+    private final Moshi moshi = new Moshi.Builder().build()
+    private final JsonAdapter<MdxValidationErrors> validationErrorsJsonAdapter = moshi.adapter(MdxValidationErrors.class)
+    private String registerUrl
 
-    private final JsonAdapter<RegisterResponse> registerResponseJsonAdapter = moshi.adapter(RegisterResponse.class)
 
-    RegisterResponse callMDXRegister(RegisterCommand command) {
-        MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    /**
+     * Set metadataUrl from config
+     * @param Configuration object
+     */
+    @Override
+    void setConfiguration(Config co) {
+        String metadataUrl = co.getProperty('metadata.url', String)
+        if ( !metadataUrl || metadataUrl == '${METADATA_URL}') {
+            metadataUrl = 'http://localhost:8080'
+        }
+        registerUrl = "${metadataUrl}/api/modelCatalogue/register"
+    }
 
-        RequestBody body = RequestBody.create(JSON, """
-            {
-                username: ${command.username},
-                email: ${command.email},
-                password: ${command.password},
-                password2: ${command.password2}
-            }
-        """)
-        final String url = "${metadataUrl}/api/modelCatalogue/register".toString()
-//        final String credential = basic()
-        HttpUrl.Builder httpBuider = HttpUrl.parse(url).newBuilder()
-        Request request = new Request.Builder()
-                .url(httpBuider.build())
-//                .header("Authorization", credential)
+    private RequestBody registerBody(RegisterRequest req) {
+        String json = JsonOutput.toJson([username: req.username,
+                                         email: req.email,
+                                         password: req.password,
+        ])
+        RequestBody.create(MediaType.parse("application/json; charset=utf-8"), json)
+    }
+
+    private Request registerRequest(RegisterRequest req) {
+        new Request.Builder()
+                .url(HttpUrl.parse(registerUrl).newBuilder().build())
                 .header("Accept", 'application/json')
-                .post(body)
+                .header("Content-Type", 'application/json')
+                .post(registerBody(req))
                 .build()
+    }
+
+    RegisterResponse register(RegisterRequest req) {
+
+        Request request = registerRequest(req)
 
         try {
             Response response = client.newCall(request).execute()
 
             if ( response.isSuccessful()  ) {
-
-//                MDXSearchResponse mdxSearchResponse = mdxSearchResponseJsonAdapter.fromJson(response.body().source())
-//                return mdxSearchResponse
-                RegisterResponse registerResponse = registerResponseJsonAdapter.fromJson(response.body().source().inputStream().getText() + "}}}}")
-                return registerResponse
+                return new RegisterResponse()
 
             } else {
-                log.warn 'Response {}. Could not fetch Data Models at {}', response.code(), url
+                if (response.code() == 422) {
+                    MdxValidationErrors validationErrors = validationErrorsJsonAdapter.fromJson(response.body().source())
+                    RegisterResponse registerResponse = new RegisterResponse()
+                    for (MdxValidationError error : validationErrors.errors) {
+                        registerResponse.errors.reject(error.code, [] as Object[], error.message)
+                    }
+                    return registerResponse
+                }
+                log.warn 'Response {}. Could not fetch Data Models at {}', response.code(), request.url().uri().toString()
             }
             response.close()
         } catch (IOException ioexception) {
-            log.warn('unable to connect to server {}', metadataUrl)
+            log.warn('unable to connect to server {}', registerUrl)
         }
+        RegisterResponse registerResponse = new RegisterResponse()
+        registerResponse.errors.reject('register.failed.message', [] as Object[], "Registration failed")
+        return registerResponse
     }
-}
-
-/**
- * Corresponds to expected JSON {
- *     ?flash: Flash,
- *     ?model: Model
- * }
- * type Flash = {
- *     error: string,
- *     ?chainedParams: Map<String, String>
- * }
- * type Model = {
- *     ?command: RegisterCommand,
- *     ?emailSent: boolean
- * }
- * @param command
- * @return
- */
-class RegisterResponse {
-    Flash flash
-    Model model
-}
-
-class Flash {
-    String error
-    Map<String, String> chainedParams
-}
-
-class Model {
-    RegisterCommandShape command
-    Boolean emailSent
-}
-
-/**
- * Needed because RegisterCommand itself has an extra field added to it by Grails.
- */
-class RegisterCommandShape {
-    String username
-    String email
-    String password
-    String password2
-    Errors errors
-    GrailsApplicationJson grailsApplication
-}
-
-class RegisterCommandShapeValidationErrors {
-    String username
-    String email
-    String password
-    String password2
-    ValidationErrors errors
-    GrailsApplicationJson grailsApplication
-
-    static RegisterCommandShapeValidationErrors of(RegisterCommandShape registerCommandShape) {
-        return new RegisterCommandShapeValidationErrors(
-                username: registerCommandShape.username,
-                email: registerCommandShape.email,
-                password: registerCommandShape.password,
-                password2: registerCommandShape.password2,
-                errors: new ValidationErrors(registerCommandShape.errors),
-                grailsApplication: registerCommandShape.grailsApplication
-
-        )
-    }
-}
-
-class Errors {
-    List<Error> errors
-}
-
-class Error {
-    String object
-    String field
-    @Json(name = "rejected-value") String rejectedValue
-    String message
-}
-
-class GrailsApplicationJson {
-    List<String> allArtefacts
-    List<String> allClasses
-    List<ArtefactHandlerShape> artefactHandlers
-}
-
-class ArtefactHandlerShape {
-    String pluginName
-    String type
-    @Json(name = "class") String className
 }

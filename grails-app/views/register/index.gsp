@@ -10,14 +10,7 @@
     <g:render template="/templates/navbarBrand"/>
     <g:render template="/templates/logout"/>
 </nav>
-<g:if test='${emailSent}'>
-    <div class="col-md-6 col-md-offset-3">
-        <div class="alert alert-info">
-            <g:message code='sentinel.register.sent' default="Your account registration email was sent - check your mail!"/>
-        </div>
-    </div>
-</g:if>
-<g:else>
+
     <div class="col-md-6 col-md-offset-3">
         <div class="panel panel-default">
             <div class="panel-heading">
@@ -26,11 +19,9 @@
             </div>
 
             <div class="panel-body">
-                <g:hasErrors bean="${command}">
-                    <g:each in="${command.errors.allErrors}" var="error">
-                        <div class='alert alert-danger'><g:message error="${error}"/></div>
-                    </g:each>
-                </g:hasErrors>
+
+                <g:render template="/templates/errors" model="[errorBean: command]"/>
+                <g:render template="/templates/flashmessage"/>
 
                 <g:form action="register" method="post" autocomplete="off" class="form-horizontal">
                     <div class="form-group ${hasErrors(bean: command, field: 'username', 'has-error')} ">
@@ -61,13 +52,13 @@
                         </div>
                     </div>
 
-                    <div class="form-group ${hasErrors(bean: command, field: 'password2', 'has-error')} ">
-                        <label for='password2' class="control-label col-sm-3"><g:message code="user.password2.label"
+                    <div class="form-group ${hasErrors(bean: command, field: 'repeatPassword', 'has-error')} ">
+                        <label for='repeatPassword' class="control-label col-sm-3"><g:message code="user.repeatPassword.label"
                                                                                          default="Password (Again)"/>:</label>
 
                         <div class="col-sm-9">
-                            <input type='password' class='form-control' name='password2' id="password2"
-                                   value='${command?.password2}'/>
+                            <input type='password' class='form-control' name='repeatPassword' id="repeatPassword"
+                                   value='${command?.repeatPassword}'/>
                         </div>
                     </div>
 
@@ -82,7 +73,6 @@
             </div>
         </div>
     </div>
-</g:else>
 
 <script>
     $(document).ready(function () {

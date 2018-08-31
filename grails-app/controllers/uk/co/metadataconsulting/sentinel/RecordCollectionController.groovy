@@ -251,7 +251,7 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
 
         List<RecordPortionMapping> recordPortionMappingList = recordCollectionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
 
-        if (catalogueElementList.size() == 0) {
+        if (!catalogueElementList && recordPortionMappingList) {
             catalogueElementList = recordPortionMappingList.collect {
                 GormUrlName.from(it, recordCollectionGormEntity.dataModelId)
             }

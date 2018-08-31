@@ -12,6 +12,7 @@ import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.Response
+import org.springframework.security.core.userdetails.User
 import uk.co.metadataconsulting.sentinel.modelcatalogue.CatalogueElements
 import uk.co.metadataconsulting.sentinel.modelcatalogue.DataModels
 import uk.co.metadataconsulting.sentinel.modelcatalogue.MDXSearchResponse
@@ -23,38 +24,45 @@ import uk.co.metadataconsulting.sentinel.security.MdxUserDetails
 /**
  * Fetches not just ValidationRules but DataModels and CatalogueElements from the MDX.
  */
-class RuleFetcherService extends MDXApiService {//implements GrailsConfigurationAware {
+class RuleFetcherService implements GrailsConfigurationAware {
+
+    SpringSecurityService springSecurityService
+
+    final Moshi moshi = new Moshi.Builder().build()
+    final OkHttpClient client = new OkHttpClient()
 
     private final JsonAdapter<ValidationRules> validationRulesJsonAdapter = moshi.adapter(ValidationRules.class)
     private final JsonAdapter<CatalogueElements> catalogueElementsJsonAdapter = moshi.adapter(CatalogueElements.class)
     private final JsonAdapter<DataModels> dataModelsJsonAdapter = moshi.adapter(DataModels.class)
     private final JsonAdapter<MDXSearchResponse> mdxSearchResponseJsonAdapter = moshi.adapter(MDXSearchResponse.class)
-//
-//    SpringSecurityService springSecurityService
-//
-//    /**
-//     * URL of the associated MDX instance.
-//     */
-//    String metadataUrl
-//
-//    private String basic() {
-//        if (springSecurityService.principal instanceof MdxUserDetails) {
-//            MdxUserDetails mdxUserDetails = (MdxUserDetails) springSecurityService.principal
-//            return Credentials.basic(mdxUserDetails.username, mdxUserDetails.password)
-//        }
-//        null
-//    }
-//
-//    @Override
-//    /**
-//     * Set metadataUrl from config
-//     */
-//    void setConfiguration(Config co) {
-//        metadataUrl = co.getProperty('metadata.url', String)
-//        if ( !metadataUrl || metadataUrl == '${METADATA_URL}') {
-//            metadataUrl = 'http://localhost:8080'
-//        }
-//    }
+
+    /**
+     * URL of the associated MDX instance.
+     */
+    String metadataUrl
+
+    String basic() {
+        if (springSecurityService.principal instanceof MdxUserDetails) {
+            MdxUserDetails mdxUserDetails = (MdxUserDetails) springSecurityService.principal
+            return Credentials.basic(mdxUserDetails.username, mdxUserDetails.password)
+        }
+        else if (springSecurityService.principal instanceof User) {
+            User user = (User) springSecurityService.principal
+            return Credentials.basic(user.username, user.password)
+        }
+        null
+    }
+
+    @Override
+    /**
+     * Set metadataUrl from config
+     */
+    void setConfiguration(Config co) {
+        metadataUrl = co.getProperty('metadata.url', String)
+        if ( !metadataUrl || metadataUrl == '${METADATA_URL}') {
+            metadataUrl = 'http://localhost:8080'
+        }
+    }
 
     MDXSearchResponse mdxSearch(MDXSearchCommand cmd) {
         final String url = "${metadataUrl}/api/modelCatalogue/core/catalogueElement/search?search=${cmd.query}&dataModel=${cmd.dataModelId}&searchImports=${cmd.searchImports.toString()}".toString()
