@@ -26,7 +26,7 @@ class RecordCollectionControllerSpec extends Specification implements Controller
     def "RecordCollectionController.cloneMapping model contains recordCollectionId"() {
         given:
         controller.recordCollectionGormService = Mock(RecordCollectionGormService)
-        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.recordCollectionMappingEntryGormService = Mock(RecordCollectionMappingEntryGormService)
 
         when:
         request.method = 'GET'
@@ -74,7 +74,7 @@ class RecordCollectionControllerSpec extends Specification implements Controller
     def "RecordCollectionController.cloneMapping model contains recordCollectionList"() {
         given:
         controller.recordCollectionGormService = Mock(RecordCollectionGormService)
-        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.recordCollectionMappingEntryGormService = Mock(RecordCollectionMappingEntryGormService)
 
         when:
         request.method = 'GET'
@@ -126,7 +126,7 @@ class RecordCollectionControllerSpec extends Specification implements Controller
 
     def "test RecordCollectionController.headersMapping model contains recordPortionMappingList"() {
         given:
-        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.recordCollectionMappingEntryGormService = Mock(RecordCollectionMappingEntryGormService)
         controller.ruleFetcherService = Mock(RuleFetcherService)
         controller.recordCollectionGormService = Stub(RecordCollectionGormService) {
             find(_) >> new RecordCollectionGormEntity()
@@ -148,7 +148,7 @@ class RecordCollectionControllerSpec extends Specification implements Controller
         controller.recordCollectionGormService = Stub(RecordCollectionGormService) {
             find(_) >> new RecordCollectionGormEntity()
         }
-        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.recordCollectionMappingEntryGormService = Mock(RecordCollectionMappingEntryGormService)
         controller.ruleFetcherService = Mock(RuleFetcherService)
         controller.catalogueElementsService = Mock(CatalogueElementsService)
 

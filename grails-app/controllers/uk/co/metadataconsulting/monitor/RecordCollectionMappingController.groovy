@@ -14,14 +14,14 @@ class RecordCollectionMappingController {
     ]
 
     MessageSource messageSource
-    RecordCollectionMappingGormService recordCollectionMappingGormService
+    RecordCollectionMappingEntryGormService recordCollectionMappingEntryGormService
     CatalogueElementsService catalogueElementsService
     ReconciliationService reconciliationService
     RecordPortionGormService recordPortionGormService
 
     def update() {
         Long recordCollectionId = params.long('recordCollectionId')
-        List<Long> recordPortionMappingIds = recordCollectionMappingGormService.findIdsByRecordCollectionId(recordCollectionId)
+        List<Long> recordPortionMappingIds = recordCollectionMappingEntryGormService.findIdsByRecordCollectionId(recordCollectionId)
         if ( recordPortionMappingIds ) {
             List<UpdateGormUrlRequest> cmds = []
             for ( Long id : recordPortionMappingIds ) {
@@ -31,7 +31,7 @@ class RecordCollectionMappingController {
                     cmds << new UpdateGormUrlRequest(id: id, gormUrl: gormUrl, dataModelId: dataModelId)
                 }
             }
-            recordCollectionMappingGormService.updateGormUrls(cmds)
+            recordCollectionMappingEntryGormService.updateGormUrls(cmds)
             flash.message = messageSource.getMessage('recordCollection.mapping.updated', [] as Object[],'Record Collection Mapping updated', request.locale)
         }
         redirect uri: "/recordCollection/$recordCollectionId/mapping".toString()
@@ -43,7 +43,7 @@ class RecordCollectionMappingController {
             return
         }
         RecordCollectionMappingEntryGormEntity recordCollectionMappingEntity =
-                recordCollectionMappingGormService.updateGormUrlName(cmd.recordPortionMappingId,
+                recordCollectionMappingEntryGormService.updateGormUrlName(cmd.recordPortionMappingId,
                                                                  cmd.gormUrl, cmd.name)
         [recordCollectionMappingEntity: recordCollectionMappingEntity]
     }

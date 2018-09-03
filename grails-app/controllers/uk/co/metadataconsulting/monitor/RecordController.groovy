@@ -12,7 +12,7 @@ class RecordController implements ValidateableErrorsMessage {
     RecordService recordService
 
     RecordPortionGormService recordPortionGormService
-    RecordCollectionMappingGormService recordCollectionMappingGormService
+    RecordCollectionMappingEntryGormService recordCollectionMappingEntryGormService
     RecordCollectionGormService recordCollectionGormService
     RuleFetcherService ruleFetcherService
 
@@ -59,7 +59,7 @@ class RecordController implements ValidateableErrorsMessage {
     }
 
     def validate(Long recordId, Long recordCollectionId) {
-        List<RecordPortionMapping> recordPortionMappingList = recordCollectionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
+        List<RecordPortionMapping> recordPortionMappingList = recordCollectionMappingEntryGormService.findAllByRecordCollectionId(recordCollectionId)
         Map<String, ValidationRules> validationRulesMap = ruleFetcherService.fetchValidationRulesByMapping(recordPortionMappingList)
         if ( !validationRulesMap ) {
             flash.error = messageSource.getMessage('record.validation.noRules', [] as Object[],'Could not trigger validation. No rules for mapping', request.locale)
@@ -82,7 +82,7 @@ class RecordController implements ValidateableErrorsMessage {
                 recordPortionList: recordPortionList,
                 recordPortionTotal: recordPortionTotal,
                 recordCollectionId: recordCollectionId,
-                recordPortionMappingList: recordCollectionMappingGormService.findAllByRecordCollectionId(recordCollectionId),
+                recordPortionMappingList: recordCollectionMappingEntryGormService.findAllByRecordCollectionId(recordCollectionId),
         ]
     }
 }

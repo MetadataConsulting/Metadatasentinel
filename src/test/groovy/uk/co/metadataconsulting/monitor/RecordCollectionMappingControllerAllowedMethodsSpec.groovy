@@ -24,7 +24,7 @@ class RecordCollectionMappingControllerAllowedMethodsSpec extends Specification
 
     def "test RecordCollectionController.update accepts POST requests"() {
         given:
-        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.recordCollectionMappingEntryGormService = Mock(RecordCollectionMappingEntryGormService)
 
         when:
         request.method = 'POST'

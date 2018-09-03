@@ -130,7 +130,7 @@ class RecordCollectionControllerAllowedMethodsSpec extends Specification impleme
     def "test RecordCollectionController.cloneMapping accepts GET requests"() {
         given:
         controller.recordCollectionGormService = Mock(RecordCollectionGormService)
-        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.recordCollectionMappingEntryGormService = Mock(RecordCollectionMappingEntryGormService)
 
         when:
         request.method = 'GET'
@@ -253,7 +253,7 @@ class RecordCollectionControllerAllowedMethodsSpec extends Specification impleme
 
     def "test RecordCollectionController.headersMapping accepts GET requests"() {
         given:
-        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.recordCollectionMappingEntryGormService = Mock(RecordCollectionMappingEntryGormService)
         controller.ruleFetcherService = Mock(RuleFetcherService)
         controller.catalogueElementsService = Mock(CatalogueElementsService)
         controller.recordCollectionGormService = Stub(RecordCollectionGormService) {

@@ -7,7 +7,7 @@ import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 
 @CompileStatic
-class RecordCollectionMappingGormService {
+class RecordCollectionMappingEntryGormService {
 
     RecordPortionMappingGormDataService recordPortionMappingGormDataService
 

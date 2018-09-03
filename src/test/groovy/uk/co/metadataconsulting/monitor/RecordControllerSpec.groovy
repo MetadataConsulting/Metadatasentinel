@@ -56,7 +56,7 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
     def "RecordController.show model contains fields recordPortionList, recordId, recordPortionTotal"() {
         given:
         controller.recordPortionGormService = Mock(RecordPortionGormService)
-        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.recordCollectionMappingEntryGormService = Mock(RecordCollectionMappingEntryGormService)
         controller.recordCollectionGormService = Mock(RecordCollectionGormService)
 
         when:
@@ -77,7 +77,7 @@ class RecordControllerSpec extends Specification implements ControllerUnitTest<R
     def "RecordController.index model contains recordCollectionEntity"() {
         given:
         controller.recordPortionGormService = Mock(RecordPortionGormService)
-        controller.recordCollectionMappingGormService = Mock(RecordCollectionMappingGormService)
+        controller.recordCollectionMappingEntryGormService = Mock(RecordCollectionMappingEntryGormService)
         controller.recordService = Stub(RecordService) {
             countByRecordCollectionIdAndCorrectness() >> 1
         }

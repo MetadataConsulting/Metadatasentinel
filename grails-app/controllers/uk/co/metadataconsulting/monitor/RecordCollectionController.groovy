@@ -45,7 +45,7 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
 
     RecordCollectionService recordCollectionService
 
-    RecordCollectionMappingGormService recordCollectionMappingGormService
+    RecordCollectionMappingEntryGormService recordCollectionMappingEntryGormService
 
     RuleFetcherService ruleFetcherService
 
@@ -186,7 +186,7 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
 
     def validate(Long recordCollectionId) {
 
-        List<RecordPortionMapping> recordPortionMappingList = recordCollectionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
+        List<RecordPortionMapping> recordPortionMappingList = recordCollectionMappingEntryGormService.findAllByRecordCollectionId(recordCollectionId)
         Map<String, ValidationRules> validationRulesMap = ruleFetcherService.fetchValidationRulesByMapping(recordPortionMappingList)
 
         if ( !validationRulesMap ) {
@@ -249,7 +249,7 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         }
         List<GormUrlName> catalogueElementList = catalogueElementsService.findAllByDataModelId(recordCollectionGormEntity.dataModelId)
 
-        List<RecordPortionMapping> recordPortionMappingList = recordCollectionMappingGormService.findAllByRecordCollectionId(recordCollectionId)
+        List<RecordPortionMapping> recordPortionMappingList = recordCollectionMappingEntryGormService.findAllByRecordCollectionId(recordCollectionId)
 
         if (!catalogueElementList && recordPortionMappingList) {
             catalogueElementList = recordPortionMappingList.collect {
@@ -272,7 +272,7 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
 
     def cloneMapping(Long recordCollectionId) {
         RecordCollectionGormEntity recordCollectionEntity = recordCollectionGormService.find(recordCollectionId)
-        Set<Long> recordCollectionIdList = recordCollectionMappingGormService.findAllRecordCollectionIdByGormUrlNotNull()
+        Set<Long> recordCollectionIdList = recordCollectionMappingEntryGormService.findAllRecordCollectionIdByGormUrlNotNull()
         [
                 recordCollectionEntity: recordCollectionEntity,
                 toRecordCollectionId: recordCollectionId,
@@ -287,7 +287,7 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
             return
         }
 
-        recordCollectionMappingGormService.cloneMapping(cmd.fromRecordCollectionId, cmd.toRecordCollectionId)
+        recordCollectionMappingEntryGormService.cloneMapping(cmd.fromRecordCollectionId, cmd.toRecordCollectionId)
 
         redirect action: 'headersMapping', params: [recordCollectionId: cmd.toRecordCollectionId]
     }
