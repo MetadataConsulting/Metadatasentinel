@@ -1,4 +1,4 @@
-<%@ page import="uk.co.metadataconsulting.sentinel.RecordFileCommand" %>
+<%@ page import="uk.co.metadataconsulting.monitor.RecordFileCommand" %>
 <html>
 <head>
     <title><g:message code="recordCollection.import" default="Import File"/></title>

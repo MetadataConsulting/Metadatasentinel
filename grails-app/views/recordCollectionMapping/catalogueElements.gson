@@ -1,4 +1,4 @@
-import uk.co.metadataconsulting.sentinel.modelcatalogue.GormUrlName
+import uk.co.metadataconsulting.monitor.modelcatalogue.GormUrlName
 
 model {
     Iterable<GormUrlName> catalogueElements

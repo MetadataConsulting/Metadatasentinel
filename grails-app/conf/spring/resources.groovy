@@ -1,6 +1,6 @@
-import uk.co.metadataconsulting.sentinel.gorm.RecordCollectionGormListener
-import uk.co.metadataconsulting.sentinel.gorm.RecordGormListener
-import uk.co.metadataconsulting.sentinel.security.MdxAuthenticationProvider
+import uk.co.metadataconsulting.monitor.gorm.RecordCollectionGormListener
+import uk.co.metadataconsulting.monitor.gorm.RecordGormListener
+import uk.co.metadataconsulting.monitor.security.MdxAuthenticationProvider
 
 beans = {
     mdxAuthenticationProvider(MdxAuthenticationProvider)

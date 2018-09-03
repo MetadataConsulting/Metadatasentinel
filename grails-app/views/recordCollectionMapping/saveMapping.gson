@@ -1,4 +1,4 @@
-import uk.co.metadataconsulting.sentinel.RecordCollectionMappingGormEntity
+import uk.co.metadataconsulting.monitor.RecordCollectionMappingGormEntity
 
 model {
     RecordCollectionMappingGormEntity recordCollectionMappingEntity

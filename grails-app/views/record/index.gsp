@@ -1,5 +1,5 @@
-<%@ page import="uk.co.metadataconsulting.sentinel.RecordCorrectnessDropdown" %>
-<%@ page import="uk.co.metadataconsulting.sentinel.export.ExportFormat" %>
+<%@ page import="uk.co.metadataconsulting.monitor.RecordCorrectnessDropdown" %>
+<%@ page import="uk.co.metadataconsulting.monitor.export.ExportFormat" %>
 
 <html>
 <head>

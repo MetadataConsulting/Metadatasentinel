@@ -1,4 +1,4 @@
-<%@ page import="uk.co.metadataconsulting.sentinel.RecordFileCommand" %>
+<%@ page import="uk.co.metadataconsulting.monitor.RecordFileCommand" %>
 <!-- Copied from recordCollection/importCsv.gsp-->
 <html>
 <head>

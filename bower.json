@@ -1,10 +1,10 @@
 {
-  "name": "Metadatasentinel",
+  "name": "Metadatamonitor",
   "homepage": "https://github.com/MetadataConsulting/Metadatasentinel",
   "authors": [
     "James Dai <james.dai@metadataconsulting.co.uk>"
   ],
-  "description": "Metadata Sentinel",
+  "description": "Metadata Monitor",
   "main": "",
   "license": "MIT",
   "ignore": [

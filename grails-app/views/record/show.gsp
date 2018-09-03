@@ -1,4 +1,4 @@
-<%@ page import="uk.co.metadataconsulting.sentinel.ValidationStatus" %>
+<%@ page import="uk.co.metadataconsulting.monitor.ValidationStatus" %>
 <html>
 <head>
     <title>Record Portions</title>
