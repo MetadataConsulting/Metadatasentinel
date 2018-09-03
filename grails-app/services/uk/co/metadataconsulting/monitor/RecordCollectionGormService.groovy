@@ -33,15 +33,17 @@ class RecordCollectionGormService implements GormErrorsMessage {
     @Transactional
     void saveRecordCollectionMappingWithHeaders(RecordCollectionGormEntity recordCollection,
                                                 List<String> headers,
-                                                Map<String, List<GormUrlName>> suggestions) {
+                                                Map<String, List<GormUrlName>> suggestionsMap) {
         if ( headers ) {
             for ( String header : headers ) {
-                RecordCollectionMappingEntryGormEntity recordPortionMapping = new RecordCollectionMappingEntryGormEntity(header: header)
-                List<GormUrlName> suggestion = suggestions[header]
-                if (suggestion ) {
-                    recordPortionMapping.gormUrl = suggestion.first().gormUrl
+                RecordCollectionMappingEntryGormEntity recordCollectionMappingEntry = new RecordCollectionMappingEntryGormEntity(header: header)
+                List<GormUrlName> suggestions = suggestionsMap[header]
+                if (suggestions ) {
+                    GormUrlName suggestion = suggestions.first()
+                    recordCollectionMappingEntry.gormUrl = suggestion.gormUrl
+                    recordCollectionMappingEntry.name = suggestion.name
                 }
-                recordCollection.addToMappings(recordPortionMapping)
+                recordCollection.addToMappings(recordCollectionMappingEntry)
             }
         }
         if ( !recordCollection.save() ) {
