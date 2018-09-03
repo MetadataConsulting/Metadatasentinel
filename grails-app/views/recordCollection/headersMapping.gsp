@@ -60,7 +60,7 @@
         var combinedGormUrlName = getSelectValue(targetId);
         console.log(combinedGormUrlName)
         if (combinedGormUrlName != 'null' && combinedGormUrlName != '') {
-            var gormUrlNameArray = combinedGormUrlName.split("####")
+            var gormUrlNameArray = combinedGormUrlName.split("####") // This is a bit of a hack... the combinedGormUrlName is a string split by ####... might be better to request the name by gormUrl from the MDX.
             var gormUrl = gormUrlNameArray[0]
             var name = gormUrlNameArray[1]
             var url = '/recordCollectionMapping/'+recordPortionMappingId+'/save?gormUrl='+gormUrl+'&name='+name;
@@ -140,12 +140,14 @@
                     <div>
                             <g:select
                                     name="catalogueElementSelectionForMapping${recordPortionMapping.id}"
-                                    noSelection="${['null':'Select One...']}"
+                                    noSelection="${['':'Select One...']}"
                                     optionKey="combinedGormUrlName"
                                     optionValue="name"
                                     from="${catalogueElementList}"
                                     value="${recordPortionMapping.combinedGormUrlName}"
-                                    onChange="saveMapping(${recordPortionMapping.id}, '${recordPortionMapping.header}');"/>
+                                    onChange="saveMapping(${recordPortionMapping.id}, '${recordPortionMapping.header}');"
+                                    >
+                            </g:select>
 
                         <input type="hidden" disabled="disabled" id="gormUrl${recordPortionMapping.id}" name="gormUrl${recordPortionMapping.id}" value="${recordPortionMapping.gormUrl}" />
 
