@@ -84,7 +84,7 @@ class RecordCollectionControllerIntegrationSpec extends GebSpec implements Login
         recordGormService.count() == old(recordGormService.count()) + 2
 
         when:
-        RecordCollectionMappingGormEntity mapping = recordPortionMappingGormDataService.save('NHS Number', recordCollection)
+        RecordCollectionMappingEntryGormEntity mapping = recordPortionMappingGormDataService.save('NHS Number', recordCollection)
 
         then:
         recordPortionMappingGormDataService.count() == old(recordPortionMappingGormDataService.count()) + 1

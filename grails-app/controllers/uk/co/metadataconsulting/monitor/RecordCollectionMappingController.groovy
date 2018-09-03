@@ -42,7 +42,7 @@ class RecordCollectionMappingController {
             response.status = 422
             return
         }
-        RecordCollectionMappingGormEntity recordCollectionMappingEntity =
+        RecordCollectionMappingEntryGormEntity recordCollectionMappingEntity =
                 recordCollectionMappingGormService.updateGormUrlName(cmd.recordPortionMappingId,
                                                                  cmd.gormUrl, cmd.name)
         [recordCollectionMappingEntity: recordCollectionMappingEntity]

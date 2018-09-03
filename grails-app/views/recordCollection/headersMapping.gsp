@@ -64,7 +64,7 @@
             var gormUrl = gormUrlNameArray[0]
             var name = gormUrlNameArray[1]
             var url = '/recordCollectionMapping/'+recordPortionMappingId+'/save?gormUrl='+gormUrl+'&name='+name;
-            // Call this URL. This triggers a save of the mapping for this header and returns a RecordCollectionMappingGormEntity.
+            // Call this URL. This triggers a save of the mapping for this header and returns a RecordCollectionMappingEntryGormEntity
             getJSON(url, function(err, data) {
                 if (err != null) {
                     console.log('Something went wrong: Error code '+err);

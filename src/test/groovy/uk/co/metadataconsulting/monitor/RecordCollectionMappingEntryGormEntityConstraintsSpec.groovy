@@ -3,8 +3,8 @@ package uk.co.metadataconsulting.monitor
 import grails.testing.gorm.DomainUnitTest
 import spock.lang.Specification
 
-class RecordCollectionMappingGormEntityConstraintsSpec extends Specification
-        implements DomainUnitTest<RecordCollectionMappingGormEntity> {
+class RecordCollectionMappingEntryGormEntityConstraintsSpec extends Specification
+        implements DomainUnitTest<RecordCollectionMappingEntryGormEntity> {
 
     void 'test header cannot be null'() {
         when:

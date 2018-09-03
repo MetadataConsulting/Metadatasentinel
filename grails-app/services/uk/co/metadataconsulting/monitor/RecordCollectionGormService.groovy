@@ -36,7 +36,7 @@ class RecordCollectionGormService implements GormErrorsMessage {
                                                 Map<String, List<GormUrlName>> suggestions) {
         if ( headers ) {
             for ( String header : headers ) {
-                RecordCollectionMappingGormEntity recordPortionMapping = new RecordCollectionMappingGormEntity(header: header)
+                RecordCollectionMappingEntryGormEntity recordPortionMapping = new RecordCollectionMappingEntryGormEntity(header: header)
                 List<GormUrlName> suggestion = suggestions[header]
                 if (suggestion ) {
                     recordPortionMapping.gormUrl = suggestion.first().gormUrl

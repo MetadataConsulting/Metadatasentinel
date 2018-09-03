@@ -6,7 +6,7 @@ import grails.compiler.GrailsCompileStatic
 /**
  * A single mapping entry for a record collection, mapping a header to a catalogue element.
  */
-class RecordCollectionMappingGormEntity {
+class RecordCollectionMappingEntryGormEntity {
 
     /**
      * Header mapped from

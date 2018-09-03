@@ -29,7 +29,7 @@ class RecordCollectionGormEntity {
     String fileKey
 
     static hasMany = [
-            mappings: RecordCollectionMappingGormEntity,
+            mappings: RecordCollectionMappingEntryGormEntity,
             records: RecordGormEntity
     ]
 

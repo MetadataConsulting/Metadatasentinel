@@ -7,7 +7,7 @@ import uk.co.metadataconsulting.monitor.modelcatalogue.GormUrlName
 @ToString
 @CompileStatic
 /**
- * Non-GORM representation of RecordCollectionMappingGormEntity.
+ * Non-GORM representation of RecordCollectionMappingEntryGormEntity.
  */
 class RecordPortionMapping {
     Long id
@@ -16,7 +16,7 @@ class RecordPortionMapping {
     String name
     String combinedGormUrlName
 
-    static RecordPortionMapping of(RecordCollectionMappingGormEntity gormEntity) {
+    static RecordPortionMapping of(RecordCollectionMappingEntryGormEntity gormEntity) {
         new RecordPortionMapping(id: gormEntity.id,
                 header: gormEntity.header,
                 gormUrl: gormEntity.gormUrl,

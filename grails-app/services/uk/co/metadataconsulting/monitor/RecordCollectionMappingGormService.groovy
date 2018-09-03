@@ -18,15 +18,15 @@ class RecordCollectionMappingGormService {
         }.list() as List<Long>
     }
 
-    DetachedCriteria<RecordCollectionMappingGormEntity> queryByRecordCollectionId(Long recordCollectionId) {
-        RecordCollectionMappingGormEntity.where {
+    DetachedCriteria<RecordCollectionMappingEntryGormEntity> queryByRecordCollectionId(Long recordCollectionId) {
+        RecordCollectionMappingEntryGormEntity.where {
             recordCollection == RecordCollectionGormEntity.load(recordCollectionId)
         }
     }
 
     @ReadOnly
     List<RecordPortionMapping> findAllByRecordCollectionId(Long recordCollectionId) {
-        queryByRecordCollectionId(recordCollectionId).list().collect { RecordCollectionMappingGormEntity gormEntity ->
+        queryByRecordCollectionId(recordCollectionId).list().collect { RecordCollectionMappingEntryGormEntity gormEntity ->
             RecordPortionMapping.of(gormEntity)
         }
     }
@@ -42,11 +42,11 @@ class RecordCollectionMappingGormService {
 
     @Transactional
     void cloneMapping(Long fromRecordCollectionId, Long toRecordCollectionId) {
-        List<RecordCollectionMappingGormEntity> fromEntities = queryByRecordCollectionId(fromRecordCollectionId).list()
-        List<RecordCollectionMappingGormEntity> toEntities = queryByRecordCollectionId(toRecordCollectionId).list()
+        List<RecordCollectionMappingEntryGormEntity> fromEntities = queryByRecordCollectionId(fromRecordCollectionId).list()
+        List<RecordCollectionMappingEntryGormEntity> toEntities = queryByRecordCollectionId(toRecordCollectionId).list()
 
-        for ( RecordCollectionMappingGormEntity toEntity : toEntities ) {
-            RecordCollectionMappingGormEntity fromEntity = fromEntities.find { it.header.equalsIgnoreCase(toEntity.header) }
+        for ( RecordCollectionMappingEntryGormEntity toEntity : toEntities ) {
+            RecordCollectionMappingEntryGormEntity fromEntity = fromEntities.find { it.header.equalsIgnoreCase(toEntity.header) }
             if ( fromEntity ) {
                 toEntity.with {
                     gormUrl = fromEntity.gormUrl
@@ -60,16 +60,16 @@ class RecordCollectionMappingGormService {
     @CompileDynamic
     Set<Long> findAllRecordCollectionIdByGormUrlNotNull() {
         // TODO implement this efficiently
-        RecordCollectionMappingGormEntity.findAllByGormUrlIsNotNull()?.collect { it.recordCollection.id } as Set<Long>
+        RecordCollectionMappingEntryGormEntity.findAllByGormUrlIsNotNull()?.collect { it.recordCollection.id } as Set<Long>
     }
 
     @Transactional
-    RecordCollectionMappingGormEntity updateGormUrl(Long recordPortionId, String gormUrl) {
+    RecordCollectionMappingEntryGormEntity updateGormUrl(Long recordPortionId, String gormUrl) {
         recordPortionMappingGormDataService.update(recordPortionId, gormUrl)
     }
 
     @Transactional
-    RecordCollectionMappingGormEntity updateGormUrlName(Long recordPortionId, String gormUrl, String name) {
+    RecordCollectionMappingEntryGormEntity updateGormUrlName(Long recordPortionId, String gormUrl, String name) {
         recordPortionMappingGormDataService.update(recordPortionId, gormUrl, name)
     }
 }

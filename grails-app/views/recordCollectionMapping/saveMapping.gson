@@ -1,7 +1,7 @@
-import uk.co.metadataconsulting.monitor.RecordCollectionMappingGormEntity
+import uk.co.metadataconsulting.monitor.RecordCollectionMappingEntryGormEntity
 
 model {
-    RecordCollectionMappingGormEntity recordCollectionMappingEntity
+    RecordCollectionMappingEntryGormEntity recordCollectionMappingEntity
 }
 response.status(recordCollectionMappingEntity ? 200 : 404)
 if (recordCollectionMappingEntity) {
