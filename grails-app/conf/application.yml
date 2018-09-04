@@ -285,7 +285,7 @@ environments:
             url: '${JDBC_CONNECTION_STRING}'            
     production:
         dataSource:
-            dbCreate: none
+            dbCreate: update
             url: '${JDBC_CONNECTION_STRING}'
             properties:
                 jmxEnabled: true
