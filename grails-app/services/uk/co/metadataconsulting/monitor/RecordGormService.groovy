@@ -45,6 +45,9 @@ class RecordGormService implements GormErrorsMessage {
     }
 
     @Transactional
+    /**
+     * Save a Record for RecordCollection recordCollection from the list of RecordPortions portionList
+     */
     RecordGormEntity save(RecordCollectionGormEntity recordCollection, List<RecordPortion> portionList) {
         RecordGormEntity record = new RecordGormEntity()
         record.recordCollection = recordCollection

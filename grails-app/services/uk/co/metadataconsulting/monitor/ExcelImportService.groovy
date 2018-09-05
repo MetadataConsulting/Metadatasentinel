@@ -12,7 +12,7 @@ import static grails.async.Promises.task
 
 @Slf4j
 @CompileStatic
-class ExcelImportService implements CsvImport, Benchmark {
+class ExcelImportService implements TabularDataImportService, Benchmark {
 
     RecordCollectionGormService recordCollectionGormService
 
@@ -35,7 +35,7 @@ class ExcelImportService implements CsvImport, Benchmark {
                 log.info 'fetching validation rules'
                 MappingMetadata metadata = new MappingMetadata()
                 Closure headerListClosure = { List<String> l ->
-                    metadata.setHeaderLineList(l)
+                    metadata.setHeadersList(l)
                     Map<String, List<GormUrlName>> suggestions = [:]
 
                     if (recordCollectionEntity.dataModelId ) {
@@ -48,7 +48,7 @@ class ExcelImportService implements CsvImport, Benchmark {
                 }
                 log.info 'processing input stream'
                 ExcelReader.read(inputStream, 0, true, headerListClosure) { List<String> values ->
-                    importService.save(recordCollectionEntity, values, metadata)
+                    importService.saveListOfValuesAsRecord(recordCollectionEntity, values, metadata)
                     cleanUpGorm()
                 }
             }

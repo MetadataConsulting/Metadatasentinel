@@ -17,7 +17,7 @@ class ImportServiceSpec extends Specification implements ServiceUnitTest<ImportS
         ValidationRules validationRules = new ValidationRules(validating: new ValidatingImpl(explicitRule: "x == null || x in ['red', 'blue']"))
         MappingMetadata metadata = new MappingMetadata()
         metadata.with {
-            headerLineList = ['RadiologicalAccessionNumber', 'Color']
+            headersList = ['RadiologicalAccessionNumber', 'Color']
             gormUrls = ['gorm://org.modelcatalogue.core.DataElement:77', 'gorm://org.modelcatalogue.core.EnumeratedType:250']
             gormUrlsRules = [('gorm://org.modelcatalogue.core.EnumeratedType:250'): validationRules]
         }
@@ -40,7 +40,7 @@ class ImportServiceSpec extends Specification implements ServiceUnitTest<ImportS
     @Unroll
     def "headerAtIndex with values ( #headerLineList  #index ) does not throw exception"(List<String> headerLineList, int index) {
         when:
-        MappingMetadata metadata = new MappingMetadata(headerLineList: headerLineList)
+        MappingMetadata metadata = new MappingMetadata(headersList: headerLineList)
         service.headerAtIndex(metadata, index)
 
         then:

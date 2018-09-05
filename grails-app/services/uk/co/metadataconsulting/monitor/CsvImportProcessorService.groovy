@@ -15,6 +15,9 @@ import uk.co.metadataconsulting.monitor.stringtransformer.StringTransformer
 
 @Slf4j
 @CompileStatic
+/**
+ * This class has one method, which processes an inputstream from a CSV file.
+ */
 class CsvImportProcessorService implements GrailsConfigurationAware, CsvImportProcessor {
 
     boolean nullIfValueBlank
@@ -39,6 +42,12 @@ class CsvImportProcessorService implements GrailsConfigurationAware, CsvImportPr
     }
 
     @Override
+    /**
+     * Processes an inputstream from a CSV file.
+     * Applies headerListClosure to the list of headers from the first line after each header has been processed by headerTransformers.
+     * Takes the next batchSize lines after that.
+     * Applies cls to the values matrix valuesList.
+     */
     int processInputStream(InputStream inputStream, Integer batchSize,   Closure headerListClosure, Closure cls) {
         int processed = 0
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))

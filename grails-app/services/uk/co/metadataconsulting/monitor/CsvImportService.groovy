@@ -12,7 +12,7 @@ import static grails.async.Promises.task
 
 @Slf4j
 @CompileStatic
-class CsvImportService implements CsvImport, Benchmark {
+class CsvImportService implements TabularDataImportService, Benchmark {
 
     CsvImportProcessorService csvImportProcessorService
 
@@ -40,7 +40,7 @@ class CsvImportService implements CsvImport, Benchmark {
                 log.info 'fetching validation rules'
                 MappingMetadata metadata = new MappingMetadata()
                 Closure headerListClosure = { List<String> l ->
-                    metadata.setHeaderLineList(l)
+                    metadata.setHeadersList(l)
                     Map<String, List<GormUrlName>> suggestions = [:]
                     log.info '#dataModel {}', recordCollectionEntity.dataModelId
 
@@ -55,7 +55,7 @@ class CsvImportService implements CsvImport, Benchmark {
                 log.info 'processing input stream'
                 csvImportProcessorService.processInputStream(inputStream, batchSize, headerListClosure) { List<List<String>> valuesList ->
                     log.info('inside closure block')
-                    importService.saveListOfValues(recordCollectionEntity, valuesList, metadata)
+                    importService.saveMatrixOfValuesToRecordCollection(recordCollectionEntity, valuesList, metadata)
                     cleanUpGorm()
                 }
             }

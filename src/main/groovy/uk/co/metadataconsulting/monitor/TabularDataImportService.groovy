@@ -6,7 +6,7 @@ import groovy.transform.CompileStatic
 /**
  * Interface for services which import a CSV-like (tabular) data format.
  */
-interface CsvImport {
+interface TabularDataImportService {
     /**
      * Save a file in some format (InputStream) as the Records of a given (should be newly created) RecordCollection. A preliminary "default" mapping is made here.
      */

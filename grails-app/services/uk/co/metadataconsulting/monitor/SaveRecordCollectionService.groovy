@@ -9,7 +9,8 @@ import uk.co.metadataconsulting.monitor.modelcatalogue.DataModel
 @Slf4j
 @CompileStatic
 /**
- * Service to save (create new) a RecordCollection and populate it with Records from an file (InputStream) using the CSV import service.
+ * Service to save (create new) a RecordCollection and populate it with Records from an file (InputStream) using a tabular data import service,
+ * given a RecordFileCommand from a controller.
  */
 class SaveRecordCollectionService {
 
@@ -44,8 +45,8 @@ class SaveRecordCollectionService {
 
         recordCollectionGormService.associateWithDataModel(recordCollectionEntity, dataModel)
 
-        CsvImport importService = csvImportByContentType(ImportContentType.of(cmd.csvFile.contentType))
-        importService.save(inputStream, batchSize, recordCollectionEntity)
+        TabularDataImportService tabularDataImportService = csvImportByContentType(ImportContentType.of(cmd.csvFile.contentType))
+        tabularDataImportService.save(inputStream, batchSize, recordCollectionEntity)
 
         UploadFileResult uploadFileResult = uploadFileService.uploadFile(recordCollectionEntityId, cmd.csvFile)
         if (uploadFileResult != null) {
@@ -57,7 +58,7 @@ class SaveRecordCollectionService {
         recordCollectionEntity
     }
 
-    protected CsvImport csvImportByContentType(ImportContentType contentType) {
+    protected TabularDataImportService csvImportByContentType(ImportContentType contentType) {
         if ( contentType == ImportContentType.XSLX ) {
             return excelImportService
         }
