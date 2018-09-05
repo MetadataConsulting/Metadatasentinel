@@ -28,6 +28,8 @@ class RecordCollectionGormEntity {
 
     String fileKey
 
+    List<String> headersList
+
     static hasMany = [
             mappings: RecordCollectionMappingEntryGormEntity,
             records: RecordGormEntity

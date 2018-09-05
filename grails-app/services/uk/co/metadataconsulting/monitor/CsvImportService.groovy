@@ -18,9 +18,7 @@ class CsvImportService implements TabularDataImportService, Benchmark {
 
     RecordCollectionGormService recordCollectionGormService
 
-    ReconciliationService reconciliationService
-
-    CatalogueElementsService catalogueElementsService
+    RecordCollectionService recordCollectionService
 
     ImportService importService
 
@@ -39,25 +37,20 @@ class CsvImportService implements TabularDataImportService, Benchmark {
             RecordCollectionGormEntity.withNewSession {
                 log.info 'fetching validation rules'
                 MappingMetadata metadata = new MappingMetadata()
-                Closure headerListClosure = { List<String> l ->
-                    metadata.setHeadersList(l)
-                    Map<String, List<GormUrlName>> suggestions = [:]
-                    log.info '#dataModel {}', recordCollectionEntity.dataModelId
-
-                    if (recordCollectionEntity.dataModelId) {
-                        List<GormUrlName> calogueElements = catalogueElementsService.findAllByDataModelId(recordCollectionEntity.dataModelId)
-                        log.info '#headers {} #catalogueElements {}', l.size(), calogueElements.size()
-                        suggestions = reconciliationService.reconcile(calogueElements, l)
-                    }
-                    recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollectionEntity, l, suggestions)
-                }
 
                 log.info 'processing input stream'
-                csvImportProcessorService.processInputStream(inputStream, batchSize, headerListClosure) { List<List<String>> valuesList ->
+                csvImportProcessorService.processInputStream(inputStream, batchSize,
+    { List<String> headersList ->
+                        metadata.setHeadersList(headersList)
+                        recordCollectionGormService.addHeadersList(recordCollectionEntity, headersList)
+                }) { List<List<String>> valuesList ->
                     log.info('inside closure block')
                     importService.saveMatrixOfValuesToRecordCollection(recordCollectionEntity, valuesList, metadata)
                     cleanUpGorm()
                 }
+
+                recordCollectionService.generateSuggestedMappings(recordCollectionEntity)
+
             }
         }
         p.onComplete {

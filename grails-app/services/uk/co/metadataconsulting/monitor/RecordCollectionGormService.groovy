@@ -134,6 +134,15 @@ class RecordCollectionGormService implements GormErrorsMessage {
     }
 
     @Transactional
+    RecordCollectionGormEntity addHeadersList(RecordCollectionGormEntity entity, List<String> headersList) {
+        if (entity) {
+            entity.headersList = headersList
+            return save(entity)
+        }
+        null
+    }
+
+    @Transactional
     RecordCollectionGormEntity updateFileMetadata(Long recordCollectionId,
                                                   UploadFileResult uploadFileResult) {
         RecordCollectionGormEntity entity = find(recordCollectionId)
