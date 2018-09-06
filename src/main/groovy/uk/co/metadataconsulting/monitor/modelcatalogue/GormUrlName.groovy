@@ -29,6 +29,13 @@ class GormUrlName {
     static GormUrlName from(RecordPortionMapping recordPortionMapping, Long dataModelId) {
         return new GormUrlName(gormUrl: recordPortionMapping.gormUrl, name: recordPortionMapping.name, dataModelId: dataModelId)
     }
+
+    static GormUrlName from(ElasticSearchCatalogueElementDocumentProjection elasticSearchCatalogueElementDocumentProjection, Long dataModelId) {
+        return new GormUrlName(gormUrl: elasticSearchCatalogueElementDocumentProjection.gormUrl,
+                                name: elasticSearchCatalogueElementDocumentProjection.name,
+                                dataModelId: dataModelId,
+                                combinedGormUrlName: elasticSearchCatalogueElementDocumentProjection.combinedGormUrlName)
+    }
 }
 
 

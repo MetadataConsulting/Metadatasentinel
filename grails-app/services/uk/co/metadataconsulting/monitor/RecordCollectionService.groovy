@@ -4,7 +4,10 @@ import grails.config.Config
 import grails.core.support.GrailsConfigurationAware
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import uk.co.metadataconsulting.monitor.modelcatalogue.ElasticSearchCatalogueElementDocumentProjection
 import uk.co.metadataconsulting.monitor.modelcatalogue.GormUrlName
+import uk.co.metadataconsulting.monitor.modelcatalogue.MDXSearchResponse
+import uk.co.metadataconsulting.monitor.modelcatalogue.MDXSearchResponseProjection
 import uk.co.metadataconsulting.monitor.modelcatalogue.ValidationRules
 
 @Slf4j
@@ -20,6 +23,8 @@ class RecordCollectionService implements GrailsConfigurationAware {
     CatalogueElementsService catalogueElementsService
 
     ReconciliationService reconciliationService
+
+    RuleFetcherService ruleFetcherService
 
     int pageSize
 
@@ -38,17 +43,43 @@ class RecordCollectionService implements GrailsConfigurationAware {
      * Generate suggested mappings from reconciliationService for a recordCollectionEntity.
      * @param recordCollectionEntity
      */
-    void generateSuggestedMappings(RecordCollectionGormEntity recordCollectionEntity) {
+    void generateSuggestedMappings(RecordCollectionGormEntity recordCollectionEntity, GenerateMappingSuggestionsBy generateMappingSuggestionsBy = GenerateMappingSuggestionsBy.ElasticSearch) {
         List<String> headersList = recordCollectionEntity.headersList
-        Map<String, List<GormUrlName>> suggestions = [:]
+        Map<String, List<GormUrlName>> suggestionsMap = [:]
         log.info '#generating suggested mapping for recordCollection with dataModel {}', recordCollectionEntity.dataModelId
 
-        if (recordCollectionEntity.dataModelId) {
-            List<GormUrlName> calogueElements = catalogueElementsService.findAllByDataModelId(recordCollectionEntity.dataModelId)
-            log.info '#headers {} #catalogueElements {}', headersList.size(), calogueElements.size()
-            suggestions = reconciliationService.reconcile(calogueElements, headersList)
+        Long recordCollectionDataModelId = recordCollectionEntity.dataModelId
+
+        switch (generateMappingSuggestionsBy) {
+            case GenerateMappingSuggestionsBy.ReconciliationService:
+                if (recordCollectionDataModelId) {
+                    List<GormUrlName> calogueElements = catalogueElementsService.findAllByDataModelId(recordCollectionDataModelId)
+                    log.info '#headers {} #catalogueElements {}', headersList.size(), calogueElements.size()
+                    suggestionsMap = reconciliationService.reconcile(calogueElements, headersList)
+                }
+                break
+            case GenerateMappingSuggestionsBy.ElasticSearch:
+                if (recordCollectionDataModelId) {
+                    for (String header: headersList) {
+                        MDXSearchCommand cmd = new MDXSearchCommand(
+                                dataModelId: recordCollectionDataModelId,
+                                query: reconciliationService.cleanup(header)
+                        )
+                        MDXSearchResponse mdxSearchResponse = ruleFetcherService.mdxSearch(cmd)
+                        MDXSearchResponseProjection mdxSearchResponseProjection =  MDXSearchResponseProjection.of(mdxSearchResponse)
+                        List<GormUrlName> suggestions = mdxSearchResponseProjection.list.collect {
+                            ElasticSearchCatalogueElementDocumentProjection elementDocumentProjection ->
+                                GormUrlName.from(elementDocumentProjection, recordCollectionDataModelId)
+                        }
+                        suggestionsMap.put(header, suggestions)
+                    }
+                }
+                break
+            default:
+                break
         }
-        recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollectionEntity, headersList, suggestions)
+
+        recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollectionEntity, headersList, suggestionsMap)
 
     }
 
@@ -56,4 +87,9 @@ class RecordCollectionService implements GrailsConfigurationAware {
     void setConfiguration(Config co) {
         pageSize = co.getProperty('record.pageSize', Integer, 100)
     }
+}
+
+enum GenerateMappingSuggestionsBy {
+    ElasticSearch,
+    ReconciliationService
 }

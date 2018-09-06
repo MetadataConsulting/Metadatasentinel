@@ -97,20 +97,20 @@ class ReconciliationService implements GrailsConfigurationAware {
 
     /**
      * Return the first {@link #max} elements of the list of GormUrlNames, which has been filtered by: whether their fuzzy match score with the header value is over the threshold, and sorted by: that score.
-     * @param l
+     * @param gunsWithDistances
      * @param value
      * @param threshold
      * @return
      */
-    List<GormUrlName> reconcile(List<GormUrlNameWithDistance> l, String value, Float threshold) {
+    List<GormUrlName> reconcile(List<GormUrlNameWithDistance> gunsWithDistances, String value, Float threshold) {
 
-        l?.each {GormUrlNameWithDistance gormUrlName ->
+        gunsWithDistances?.each {GormUrlNameWithDistance gormUrlName ->
             gormUrlName.distance =  compareByNameService.distance(gormUrlName.nameCleanup, value)
         }
         if (threshold != null) {
-            l = l?.findAll { it.distance > threshold }
+            gunsWithDistances = gunsWithDistances?.findAll { it.distance > threshold }
         }
-        l?.sort { a, b ->
+        gunsWithDistances?.sort { a, b ->
             int compare = b.distance <=> a.distance
             if ( compare != 0) {
                 return compare
@@ -118,13 +118,13 @@ class ReconciliationService implements GrailsConfigurationAware {
             return 0
         }
 
-        if(!l) {
+        if(!gunsWithDistances) {
             return []
         }
 
-        if (l.size() < max.intValue()) {
-            return l as List<GormUrlName>
+        if (gunsWithDistances.size() < max.intValue()) {
+            return gunsWithDistances as List<GormUrlName>
         }
-        l.subList(0, max.intValue()) as List<GormUrlName>
+        gunsWithDistances.subList(0, max.intValue()) as List<GormUrlName>
     }
 }
