@@ -63,7 +63,8 @@ class RecordCollectionService implements GrailsConfigurationAware {
                     for (String header: headersList) {
                         MDXSearchCommand cmd = new MDXSearchCommand(
                                 dataModelId: recordCollectionDataModelId,
-                                query: reconciliationService.cleanup(header)
+                                query: reconciliationService.cleanup(header),
+                                fuzzy: true
                         )
                         MDXSearchResponse mdxSearchResponse = ruleFetcherService.mdxSearch(cmd)
                         MDXSearchResponseProjection mdxSearchResponseProjection =  MDXSearchResponseProjection.of(mdxSearchResponse)
