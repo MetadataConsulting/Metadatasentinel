@@ -14,6 +14,10 @@ class GormUrlName {
     String gormUrl
     String name
     Long dataModelId
+
+    /**
+     * Hack to have information about GORM URL and Name in GSP selection... there might be a better way...
+     */
     String combinedGormUrlName
 
     static String gormUrlNameSeparator = "####"

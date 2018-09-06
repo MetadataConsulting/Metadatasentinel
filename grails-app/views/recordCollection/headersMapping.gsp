@@ -120,6 +120,13 @@
     </g:form>
     <br/>
 
+    <g:form class="center" onsubmit="return confirm('This will overwrite the current mapping. Are you sure you want to regenerate the mapping?')"
+            controller="recordCollection" action="regenerateMapping" method="POST">
+        <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
+        <input type="submit" class="center big-btn btn btn-outline-warning my-2 my-sm-0" value="${g.message(code: 'record.regenerateMapping', default: 'Regenerate Mapping')}"/>
+    </g:form>
+    <br/>
+
 
     <g:if test="${recordPortionMappingList}">
         <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>

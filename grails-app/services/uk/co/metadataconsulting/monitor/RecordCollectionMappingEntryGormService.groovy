@@ -11,6 +11,8 @@ class RecordCollectionMappingEntryGormService {
 
     RecordPortionMappingGormDataService recordPortionMappingGormDataService
 
+    RecordCollectionGormService recordCollectionGormService
+
     @ReadOnly
     List<Long> findIdsByRecordCollectionId(Long recordCollectionId) {
         queryByRecordCollectionId(recordCollectionId).projections {
@@ -54,6 +56,12 @@ class RecordCollectionMappingEntryGormService {
                 toEntity.save()
             }
         }
+    }
+
+    @Transactional
+    void deleteMappingEntriesFor(Long recordCollectionGormEntityId) {
+        RecordCollectionGormEntity recordCollectionGormEntity = recordCollectionGormService.find(recordCollectionGormEntityId)
+        queryByRecordCollectionId(recordCollectionGormEntityId).deleteAll()
     }
 
     @ReadOnly

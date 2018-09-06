@@ -173,17 +173,22 @@ class RuleFetcherService implements GrailsConfigurationAware {
         validationRules
     }
 
+    /**
+     * Get validation rules according to mapping, returning a map from GORM URLs to "ValidationRules"
+     * @param recordPortionMappings
+     * @return
+     */
     Map<String,ValidationRules> fetchValidationRulesByMapping(List<RecordPortionMapping> recordPortionMappings) {
-        Map<String, ValidationRules> m = [:]
+        Map<String, ValidationRules> gormUrlRulesMap = [:]
         if ( recordPortionMappings ) {
             List<String> gormUrls = recordPortionMappings*.gormUrl.findAll { it != null && it != 'null' }
             for ( String gormUrl : gormUrls ) {
                 ValidationRules validationRules = fetchValidationRules(gormUrl)
                 if ( validationRules ) {
-                    m[gormUrl] = validationRules
+                    gormUrlRulesMap[gormUrl] = validationRules
                 }
             }
         }
-        m
+        return gormUrlRulesMap
     }
 }

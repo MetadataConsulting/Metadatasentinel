@@ -184,6 +184,10 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         [dataModelList: dataModelList]
     }
 
+    /**
+     * Validate a recordCollection with respect to its mapping which selects rules from the MDX.
+     * @param recordCollectionId
+     */
     def validate(Long recordCollectionId) {
 
         List<RecordPortionMapping> recordPortionMappingList = recordCollectionMappingEntryGormService.findAllByRecordCollectionId(recordCollectionId)
@@ -200,6 +204,21 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         redirect action: 'index', controller: 'record', params: [recordCollectionId: recordCollectionId]
     }
 
+    /**
+     * Delete mappings for recordCollectionId and generate new ones.
+     * @param recordCollectionId
+     */
+    def regenerateMapping(Long recordCollectionId) {
+        RecordCollectionGormEntity recordCollectionGormEntity = recordCollectionGormService.find(recordCollectionId)
+        recordCollectionMappingEntryGormService.deleteMappingEntriesFor(recordCollectionId)
+        recordCollectionService.generateSuggestedMappings(recordCollectionGormEntity)
+        redirect action: 'headersMapping', params: [recordCollectionId: recordCollectionId]
+    }
+
+    /**
+     * Receive a CSV file and create a record collection from it.
+     * @param cmd
+     */
     def uploadCsv(RecordFileCommand cmd) {
         if ( cmd.hasErrors() ) {
             flash.error = errorsMsg(cmd, messageSource)
@@ -241,6 +260,11 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
         redirect controller: 'recordCollection', action: 'index'
     }
 
+    /**
+     * Show the headersMapping associated with recordCollectionId.
+     * @param recordCollectionId
+     * @return
+     */
     def headersMapping(Long recordCollectionId) {
         RecordCollectionGormEntity recordCollectionGormEntity = recordCollectionGormService.find(recordCollectionId)
         if (!recordCollectionGormEntity) {

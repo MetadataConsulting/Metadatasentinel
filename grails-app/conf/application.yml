@@ -171,6 +171,10 @@ grails:
                     access:
                         - 'isAuthenticated()'
                 -
+                    pattern: /recordCollection/regenerateMapping
+                    access:
+                        - 'isAuthenticated()'
+                -
                     pattern: /recordCollection/export
                     access:
                         - 'isAuthenticated()'

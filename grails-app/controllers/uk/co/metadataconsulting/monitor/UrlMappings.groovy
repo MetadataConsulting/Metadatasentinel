@@ -8,6 +8,7 @@ class UrlMappings {
         "/recordCollection/cloneMapping"(controller: 'recordCollection', action: 'cloneMapping')
         "/recordCollection/cloneSave"(controller: 'recordCollection', action: 'cloneSave', httpMethod: 'POST')
         "/recordCollection/validate"(controller: 'recordCollection', action: 'validate')
+        "/recordCollection/regenerateMapping"(controller: 'recordCollection', action: 'regenerateMapping')
         "/recordCollection/export"(controller: 'recordCollection', action: 'export')
         "/recordCollection/delete"(controller: 'recordCollection', action: 'delete', httpMethod: 'POST')
         "/recordCollection/$recordCollectionId/mapping"(controller: 'recordCollection', action: 'headersMapping')
