@@ -40,6 +40,7 @@ class ReconciliationService implements GrailsConfigurationAware {
     List<StringTransformer> stringTransformerList = [
             new LeadingTrailingDoubleQuotesRemovalTransformer(),
             new DuplicatedDoubleQuotesToOneDoubleQuoteTransformer(),
+            new CamelCaseSplitTransformer(), // This is here both before and after SnakeCaseToLowerCamelCaseTransformer because that flattens a lowerCamelCase if it's not snake case...
             new SnakeCaseToLowerCamelCaseTransformer(),
             new CamelCaseSplitTransformer(),
             new ToLowerCaseTransformer(),
