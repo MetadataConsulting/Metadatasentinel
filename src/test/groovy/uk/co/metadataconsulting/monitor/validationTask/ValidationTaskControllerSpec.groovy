@@ -24,7 +24,24 @@ class ValidationTaskControllerSpec extends Specification implements ControllerUn
         field << ['validationTaskList', 'paginationQuery', 'validationTaskTotal']
     }
 
-    def "ValidationTaskController.importCsv model contains field dataModelList, validationTask"() {
+    def "ValidationTaskController.show model contains fields validationPassList, paginationQuery, validationPassTotal, validationTask"() {
+        given:
+        controller.validationTaskGormService = Mock(ValidationTaskGormService)
+        controller.validationPassGormService = Mock(ValidationPassGormService)
+
+        when:
+        request.method = 'GET'
+        Map model = controller.show()
+
+        then:
+        response.status == SC_OK
+        model.containsKey(field)
+
+        where:
+        field << ['validationPassList', 'paginationQuery', 'validationPassTotal', 'validationTask']
+    }
+
+    def "ValidationTaskController.importCsv model contains fields dataModelList, validationTask"() {
         given:
         controller.ruleFetcherService = Mock(RuleFetcherService)
 

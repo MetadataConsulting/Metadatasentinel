@@ -1,8 +1,9 @@
-package uk.co.metadataconsulting.monitor
+package uk.co.metadataconsulting.monitor.validationTask
 
 import grails.compiler.GrailsCompileStatic
 import grails.validation.Validateable
 import org.springframework.web.multipart.MultipartFile
+import uk.co.metadataconsulting.monitor.RecordCollectionMetadata
 
 @GrailsCompileStatic
 class ValidationTaskFileCommand implements Validateable, RecordCollectionMetadata {

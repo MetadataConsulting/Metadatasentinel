@@ -7,7 +7,6 @@ import uk.co.metadataconsulting.monitor.RecordFileCommand
 import uk.co.metadataconsulting.monitor.RuleFetcherService
 import uk.co.metadataconsulting.monitor.SaveRecordCollectionService
 import uk.co.metadataconsulting.monitor.ValidateableErrorsMessage
-import uk.co.metadataconsulting.monitor.ValidationTaskFileCommand
 
 class ValidationTaskController implements ValidateableErrorsMessage {
 
@@ -16,6 +15,7 @@ class ValidationTaskController implements ValidateableErrorsMessage {
 //            edit: 'GET',
             importCsv: 'GET',
             uploadCsv: 'POST',
+            show: 'GET',
 //            validate: 'POST',
 //            delete: 'POST',
 //            headersMapping: 'GET',
@@ -35,8 +35,19 @@ class ValidationTaskController implements ValidateableErrorsMessage {
 
     ValidationTaskGormService validationTaskGormService
 
+    ValidationPassGormService validationPassGormService
+
     int defaultPaginationMax = 25
     int defaultPaginationOffset = 0
+
+    def show(Long validationTaskId) {
+
+        Integer max = params.int('max') ?: defaultPaginationMax
+        Integer offset = params.int('offset') ?: defaultPaginationOffset
+        PaginationQuery paginationQuery = new PaginationQuery(max: max, offset: offset)
+
+        showModel(paginationQuery, validationTaskId)
+    }
 
     def index() {
 
@@ -45,6 +56,19 @@ class ValidationTaskController implements ValidateableErrorsMessage {
         PaginationQuery paginationQuery = new PaginationQuery(max: max, offset: offset)
 
         indexModel(paginationQuery)
+    }
+
+    protected Map showModel(PaginationQuery paginationQuery, Long validationTaskId) {
+        ValidationTask validationTask = validationTaskGormService.getValidationTask(validationTaskId)
+        List<ValidationPass> validationPassList = validationPassGormService.findAllValidationPasses(paginationQuery.toMap(), validationTask)
+
+        Number validationPassTotal = validationPassGormService.count()
+        [
+                validationPassList: validationPassList,
+                paginationQuery: paginationQuery,
+                validationPassTotal: validationPassTotal,
+                validationTask: validationTask,
+        ]
     }
 
     protected Map indexModel(PaginationQuery paginationQuery) {

@@ -1,4 +1,4 @@
-<%@ page import="uk.co.metadataconsulting.monitor.ValidationTaskFileCommand" %>
+<%@ page import="uk.co.metadataconsulting.monitor.validationTask.ValidationTaskFileCommand" %>
 <!-- Copied from recordCollection/importCsv.gsp-->
 <html>
 <head>

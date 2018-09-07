@@ -43,7 +43,7 @@
             <g:set var="validationTaskGormService" bean="validationTaskGormService"/>
             <g:each var="validationTask" in="${validationTaskList}">
                 <tr>
-                    <td>${validationTask.name}</td>
+                    <td><g:link class="nav-link" controller="validationTask" action="show" params="[validationTaskId: validationTask.id]">${validationTask.name}</g:link></td>
                     %{--Eventually we might want to use service methods to call more precise database routines, otherwise we'll have hasMany problems.--}%
                     <td>${validationTaskGormService.countValidationPasses(validationTask.id)}</td>
                     <td class="right-border">
