@@ -7,6 +7,7 @@ import uk.co.metadataconsulting.monitor.RecordFileCommand
 import uk.co.metadataconsulting.monitor.RuleFetcherService
 import uk.co.metadataconsulting.monitor.SaveRecordCollectionService
 import uk.co.metadataconsulting.monitor.ValidateableErrorsMessage
+import uk.co.metadataconsulting.monitor.ValidationTaskFileCommand
 
 class ValidationTaskController implements ValidateableErrorsMessage {
 
@@ -62,7 +63,12 @@ class ValidationTaskController implements ValidateableErrorsMessage {
      */
     def importCsv() {
         List dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
-        [dataModelList: dataModelList]
+        Map model = [dataModelList: dataModelList,
+                     validationTask: null]
+        if (params.validationTaskId) {
+            model.validationTask = validationTaskService.validationTaskProjection(params.long('validationTaskId'))
+        }
+        model
     }
 
     /**
@@ -71,7 +77,7 @@ class ValidationTaskController implements ValidateableErrorsMessage {
      * @param cmd
      * @return
      */
-    def uploadCsv(RecordFileCommand cmd) {
+    def uploadCsv(ValidationTaskFileCommand cmd) {
         if ( cmd.hasErrors() ) {
             flash.error = errorsMsg(cmd, messageSource)
             List dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
@@ -79,14 +85,21 @@ class ValidationTaskController implements ValidateableErrorsMessage {
                     dataModelList: dataModelList,
                     datasetName: cmd.datasetName,
                     dataModelId: cmd.dataModelId,
+                    validationTask: validationTaskService.validationTaskProjection(cmd.validationTaskId),
                     about: cmd.about,
             ]
             return
         }
 
         log.debug 'Content Type {}', cmd.csvFile.contentType
-        RecordCollectionGormEntity recordCollectionGormEntity = saveRecordCollectionService.save(cmd)
-        ValidationTask validationTask = validationTaskService.newValidationTaskFromRecordCollection(recordCollectionGormEntity)
+        RecordCollectionGormEntity recordCollectionGormEntity = saveRecordCollectionService.save(RecordFileCommand.of(cmd))
+        if (cmd.validationTaskId) {
+            ValidationTask validationTask = validationTaskService.addRecordCollectionToValidationTask(recordCollectionGormEntity, cmd.validationTaskId)
+        }
+        else {
+            ValidationTask validationTask = validationTaskService.newValidationTaskFromRecordCollection(recordCollectionGormEntity)
+        }
+
 
         redirect controller: 'recordCollection',
                 action: 'headersMapping',

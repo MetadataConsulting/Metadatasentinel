@@ -24,7 +24,7 @@ class ValidationTaskControllerSpec extends Specification implements ControllerUn
         field << ['validationTaskList', 'paginationQuery', 'validationTaskTotal']
     }
 
-    def "ValidationTaskController.importCsv model contains field dataModelList"() {
+    def "ValidationTaskController.importCsv model contains field dataModelList, validationTask"() {
         given:
         controller.ruleFetcherService = Mock(RuleFetcherService)
 
@@ -37,7 +37,7 @@ class ValidationTaskControllerSpec extends Specification implements ControllerUn
         model.containsKey(field)
 
         where:
-        field << ['dataModelList']
+        field << ['dataModelList', 'validationTask']
     }
 
 //    validationTaskList: validationTaskList,

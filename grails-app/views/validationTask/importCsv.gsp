@@ -1,4 +1,4 @@
-<%@ page import="uk.co.metadataconsulting.monitor.RecordFileCommand" %>
+<%@ page import="uk.co.metadataconsulting.monitor.ValidationTaskFileCommand" %>
 <!-- Copied from recordCollection/importCsv.gsp-->
 <html>
 <head>
@@ -26,15 +26,22 @@
 </nav>
 <article>
     <div class="ml-5">
-        <h1 class="center"><g:message code="validationTask.csv.import.title" default="Import CSV File to Create New Validation Task"/></h1>
+        <g:if test="validationTask">
+            <h1 class="center">Import CSV File to Create New Validation Pass for Validation Task <i>"${validationTask.name}"</i></h1>
+        </g:if>
+        <g:else>
+            <h1 class="center"><g:message code="validationTask.csv.import.title" default="Import CSV File to Create New Validation Task"/></h1>
+        </g:else>
+
         <br/>
         <g:render template="/templates/flashmessage"/>
         <g:render template="/templates/flasherror"/>
         <g:uploadForm action="uploadCsv" controller="validationTask">
+            <g:hiddenField name="validationTaskId" value="${validationTask?.id}"/>
             <ol>
                 <li>
                     <div class="form-group">
-                        <label for="csvFile"><g:message code="validationTask.import.file" args="${[RecordFileCommand.allowedExtensions().join(', ')]}" default="Upload a file (allowed formats: {0})"/></label>
+                        <label for="csvFile"><g:message code="validationTask.import.file" args="${[ValidationTaskFileCommand.allowedExtensions().join(', ')]}" default="Upload a file (allowed formats: {0})"/></label>
                         <input type="file" class="btn btn-default" name="csvFile" />
                     </div>
                 </li>
