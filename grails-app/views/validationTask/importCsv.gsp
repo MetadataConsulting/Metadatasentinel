@@ -26,7 +26,7 @@
 </nav>
 <article>
     <div class="ml-5">
-        <g:if test="validationTask">
+        <g:if test="${validationTask}">
             <h1 class="center">Import CSV File to Create New Validation Pass for Validation Task <i>"${validationTask.name}"</i></h1>
         </g:if>
         <g:else>
