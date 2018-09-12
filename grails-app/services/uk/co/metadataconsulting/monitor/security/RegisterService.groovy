@@ -13,9 +13,16 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
 
+import java.util.concurrent.TimeUnit
+
 @Slf4j
 class RegisterService implements GrailsConfigurationAware {
-    private final OkHttpClient client = new OkHttpClient()
+    private final OkHttpClient client = new OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(2, TimeUnit.MINUTES)
+            .build()
+
     private final Moshi moshi = new Moshi.Builder().build()
     private final JsonAdapter<MdxValidationErrors> validationErrorsJsonAdapter = moshi.adapter(MdxValidationErrors.class)
     private String registerUrl
@@ -56,7 +63,9 @@ class RegisterService implements GrailsConfigurationAware {
         Request request = registerRequest(req)
 
         try {
+            log.info("Register request sent at ${new Date()}")
             Response response = client.newCall(request).execute()
+            log.info("Register response received at ${new Date()}")
 
             if ( response.isSuccessful()  ) {
                 return new RegisterResponse()
