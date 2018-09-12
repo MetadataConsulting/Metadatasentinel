@@ -1,12 +1,13 @@
-<%@ page import="uk.co.metadataconsulting.sentinel.ValidationStatus" %>
+<%@ page import="uk.co.metadataconsulting.monitor.ValidationStatus" %>
 <html>
 <head>
     <title>Record Portions</title>
     <meta name="layout" content="main" />
 </head>
 <body>
-<nav class="navbar navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
     <g:render template="/templates/navbarBrand"/>
+    <g:render template="/templates/logout"/>
     <g:form controller="record" action="validate" method="POST">
         <g:hiddenField name="recordId" value="${recordId}"/>
         <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
@@ -18,7 +19,7 @@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><g:link controller="recordCollection" action="index"><g:message code="nav.home" default="Home"/></g:link></li>
-        <li class="breadcrumb-item"><g:link controller="record" action="index" params="[recordCollectionId: recordCollectionId]"><g:message code="nav.recordCollection" default="Record Collection"/></g:link></li>
+        <li class="breadcrumb-item"><g:link controller="record" action="index" params="[recordCollectionId: recordCollectionId]">${recordCollectionEntity.datasetName}</g:link></li>
         <li class="breadcrumb-item active" aria-current="page"><g:message code="nav.record" default="Record"/></li>
     </ol>
 </nav>
@@ -49,7 +50,7 @@
             </g:else>
             <td>
                 <g:if test="${recordPortion.header}">
-                    <mdx:link recordPortionMappingList="${recordPortionMappingList}" recordPortion="${recordPortion}"/>
+                    <mdx:link dataModelId="${recordCollectionEntity.dataModelId}" recordPortionMappingList="${recordPortionMappingList}" recordPortion="${recordPortion}"/>
                 </g:if>
             </td>
             <td>${recordPortion.value}</td>

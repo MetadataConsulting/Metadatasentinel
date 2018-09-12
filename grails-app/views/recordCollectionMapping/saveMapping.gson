@@ -1,0 +1,12 @@
+import uk.co.metadataconsulting.monitor.RecordCollectionMappingEntryGormEntity
+
+model {
+    RecordCollectionMappingEntryGormEntity recordCollectionMappingEntity
+}
+response.status(recordCollectionMappingEntity ? 200 : 404)
+if (recordCollectionMappingEntity) {
+    json {
+        gormUrl recordCollectionMappingEntity.gormUrl
+        name recordCollectionMappingEntity.header
+    }
+}

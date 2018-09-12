@@ -34,5 +34,7 @@ if (Environment.isDevelopmentMode() && targetDir != null) {
     logger("StackTrace", ERROR, ['FULL_STACKTRACE'], false)
 }
 root(ERROR, ['STDOUT'])
-logger('uk.co.metadataconsulting.sentinel', DEBUG, ['STDOUT'], false)
+logger('uk.co.metadataconsulting.monitor', DEBUG, ['STDOUT'], false)
 logger('metadata', DEBUG, ['STDOUT'], false)
+//logger 'org.springframework.security', TRACE, ['STDOUT'], false
+//logger 'grails.plugin.springsecurity', TRACE, ['STDOUT'], false

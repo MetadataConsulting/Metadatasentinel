@@ -4,14 +4,22 @@
     <meta name="layout" content="main" />
 </head>
 <body>
-<nav class="navbar navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
     <g:render template="/templates/navbarBrand"/>
-    <g:link id="importfile-link" controller="recordCollection" action="importCsv" class="btn btn-primary">
-        <g:message code="recordCollection.import" default="Import File"/>
-    </g:link>
+    <g:render template="/templates/logout"/>
+    <div class="row justify-content-end">
+    </div>
+
 </nav>
 <g:render template="/templates/flashmessage"/>
 <g:render template="/templates/flasherror"/>
+<center><h1>Record Collections</h1>
+    <div style="padding: 10px;">
+        <g:link id="importfile-link" controller="validationTask" action="importCsv" class="btn btn-primary">
+            <g:message code="validationTask.start" default="Start New Validation Task"/>
+        </g:link>
+    </div></center>
+
 
 <g:if test="${recordCollectionList}">
     <article>
@@ -19,19 +27,43 @@
             <thead class="thead-dark">
             <tr>
                 <th><g:message code="recordCollection.datasetname" default="Dataset name"/></th>
-                <th><g:message code="recordCollection.th.lastUpdated" default="Record Collection Creation Date"/></th>
-                <th><g:message code="recordCollection.th.actions" default="Actions"/></th></th>
+                <th><g:message code="recordCollection.dataModelName" default="Data Model name"/></th>
+                <th><g:message code="recordCollection.th.createdBy" default="Created By"/></th>
+                <th><g:message code="recordCollection.th.dateCreated" default="Date Created"/></th>
+                <th><g:message code="recordCollection.th.updatedBy" default="Updated By"/></th>
+                <th><g:message code="recordCollection.th.lastUpdated" default="Last Updated"/></th>
+                <th></th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
             <g:each var="recordCollection" in="${recordCollectionList}">
                 <tr>
                     <td><g:link controller="record" action="index" params="[recordCollectionId: recordCollection?.id]">${recordCollection.datasetName}</g:link></td>
-                    <td><g:link controller="record" action="index" params="[recordCollectionId: recordCollection?.id]">${recordCollection.lastUpdated}</g:link></td>
+                    <td>${recordCollection.dataModelName}</td>
+                    <td>${recordCollection.createdBy}</td>
                     <td>
-                        <g:form controller="recordCollection" action="delete">
+                        <g:formatDate date="${recordCollection.dateCreated}" type="datetime" style="LONG" timeStyle="SHORT"/>
+                    </td>
+                    <td>${recordCollection.updatedBy}</td>
+                    <td>
+                        <g:formatDate date="${recordCollection.lastUpdated}" type="datetime" style="LONG" timeStyle="SHORT"/>
+                    </td>
+                    <td>
+                        <g:form controller="recordCollection" action="edit" method="GET">
                             <g:hiddenField name="recordCollectionId" value="${recordCollection?.id}"/>
-                            <input type="submit" class="btn btn-danger" value="${g.message(code: 'recordCollection.delete', default: 'Delete')}"/>
+                            <input type="submit" class="btn btn-default" value="${g.message(code: 'recordCollection.edit', default: 'Edit')}"/>
+                        </g:form>
+                    </td>
+                    <td>
+
+                    <g:form controller="recordCollection" action="delete">
+                            <g:hiddenField name="recordCollectionId" value="${recordCollection?.id}"/>
+                            <input onclick="return confirm('${g.message(code: "recordCollection.delete.confirmation",
+                                                                        default: "Are you sure you want to delete this record collection?")}');"
+                                   type="submit"
+                                   class="btn btn-danger"
+                                   value="${g.message(code: 'recordCollection.delete', default: 'Delete')}"/>
                         </g:form>
                     </td>
                 </tr>
