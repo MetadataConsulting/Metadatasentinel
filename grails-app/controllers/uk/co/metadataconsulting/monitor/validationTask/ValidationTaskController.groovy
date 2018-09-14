@@ -15,6 +15,7 @@ class ValidationTaskController implements ValidateableErrorsMessage {
 //            edit: 'GET',
             importCsv: 'GET',
             uploadCsv: 'POST',
+            show: 'GET',
 //            validate: 'POST',
 //            delete: 'POST',
 //            headersMapping: 'GET',
@@ -34,8 +35,19 @@ class ValidationTaskController implements ValidateableErrorsMessage {
 
     ValidationTaskGormService validationTaskGormService
 
+    ValidationPassGormService validationPassGormService
+
     int defaultPaginationMax = 25
     int defaultPaginationOffset = 0
+
+    def show(Long validationTaskId) {
+
+        Integer max = params.int('max') ?: defaultPaginationMax
+        Integer offset = params.int('offset') ?: defaultPaginationOffset
+        PaginationQuery paginationQuery = new PaginationQuery(max: max, offset: offset)
+
+        showModel(paginationQuery, validationTaskId)
+    }
 
     def index() {
 
@@ -44,6 +56,19 @@ class ValidationTaskController implements ValidateableErrorsMessage {
         PaginationQuery paginationQuery = new PaginationQuery(max: max, offset: offset)
 
         indexModel(paginationQuery)
+    }
+
+    protected Map showModel(PaginationQuery paginationQuery, Long validationTaskId) {
+        ValidationTask validationTask = validationTaskGormService.getValidationTask(validationTaskId)
+        List<ValidationPass> validationPassList = validationPassGormService.findAllValidationPasses(paginationQuery.toMap(), validationTask)
+
+        Number validationPassTotal = validationPassGormService.count()
+        [
+                validationPassList: validationPassList,
+                paginationQuery: paginationQuery,
+                validationPassTotal: validationPassTotal,
+                validationTask: validationTask,
+        ]
     }
 
     protected Map indexModel(PaginationQuery paginationQuery) {
@@ -62,7 +87,12 @@ class ValidationTaskController implements ValidateableErrorsMessage {
      */
     def importCsv() {
         List dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
-        [dataModelList: dataModelList]
+        Map model = [dataModelList: dataModelList,
+                     validationTask: null]
+        if (params.validationTaskId) {
+            model.validationTask = validationTaskService.validationTaskProjection(params.long('validationTaskId'))
+        }
+        model
     }
 
     /**
@@ -71,7 +101,7 @@ class ValidationTaskController implements ValidateableErrorsMessage {
      * @param cmd
      * @return
      */
-    def uploadCsv(RecordFileCommand cmd) {
+    def uploadCsv(ValidationTaskFileCommand cmd) {
         if ( cmd.hasErrors() ) {
             flash.error = errorsMsg(cmd, messageSource)
             List dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
@@ -79,14 +109,21 @@ class ValidationTaskController implements ValidateableErrorsMessage {
                     dataModelList: dataModelList,
                     datasetName: cmd.datasetName,
                     dataModelId: cmd.dataModelId,
+                    validationTask: validationTaskService.validationTaskProjection(cmd.validationTaskId),
                     about: cmd.about,
             ]
             return
         }
 
         log.debug 'Content Type {}', cmd.csvFile.contentType
-        RecordCollectionGormEntity recordCollectionGormEntity = saveRecordCollectionService.save(cmd)
-        ValidationTask validationTask = validationTaskService.newValidationTaskFromRecordCollection(recordCollectionGormEntity)
+        RecordCollectionGormEntity recordCollectionGormEntity = saveRecordCollectionService.save(RecordFileCommand.of(cmd))
+        if (cmd.validationTaskId) {
+            ValidationTask validationTask = validationTaskService.addRecordCollectionToValidationTask(recordCollectionGormEntity, cmd.validationTaskId)
+        }
+        else {
+            ValidationTask validationTask = validationTaskService.newValidationTaskFromRecordCollection(recordCollectionGormEntity)
+        }
+
 
         redirect controller: 'recordCollection',
                 action: 'headersMapping',

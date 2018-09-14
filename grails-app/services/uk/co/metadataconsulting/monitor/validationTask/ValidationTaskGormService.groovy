@@ -21,6 +21,7 @@ class ValidationTaskGormService {
 //
 //    }
 //
+    @ReadOnly
     ValidationTask getValidationTask(Long validationTaskId) {
         return ValidationTask.get(validationTaskId)
     }

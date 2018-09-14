@@ -149,6 +149,10 @@ grails:
                     access:
                         - 'permitAll'
                 -
+                    pattern: /recordCollection/index
+                    access:
+                        - 'isAuthenticated()'
+                -
                     pattern: /recordCollection/cloneMapping
                     access:
                         - 'isAuthenticated()'
@@ -210,6 +214,10 @@ grails:
                         - 'isAuthenticated()'
                 -
                     pattern: /validationTask/index
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /validationTask/*/show
                     access:
                         - 'isAuthenticated()'
                 -

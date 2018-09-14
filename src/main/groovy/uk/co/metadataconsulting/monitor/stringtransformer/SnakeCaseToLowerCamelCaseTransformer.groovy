@@ -16,7 +16,7 @@ class SnakeCaseToLowerCamelCaseTransformer implements StringTransformer {
     boolean isSnakeCase(String word) {
         char[] headerLineChars = word.toCharArray()
         int numberOfUnderscore = word.count('_')
-        return !( numberOfUnderscore  == 0 && headerLineChars[0] == headerLineChars[0].toUpperCase() )
+        return !(numberOfUnderscore  == 0) && !(headerLineChars[0] == headerLineChars[0].toUpperCase() ) // has underscores and first character is lowercase
     }
 
     @Override

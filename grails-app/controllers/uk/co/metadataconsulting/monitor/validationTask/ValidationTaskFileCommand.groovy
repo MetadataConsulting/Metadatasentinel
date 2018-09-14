@@ -1,13 +1,14 @@
-package uk.co.metadataconsulting.monitor
+package uk.co.metadataconsulting.monitor.validationTask
 
 import grails.compiler.GrailsCompileStatic
 import grails.validation.Validateable
 import org.springframework.web.multipart.MultipartFile
-import uk.co.metadataconsulting.monitor.validationTask.ValidationTaskFileCommand
+import uk.co.metadataconsulting.monitor.RecordCollectionMetadata
 
 @GrailsCompileStatic
-class RecordFileCommand implements Validateable, RecordCollectionMetadata {
+class ValidationTaskFileCommand implements Validateable, RecordCollectionMetadata {
     MultipartFile csvFile
+    Long validationTaskId
     Integer batchSize = 100
     String datasetName
     String about
@@ -16,9 +17,10 @@ class RecordFileCommand implements Validateable, RecordCollectionMetadata {
     static constraints = {
         datasetName nullable: false, blank: false
         about nullable: true, blank: true
+        validationTaskId nullable: true
         dataModelId nullable: false
         batchSize nullable: false
-        csvFile  validator: { MultipartFile val, RecordFileCommand obj ->
+        csvFile  validator: { MultipartFile val, ValidationTaskFileCommand obj ->
             if ( val == null ) {
                 return 'nofile'
             }
@@ -36,16 +38,6 @@ class RecordFileCommand implements Validateable, RecordCollectionMetadata {
 
     static List<String> allowedExtensions() {
         ['csv', 'xlsx']
-    }
-
-    static RecordFileCommand of(ValidationTaskFileCommand validationTaskFileCommand) {
-        return new RecordFileCommand(
-                csvFile: validationTaskFileCommand.csvFile,
-                batchSize: validationTaskFileCommand.batchSize,
-                datasetName: validationTaskFileCommand.datasetName,
-                about: validationTaskFileCommand.about,
-                dataModelId: validationTaskFileCommand.dataModelId
-        )
     }
 
 }

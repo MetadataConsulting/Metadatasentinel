@@ -3,8 +3,9 @@ package uk.co.metadataconsulting.monitor
 class UrlMappings {
 
     static mappings = {
-        "/"(controller: 'recordCollection', action: 'index')
+        "/"(controller: 'validationTask', action: 'index')
 
+        "/recordCollection/index"(controller: 'recordCollection', action: 'index')
         "/recordCollection/cloneMapping"(controller: 'recordCollection', action: 'cloneMapping')
         "/recordCollection/cloneSave"(controller: 'recordCollection', action: 'cloneSave', httpMethod: 'POST')
         "/recordCollection/validate"(controller: 'recordCollection', action: 'validate')
@@ -23,6 +24,7 @@ class UrlMappings {
         "/importForNewValidationTask"(controller: 'validationTask', action: 'importCsv')
         "/uploadForNewValidationTask"(controller: 'validationTask', action: 'uploadCsv', httpMethod: 'POST')
         "/validationTask/index"(controller: 'validationTask', action: 'index')
+        "/validationTask/$validationTaskId/show"(controller: 'validationTask', action: 'show')
 
         "/fetch/mdxSearch"(controller: 'MDXFetch', action: 'mdxSearch')
 
