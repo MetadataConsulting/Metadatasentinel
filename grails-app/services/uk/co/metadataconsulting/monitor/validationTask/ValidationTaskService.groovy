@@ -1,9 +1,10 @@
 package uk.co.metadataconsulting.monitor.validationTask
 
 import grails.gorm.transactions.Transactional
+import org.springframework.transaction.annotation.Isolation
 import uk.co.metadataconsulting.monitor.RecordCollectionGormEntity
 
-@Transactional
+@Transactional(isolation= Isolation.REPEATABLE_READ)
 class ValidationTaskService {
 
     ValidationTaskGormService validationTaskGormService

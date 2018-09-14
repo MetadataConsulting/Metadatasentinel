@@ -31,7 +31,8 @@ class CsvImportService implements TabularDataImportService, Benchmark {
      */
     void save(InputStream inputStream,
               Integer batchSize,
-              RecordCollectionGormEntity recordCollectionEntity) {
+              RecordCollectionGormEntity recordCollectionEntity,
+              Boolean forNewValidationTask = true) {
 
         Promise p = task {
             RecordCollectionGormEntity.withNewSession {
@@ -43,13 +44,15 @@ class CsvImportService implements TabularDataImportService, Benchmark {
     { List<String> headersList ->
                         metadata.setHeadersList(headersList)
                         recordCollectionGormService.addHeadersList(recordCollectionEntity, headersList)
-                }) { List<List<String>> valuesList ->
+                }, { List<List<String>> valuesList ->
                     log.info('inside closure block')
                     importService.saveMatrixOfValuesToRecordCollection(recordCollectionEntity, valuesList, metadata)
                     cleanUpGorm()
-                }
+                },
+                        forNewValidationTask
+                )
 
-                recordCollectionService.generateSuggestedMappings(recordCollectionEntity)
+
 
             }
         }

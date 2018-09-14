@@ -28,7 +28,7 @@ class SaveRecordCollectionService {
     /**
      * Create a new RecordCollection and populate it with Records from an file (InputStream) using the CSV import service.
      */
-    RecordCollectionGormEntity save(RecordFileCommand cmd) {
+    RecordCollectionGormEntity save(RecordFileCommand cmd, Boolean forNewValidationTask = true) {
         List<DataModel> dataModelList = ruleFetcherService.fetchDataModels()?.dataModels
         DataModel dataModel = dataModelList?.find { it.id == cmd.dataModelId }
         if (!dataModel) {
@@ -46,7 +46,7 @@ class SaveRecordCollectionService {
         recordCollectionGormService.associateWithDataModel(recordCollectionEntity, dataModel)
 
         TabularDataImportService tabularDataImportService = csvImportByContentType(ImportContentType.of(cmd.csvFile.contentType))
-        tabularDataImportService.save(inputStream, batchSize, recordCollectionEntity)
+        tabularDataImportService.save(inputStream, batchSize, recordCollectionEntity, forNewValidationTask)
 
         UploadFileResult uploadFileResult = uploadFileService.uploadFile(recordCollectionEntityId, cmd.csvFile)
         if (uploadFileResult != null) {

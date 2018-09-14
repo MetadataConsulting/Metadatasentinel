@@ -275,6 +275,8 @@ grails:
                        filters: JOINED_FILTERS
 ---
 hibernate:
+    format_sql: true
+    use_sql_comments: true
     cache:
         queries: false
         use_second_level_cache: false
@@ -289,6 +291,7 @@ dataSource:
 environments:
     development:
         dataSource:
+            logSql: true
             dbCreate: update
             url: '${JDBC_CONNECTION_STRING}'
     test:

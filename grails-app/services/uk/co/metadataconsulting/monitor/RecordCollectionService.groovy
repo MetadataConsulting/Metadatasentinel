@@ -3,7 +3,9 @@ package uk.co.metadataconsulting.monitor
 import grails.config.Config
 import grails.core.support.GrailsConfigurationAware
 import groovy.transform.CompileStatic
+import grails.gorm.transactions.Transactional
 import groovy.util.logging.Slf4j
+import org.springframework.transaction.annotation.Isolation
 import uk.co.metadataconsulting.monitor.modelcatalogue.ElasticSearchCatalogueElementDocumentProjection
 import uk.co.metadataconsulting.monitor.modelcatalogue.GormUrlName
 import uk.co.metadataconsulting.monitor.modelcatalogue.MDXSearchResponse
@@ -43,6 +45,7 @@ class RecordCollectionService implements GrailsConfigurationAware {
      * Generate suggested mappings from reconciliationService for a recordCollectionEntity.
      * @param recordCollectionEntity
      */
+    @Transactional(isolation= Isolation.REPEATABLE_READ)
     void generateSuggestedMappings(RecordCollectionGormEntity recordCollectionEntity, GenerateMappingSuggestionsBy generateMappingSuggestionsBy = GenerateMappingSuggestionsBy.ElasticSearch) {
         List<String> headersList = recordCollectionEntity.headersList
         Map<String, List<GormUrlName>> suggestionsMap = [:]

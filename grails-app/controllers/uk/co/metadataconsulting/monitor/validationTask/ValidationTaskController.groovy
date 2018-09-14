@@ -3,6 +3,7 @@ package uk.co.metadataconsulting.monitor.validationTask
 import org.springframework.context.MessageSource
 import uk.co.metadataconsulting.monitor.PaginationQuery
 import uk.co.metadataconsulting.monitor.RecordCollectionGormEntity
+import uk.co.metadataconsulting.monitor.RecordCollectionService
 import uk.co.metadataconsulting.monitor.RecordFileCommand
 import uk.co.metadataconsulting.monitor.RuleFetcherService
 import uk.co.metadataconsulting.monitor.SaveRecordCollectionService
@@ -36,6 +37,8 @@ class ValidationTaskController implements ValidateableErrorsMessage {
     ValidationTaskGormService validationTaskGormService
 
     ValidationPassGormService validationPassGormService
+
+    RecordCollectionService recordCollectionService
 
     int defaultPaginationMax = 25
     int defaultPaginationOffset = 0
@@ -116,12 +119,23 @@ class ValidationTaskController implements ValidateableErrorsMessage {
         }
 
         log.debug 'Content Type {}', cmd.csvFile.contentType
-        RecordCollectionGormEntity recordCollectionGormEntity = saveRecordCollectionService.save(RecordFileCommand.of(cmd))
+        RecordCollectionGormEntity recordCollectionGormEntity = null
+
         if (cmd.validationTaskId) {
+            // already existing validation task:
+            // should load the CSV with headers unchanged
+
+            recordCollectionGormEntity = saveRecordCollectionService.save(RecordFileCommand.of(cmd), false)
             ValidationTask validationTask = validationTaskService.addRecordCollectionToValidationTask(recordCollectionGormEntity, cmd.validationTaskId)
+            recordCollectionGormEntity.save(flush:true)
+            recordCollectionService.generateSuggestedMappings(recordCollectionGormEntity)
+            // TODO: should copy over mapping from previous validation pass
         }
         else {
+            // extract the triggering of mapping generation from CSV import service and put it here
+            recordCollectionGormEntity = saveRecordCollectionService.save(RecordFileCommand.of(cmd))
             ValidationTask validationTask = validationTaskService.newValidationTaskFromRecordCollection(recordCollectionGormEntity)
+            recordCollectionService.generateSuggestedMappings(recordCollectionGormEntity)
         }
 
 

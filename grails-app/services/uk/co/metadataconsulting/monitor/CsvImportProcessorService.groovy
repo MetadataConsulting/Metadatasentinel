@@ -48,14 +48,15 @@ class CsvImportProcessorService implements GrailsConfigurationAware, CsvImportPr
      * Takes the next batchSize lines after that.
      * Applies cls to the values matrix valuesList.
      */
-    int processInputStream(InputStream inputStream, Integer batchSize,   Closure headerListClosure, Closure cls) {
+    int processInputStream(InputStream inputStream, Integer batchSize,   Closure headerListClosure, Closure cls, Boolean forNewValidationTask = true) {
         int processed = 0
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))
         List<String> lines = []
         String line
         for ( int ln = 0; (line = br.readLine()) != null; ln++ ) {
+            log.info("Line: ${ln}")
             if ( ln == 0 ) {
-                List<String> headerPropertyList = headerLineToPropertiesList(line)
+                List<String> headerPropertyList = forNewValidationTask ? headerLineToPropertiesList(line, true) : headerLineToPropertiesList(line, false)
                 if ( headerListClosure != null ) {
                     headerListClosure(headerPropertyList)
                 }
@@ -87,16 +88,23 @@ class CsvImportProcessorService implements GrailsConfigurationAware, CsvImportPr
         }
     }
 
-    List<String> headerLineToPropertiesList(String headerLine) {
-        processLineWithTransformers(headerLine, headerTransformers)
+    List<String> headerLineToPropertiesList(String headerLine, Boolean transform) {
+        if (transform) {
+            return processLineWithTransformers(headerLine, headerTransformers)
+        }
+        else {
+            return processLineWithTransformers(headerLine, [])
+        }
     }
 
     List<String> processLineWithTransformers(String line, List<StringTransformer> transformerList) {
-        List<String> headers = line.split(/,(?=([^\"]*\"[^\"]*\")*[^\"]*$)/) as List<String>
+        List<String> lineList = line.split(/,(?=([^\"]*\"[^\"]*\")*[^\"]*$)/) as List<String>
+        log.info("Line: ${lineList.join(', ')}")
         for ( StringTransformer transformer : transformerList ) {
-            headers = headers.collect { transformer.transform(it) }
+            lineList = lineList.collect { transformer.transform(it) }
         }
-        headers
+        log.info("Line after transformation: ${lineList.join(', ')}")
+        lineList
     }
 
     Object valueAtPosition(List<String> values, int i) {

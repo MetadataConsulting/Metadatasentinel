@@ -6,6 +6,7 @@ import grails.gorm.transactions.Transactional
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
 import org.springframework.context.MessageSource
+import org.springframework.transaction.annotation.Isolation
 import uk.co.metadataconsulting.monitor.modelcatalogue.DataModel
 import uk.co.metadataconsulting.monitor.modelcatalogue.GormUrlName
 
@@ -30,7 +31,7 @@ class RecordCollectionGormService implements GormErrorsMessage {
         RecordCollectionGormEntity.where {}.list(args)
     }
 
-    @Transactional
+    @Transactional(isolation=Isolation.REPEATABLE_READ)
     void saveRecordCollectionMappingWithHeaders(RecordCollectionGormEntity recordCollection,
                                                 List<String> headers,
                                                 Map<String, List<GormUrlName>> suggestionsMap) {
@@ -46,12 +47,14 @@ class RecordCollectionGormService implements GormErrorsMessage {
                 recordCollection.addToMappings(recordCollectionMappingEntry)
             }
         }
+        log.info("Mapping Entries added")
         if ( !recordCollection.save() ) {
             log.warn( 'error saving mappings {}', headers)
         }
+        log.info("Record Collection Saved")
     }
 
-    @Transactional
+    @Transactional(isolation=Isolation.REPEATABLE_READ)
     RecordCollectionGormEntity save(RecordCollectionMetadata recordCollectionMetadata) {
         RecordCollectionGormEntity recordCollection = new RecordCollectionGormEntity()
         recordCollection.with {

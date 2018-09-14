@@ -26,25 +26,21 @@ class ExcelImportService implements TabularDataImportService, Benchmark {
 
     @CompileDynamic
     @Override
+    /**
+     * forNewValidationTask unused here.
+     */
     void save(InputStream inputStream,
               Integer batchSize,
-              RecordCollectionGormEntity recordCollectionEntity) {
+              RecordCollectionGormEntity recordCollectionEntity,
+              Boolean forNewValidationTask = true) {
 
         Promise p = task {
             RecordCollectionGormEntity.withNewSession {
                 log.info 'fetching validation rules'
                 MappingMetadata metadata = new MappingMetadata()
-                Closure headerListClosure = { List<String> l ->
-                    metadata.setHeadersList(l)
-                    Map<String, List<GormUrlName>> suggestions = [:]
-
-                    if (recordCollectionEntity.dataModelId ) {
-                        List<GormUrlName> calogueElements = catalogueElementsService.findAllByDataModelId(recordCollectionEntity.dataModelId)
-                        suggestions = reconciliationService.reconcile(calogueElements, l)
-                    }
-
-                    recordCollectionGormService.saveRecordCollectionMappingWithHeaders(recordCollectionEntity, l, suggestions)
-
+                Closure headerListClosure = { List<String> headersList ->
+                    metadata.setHeadersList(headersList)
+                    recordCollectionGormService.addHeadersList(recordCollectionEntity, headersList)
                 }
                 log.info 'processing input stream'
                 ExcelReader.read(inputStream, 0, true, headerListClosure) { List<String> values ->

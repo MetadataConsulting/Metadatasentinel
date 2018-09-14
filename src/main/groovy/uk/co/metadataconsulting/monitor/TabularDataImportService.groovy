@@ -12,5 +12,6 @@ interface TabularDataImportService {
      */
     void save(InputStream inputStream,
               Integer batchSize,
-              RecordCollectionGormEntity recordCollectionEntity)
+              RecordCollectionGormEntity recordCollectionEntity,
+              Boolean forNewValidationTask)
 }
