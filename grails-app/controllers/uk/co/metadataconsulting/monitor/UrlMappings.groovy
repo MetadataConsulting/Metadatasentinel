@@ -3,8 +3,9 @@ package uk.co.metadataconsulting.monitor
 class UrlMappings {
 
     static mappings = {
-        "/"(controller: 'recordCollection', action: 'index')
+        "/"(controller: 'validationTask', action: 'index')
 
+        "/recordCollection/index"(controller: 'recordCollection', action: 'index')
         "/recordCollection/cloneMapping"(controller: 'recordCollection', action: 'cloneMapping')
         "/recordCollection/cloneSave"(controller: 'recordCollection', action: 'cloneSave', httpMethod: 'POST')
         "/recordCollection/validate"(controller: 'recordCollection', action: 'validate')

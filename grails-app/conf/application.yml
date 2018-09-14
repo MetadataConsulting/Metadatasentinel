@@ -149,6 +149,10 @@ grails:
                     access:
                         - 'permitAll'
                 -
+                    pattern: /recordCollection/index
+                    access:
+                        - 'isAuthenticated()'
+                -
                     pattern: /recordCollection/cloneMapping
                     access:
                         - 'isAuthenticated()'
