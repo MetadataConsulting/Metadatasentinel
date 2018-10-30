@@ -6,7 +6,7 @@
 </head>
 
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+<nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
     <g:render template="/templates/navbarBrand"/>
     <g:render template="/templates/logout"/>
 </nav>

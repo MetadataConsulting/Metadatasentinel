@@ -21,7 +21,7 @@
 <body>
 <g:layoutBody/>
 <footer>
-    <a href="https://metadataconsulting.co.uk"><asset:image src="mdc.png" alt="Metadata Consulting"/></a>
+    <a href="https://metadataworks.co.uk"><asset:image src="mdc.png" alt="METADATAWORKS"/></a>
 </footer>
 </body>
 </html>

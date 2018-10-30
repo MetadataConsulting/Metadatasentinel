@@ -77,7 +77,7 @@
         }
     }
 </g:javascript>
-<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+<nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
     <g:render template="/templates/navbarBrand"/>
     <g:render template="/templates/logout"/>
 </nav>
@@ -96,14 +96,25 @@
 
 <g:if test="${dataModelList}">
     <article>
+<div class="jumbotron">
 
-    <h1 class="center">Mapping From Record Collection: <i>${recordCollectionEntity.datasetName}</i> <g:if test="${recordCollectionEntity.dataModelName}"><g:message code="recordCollection.dataModelName" default="to DataModel" />: <i>${recordCollectionEntity.dataModelName}</i></g:if><g:else>to MDX Elements</g:else></h1>
+<div class="float-right" id="mapping-explanation">
+    <h6 class="collapse-heading">What is a Mapping?</h6>
+    <p>A Mapping specifies, for each Column of your Spreadsheet, an Element from the Model Catalogue, which contains Rules which will be used to Validate Entries under that Column.</p>
+</div>
 
-    <br/>
-    <div class="center" id="mapping-explanation">
-        <h3 class="collapse-heading">What is a Mapping?</h3>
-        <p>A Mapping specifies, for each Column of your Spreadsheet, an Element from the Model Catalogue, which contains Rules which will be used to Validate Entries under that Column.</p>
-    </div>
+<h4>Suggested mappings from :</h4>
+<p><i>${recordCollectionEntity.datasetName}</i> <g:if test="${recordCollectionEntity.dataModelName}">
+    <g:message code="recordCollection.dataModelName" default="" />
+    to attributes and rules contained in <i>${recordCollectionEntity.dataModelName}</i></g:if><g:else>to MDX Elements</g:else> </p>
+
+
+
+
+
+
+
+
 
     <g:javascript>
         $("#mapping-explanation").collapse({
@@ -111,23 +122,29 @@
         })
     </g:javascript>
 
-    <br/>
-    <g:form controller="recordCollection" action="validate" method="POST" class="form-inline my-2 my-lg-0">
-        <g:hiddenField name="recordId" value="${recordId}"/>
-        <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
-        <g:hiddenField name="datasetName" value="${datasetName}"/>
-        <input type="submit" class="center big-btn btn btn-outline-success my-2 my-sm-0" value="${g.message(code: 'record.validate', default: 'Validate!')}"/>
-    </g:form>
-    <br/>
+    <div class="row">
+        <div class="col-sm-6">
+            <g:form class="center" onsubmit="return confirm('This will overwrite the current mapping. Are you sure you want to regenerate the mapping?')"
+                    controller="recordCollection" action="regenerateMapping" method="POST">
+                <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
+                <input type="submit" class="center btn btn-outline-warning btn-block" value="${g.message(code: 'record.regenerateMapping', default: 'Regenerate Mapping')}"/>
+            </g:form>
+        </div>
+        <div class="col-sm-6">
+            <g:form class="center" controller="recordCollection" action="validate" method="POST" >
+                <g:hiddenField name="recordId" value="${recordId}"/>
+                <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
+                <g:hiddenField name="datasetName" value="${datasetName}"/>
+                <input type="submit" class="center btn btn-outline-success btn-block" value="${g.message(code: 'record.validate', default: 'Validate!')}"/>
+            </g:form>
+        </div>
 
-    <g:form class="center" onsubmit="return confirm('This will overwrite the current mapping. Are you sure you want to regenerate the mapping?')"
-            controller="recordCollection" action="regenerateMapping" method="POST">
-        <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
-        <input type="submit" class="center big-btn btn btn-outline-warning my-2 my-sm-0" value="${g.message(code: 'record.regenerateMapping', default: 'Regenerate Mapping')}"/>
-    </g:form>
-    <br/>
+    </div>
 
 
+
+
+    </div>
     <g:if test="${recordPortionMappingList}">
         <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
         <g:hiddenField name="dataModelId" id="dataModelId" value="${recordCollectionEntity.dataModelId}"/>

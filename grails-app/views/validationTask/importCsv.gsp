@@ -14,13 +14,13 @@
     <asset:javascript src="jquery.collapse.js"/>
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+<nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
     <g:render template="/templates/navbarBrand"/>
     <g:render template="/templates/logout"/>
 </nav>
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><g:link controller="recordCollection" action="index"><g:message code="nav.home" default="Home"/></g:link></li>
+        <li class="breadcrumb-item"><g:link controller="validationTask" action="index"><g:message code="nav.home" default="Home"/></g:link></li>
         <li class="breadcrumb-item active" aria-current="page"><g:message code="nav.importFile" default="Import File"/></li>
     </ol>
 </nav>

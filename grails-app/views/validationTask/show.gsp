@@ -8,7 +8,7 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+<nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
     <g:render template="/templates/navbarBrand"/>
     <g:render template="/templates/logout"/>
     <div class="collapse navbar-collapse  justify-content-end" id="navbarSupportedContent">
@@ -35,10 +35,10 @@
 
 <article>
     <g:if test="${validationTask}">
-        <h1 class="center">Validation Task: ${validationTask.name}</h1>
+        <h1 class="left">Validation Task: ${validationTask.name}</h1>
     </g:if>
     <br/>
-    <g:form class="center" controller="validationTask" action="importCsv" method="GET">
+    <g:form class="pull-right" controller="validationTask" action="importCsv" method="GET">
         <g:hiddenField name="validationTaskId" value="${validationTask.id}"/>
         <input type="submit" class="btn btn-success" value="${g.message(code: 'validationTask.importCsv.newValidationPass', default: 'Import CSV for new Validation Pass')}"/>
     </g:form>

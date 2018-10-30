@@ -4,21 +4,21 @@
     <meta name="layout" content="main" />
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light sticky-top">
+<nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
     <g:render template="/templates/navbarBrand"/>
     <g:render template="/templates/logout"/>
-    <div class="row justify-content-end">
-    </div>
-
 </nav>
 <g:render template="/templates/flashmessage"/>
 <g:render template="/templates/flasherror"/>
-<center><h1>Validation Tasks</h1>
-    <div style="padding: 10px;">
+<div class="jumbotron">
+    <div class="float-right" style="padding: 10px;">
         <g:link id="importfile-link" controller="validationTask" action="importCsv" class="btn btn-primary">
             <g:message code="validationTask.start" default="Start New Validation Task"/>
         </g:link>
-    </div></center>
+    </div>
+<h3>VALIDATION TASKS</h3>
+
+</div>
 
 
 <g:if test="${validationTaskList}">

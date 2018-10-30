@@ -1,6 +1,7 @@
 package uk.co.metadataconsulting.monitor
 
 import grails.compiler.GrailsCompileStatic
+import uk.co.metadataconsulting.monitor.validationTask.ValidationPass
 
 @GrailsCompileStatic
 /**
@@ -34,6 +35,8 @@ class RecordCollectionGormEntity {
             mappings: RecordCollectionMappingEntryGormEntity,
             records: RecordGormEntity
     ]
+
+    static belongsTo = [validationPass: ValidationPass]
 
     static constraints = {
         records nullable: true
