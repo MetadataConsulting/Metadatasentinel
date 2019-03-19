@@ -1,6 +1,6 @@
-<%@ page import="uk.co.metadataconsulting.sentinel.RecordCorrectnessDropdown" %>
+<%@ page import="uk.co.metadataconsulting.monitor.RecordCorrectnessDropdown" %>
 <p>
-    <g:if test="${correctness == uk.co.metadataconsulting.sentinel.RecordCorrectnessDropdown.ALL}">
+    <g:if test="${correctness == uk.co.metadataconsulting.monitor.RecordCorrectnessDropdown.ALL}">
         <span><g:message code="record.all.total" args="${[recordTotal]}" default="Total number of records: {0}."/> </span>
         <span><g:message code="record.total" args="${[invalidRecordTotal]}" default="Number of invalid records: {0}."/> </span>
     </g:if>

@@ -1,4 +1,4 @@
-<%@ page import="uk.co.metadataconsulting.sentinel.RecordFileCommand" %>
+<%@ page import="uk.co.metadataconsulting.monitor.RecordFileCommand" %>
 <html>
 <head>
     <title><g:message code="recordCollection.import" default="Import File"/></title>
@@ -8,8 +8,9 @@
     </style>
 </head>
 <body>
-<nav class="navbar navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
     <g:render template="/templates/navbarBrand"/>
+    <g:render template="/templates/logout"/>
 </nav>
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -25,7 +26,16 @@
     <g:uploadForm action="uploadCsv" controller="recordCollection">
         <div class="form-group">
             <label for="datasetName"><g:message code="recordCollection.csv.import.datasetName" default="Dataset Name"/>
-                <g:textField name="datasetName" value="" id="datasetName" /></label>
+                <g:textField name="datasetName" value="${datasetName}" id="datasetName" /></label>
+        </div>
+        <div class="form-group">
+            <g:select noSelection="${['null':'Select One...']}"
+                      optionKey="id"
+                      optionValue="name"
+                      name="dataModelId"
+                      from="${dataModelList}"
+                      value="${dataModelId}"
+                      />
         </div>
         <div class="form-group">
             <label for="csvFile"><g:message code="recordCollection.import.file" args="${[RecordFileCommand.allowedExtensions().join(',')]}" default="File ({0})"/></label>
@@ -42,10 +52,16 @@
             </select>
         </div>
         <div class="form-group">
+            <label for="about"><g:message code="recordCollection.about" default="About"/></label>
+            <trix:editor name="about" id="about" value="${about}"/>
+        </div>
+        <div class="form-group">
             <input type="submit" class="btn btn-primary" value="${message(code: 'recordCollection.import.submit', default: 'Submit')}"/>
         </div>
     </g:uploadForm>
 </div>
 </article>
+<asset:stylesheet src="trix.css"/>
+<asset:javascript src="trix.js"/>
 </body>
 </html>

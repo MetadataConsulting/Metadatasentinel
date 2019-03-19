@@ -13,3 +13,6 @@ out/
 .runTests.sh
 bin
 *.db
+bower_components
+css_bower_components
+node_modules

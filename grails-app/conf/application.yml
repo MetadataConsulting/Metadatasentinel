@@ -2,7 +2,7 @@
 grails:
     profile: web
     codegen:
-        defaultPackage: uk.co.metadataconsulting.sentinel
+        defaultPackage: uk.co.metadataconsulting.monitor
     gorm:
         reactor:
             # Whether to translate GORM events into Reactor events
@@ -87,7 +87,192 @@ grails:
 endpoints:
     jmx:
         unique-names: true
-
+---
+grails:
+    plugin:
+        springsecurity:
+            providerNames:
+                - 'mdxAuthenticationProvider'
+                - 'anonymousAuthenticationProvider'
+            securityConfigType: InterceptUrlMap
+            interceptUrlMap:
+                -
+                    pattern: /
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /error
+                    access:
+                        - permitAll
+                -
+                    pattern: /index
+                    access:
+                        - permitAll
+                -
+                    pattern: /index.gsp
+                    access:
+                        - permitAll
+                -
+                    pattern: /shutdown
+                    access:
+                        - permitAll
+                -
+                    pattern: /assets/**
+                    access:
+                        - permitAll
+                -
+                    pattern: /**/js/**
+                    access:
+                        - permitAll
+                -
+                    pattern: /**/css/**
+                    access:
+                        - permitAll
+                -
+                    pattern: /**/images/**
+                    access:
+                        - permitAll
+                -
+                    pattern: /**/favicon.ico
+                    access:
+                        - permitAll
+                -
+                    pattern: /login/**
+                    access:
+                        - 'permitAll'
+                -
+                    pattern: /logout/**
+                    access:
+                        - 'permitAll'
+                -
+                    pattern: /register/**
+                    access:
+                        - 'permitAll'
+                -
+                    pattern: /recordCollection/index
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /recordCollection/cloneMapping
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /recordCollection/edit
+                    access:
+                        - 'isAuthenticated()'
+                -
+                  pattern: /recordCollection/update
+                  access:
+                      - 'isAuthenticated()'
+                  httpMethod: POST
+                -
+                    pattern: /recordCollection/cloneSave
+                    access:
+                        - 'isAuthenticated()'
+                    httpMethod: POST
+                -
+                    pattern: /recordCollection/validate
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /recordCollection/regenerateMapping
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /recordCollection/export
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /recordCollection/delete
+                    access:
+                        - 'isAuthenticated()'
+                    httpMethod: POST
+                -
+                    pattern: /recordCollection/*/mapping
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /recordCollectionMapping/*/save
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /recordCollectionMapping/catalogueElements/*
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /recordCollectionMapping/update
+                    access:
+                        - 'isAuthenticated()'
+                    httpMethod: POST
+                -
+                    pattern: /import
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /upload
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /validationTask/index
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /validationTask/*/show
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /importForNewValidationTask
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /uploadForNewValidationTask
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /fetch/mdxSearch
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /records/*
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /record/index
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /record/*
+                    access:
+                        - 'isAuthenticated()'
+                -
+                    pattern: /record/validate
+                    access:
+                        - 'isAuthenticated()'
+                    httpMethod: POST
+                -
+                    pattern: /records/*/*
+                    access:
+                        - 'isAuthenticated()'
+            filterChain:
+                chainMap:
+                   -
+                       pattern: /assets/**
+                       filters: none
+                   -
+                       pattern: /**/js/**
+                       filters: none
+                   -
+                       pattern: /**/css/**
+                       filters: none
+                   -
+                       pattern: /**/images/**
+                       filters: none
+                   -
+                       pattern: /**/favicon.ico
+                       filters: none
+                   -
+                       pattern: /**
+                       filters: JOINED_FILTERS
 ---
 hibernate:
     cache:
@@ -104,15 +289,15 @@ dataSource:
 environments:
     development:
         dataSource:
-            dbCreate: create
+            dbCreate: update
             url: '${JDBC_CONNECTION_STRING}'
     test:
         dataSource:
-            dbCreate: update
+            dbCreate: create-drop
             url: '${JDBC_CONNECTION_STRING}'            
     production:
         dataSource:
-            dbCreate: none
+            dbCreate: update
             url: '${JDBC_CONNECTION_STRING}'
             properties:
                 jmxEnabled: true
@@ -135,5 +320,10 @@ environments:
 ---
 metadata:
     url: '${METADATA_URL}'
-    username: '${METADATA_USERNAME}'
-    apiKey: '${METADATA_APIKEY}'
+---
+grails:
+    plugins:
+        awssdk:
+            s3:
+                region: '${S3_REGION}'
+                bucket: '${S3_BUCKET}'

@@ -1,0 +1,394 @@
+elements:
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178701"
+        name: "Age Band 10 years"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178697"
+        name: "Age Band 5 years"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178703"
+        name: "Age band children inc. 0 years"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178706"
+        name: "Age band inc. 50    -74"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178709"
+        name: "Age band inc. working age 16 to 60"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178713"
+        name: "Age band inc. working age 16 to 64"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178797"
+        name: "CCG Code"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178799"
+        name: "CCG Name"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178793"
+        name: "Commissioning Organisation Code"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178795"
+        name: "Commissioning Organisation Name"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178673"
+        name: "Date of Birth"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178644"
+        name: "Date of Test"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178650"
+        name: "Date of Test Request"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178688"
+        name: "Date Test Report Issued"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178654"
+        name: "Date Test Request Received"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178778"
+        name: "Early cancer diagnosis"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178717"
+        name: "Ethnic Category Description"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178720"
+        name: "Ethnic Category Group"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178658"
+        name: "Ethnicity"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178776"
+        name: "Fetal"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178774"
+        name: "Fetal ID"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178722"
+        name: "Gender Description"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178728"
+        name: "GP Description"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178662"
+        name: "Imaging Code (NICIP)"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178738"
+        name: "Imaging Code (NICIP) Description"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178664"
+        name: "Imaging Code (SNOMED CT)"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178740"
+        name: "Imaging Code (SNOMED    -CT) Description"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178724"
+        name: "Location     - LSOA"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178726"
+        name: "Location     - MSOA"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178744"
+        name: "Modality"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178742"
+        name: "Modality ID"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178736"
+        name: "Month of Test"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178772"
+        name: "Morphology"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178770"
+        name: "Morphology ID"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178666"
+        name: "NHS Number"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178669"
+        name: "NHS Number Status"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178695"
+        name: "NHS Number Status Description"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178693"
+        name: "NHS Number Supplied"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178785"
+        name: "Organisation Code"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178787"
+        name: "Organisation Name"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178678"
+        name: "Patient Gender"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178680"
+        name: "Patient Home Postcode"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178660"
+        name: "Patient Registered GP Practice"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178730"
+        name: "Patient Source Setting Description"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178671"
+        name: "Patient Type"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178819"
+        name: "Provider Code"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178822"
+        name: "Provider Name"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178789"
+        name: "Provider SHA Code"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178791"
+        name: "Provider SHA Name"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178690"
+        name: "Provider Site Code"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178783"
+        name: "Provider Site Code Description"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178684"
+        name: "Referrer"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178825"
+        name: "Referrer type"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178686"
+        name: "Referring Organisation"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178732"
+        name: "Referring Organisation Description"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178752"
+        name: "Region"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178750"
+        name: "Region ID"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178682"
+        name: "RIS Accession Number"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178780"
+        name: "Sub Early cancer diagnosis"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178748"
+        name: "Sub Modality"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178746"
+        name: "Sub Modality ID"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178756"
+        name: "Sub Region"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178754"
+        name: "Sub Region ID"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178764"
+        name: "Sub    -system"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178768"
+        name: "Sub    -System Component"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178766"
+        name: "Sub    -System Component ID"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178762"
+        name: "Sub    -system ID"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178760"
+        name: "System"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178758"
+        name: "System ID"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178813"
+        name: "Test Request Received to Service (test) Report Issue"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178810"
+        name: "Test Request Received to Test"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178807"
+        name: "Test Request to Service (Test) Report Issue"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178804"
+        name: "Test Request to Test"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178801"
+        name: "Test Request to Test Request Received"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178816"
+        name: "Test to Service (Test) Report Issue"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataElement:178734"
+        name: "Year of Test"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataClass:180227"
+        name: "Address"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataClass:178643"
+        name: "Diagnostic Imaging Dataset CSV"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataClass:178692"
+        name: "Diagnostic Imaging Dataset Derived Fields"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataClass:180223"
+        name: "Diagnostic Imaging Dataset XSD"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataClass:180224"
+        name: "DIDSRecord"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataClass:180228"
+        name: "Imaging Activity"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataClass:180225"
+        name: "Personal And Demographics"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataClass:180226"
+        name: "Referrals"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.EnumeratedType:34"
+        name: "xs:boolean"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.EnumeratedType:180230"
+        name: "nhsNumberStatusCode"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.EnumeratedType:180231"
+        name: "gender"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.EnumeratedType:180233"
+        name: "patientSourceSettingType"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:34"
+        name: "xs:boolean"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:35"
+        name: "xs:base64Binary"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:36"
+        name: "xs:hexBinary"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:37"
+        name: "xs:anyURI"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:38"
+        name: "xs:string"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:39"
+        name: "xs:normalizedString"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:40"
+        name: "xs:token"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:41"
+        name: "xs:language"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:42"
+        name: "xs:decimal"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:43"
+        name: "xs:double"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:44"
+        name: "xs:float"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:45"
+        name: "xs:integer"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:46"
+        name: "xs:long"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:47"
+        name: "xs:int"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:48"
+        name: "xs:short"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:49"
+        name: "xs:byte"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:50"
+        name: "xs:nonNegativeInteger"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:51"
+        name: "xs:nonPositiveInteger"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:52"
+        name: "xs:negativeInteger"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:53"
+        name: "xs:positiveInteger"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:54"
+        name: "xs:unsignedLong"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:55"
+        name: "xs:unsignedInt"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:56"
+        name: "xs:unsignedShort"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:57"
+        name: "xs:unsignedByte"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:58"
+        name: "xs:date"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:59"
+        name: "xs:dateTime"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:60"
+        name: "xs:time"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:61"
+        name: "xs:duration"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:62"
+        name: "xs:gDay"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:63"
+        name: "xs:gMonth"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:64"
+        name: "xs:gMonthDay"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:65"
+        name: "xs:gYear"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:66"
+        name: "xs:gYearMonth"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:67"
+        name: "xs:QName"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:68"
+        name: "xs:NOTATION"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:180229"
+        name: "gpCodeRegistration"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:180230"
+        name: "nhsNumberStatusCode"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:180231"
+        name: "gender"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:180232"
+        name: "postcode"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:180233"
+        name: "patientSourceSettingType"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:180234"
+        name: "referrerCode"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:180235"
+        name: "providerCode"
+    -
+        gormUrl: "gorm://org.modelcatalogue.core.DataType:180236"
+        name: "risAccessionNumber"
