@@ -11,15 +11,6 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
     <g:render template="/templates/navbarBrand"/>
     <g:render template="/templates/logout"/>
-    <div class="collapse navbar-collapse  justify-content-end" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-
-
-
-        </ul>
-
-
-    </div>
 </nav>
 
 
@@ -33,16 +24,23 @@
 <g:render template="/templates/flashmessage"/>
 <g:render template="/templates/flasherror"/>
 
+<div class="jumbotron">
+    <div class="float-right" style="padding: 10px;">
+
+        <g:form ontroller="validationTask" action="importCsv" method="GET">
+            <g:hiddenField name="validationTaskId" value="${validationTask.id}"/>
+            <input type="submit" class="btn btn-success" value="${g.message(code: 'validationTask.importCsv.newValidationPass', default: 'Import CSV for new Validation Pass')}"/>
+        </g:form>
+
+    </div>
+<g:if test="${validationTask}">
+    <h3>${validationTask.name}</h3>
+</g:if>
+
+</div>
+
 <article>
-    <g:if test="${validationTask}">
-        <h1 class="left">Validation Task: ${validationTask.name}</h1>
-    </g:if>
-    <br/>
-    <g:form class="pull-right" controller="validationTask" action="importCsv" method="GET">
-        <g:hiddenField name="validationTaskId" value="${validationTask.id}"/>
-        <input type="submit" class="btn btn-success" value="${g.message(code: 'validationTask.importCsv.newValidationPass', default: 'Import CSV for new Validation Pass')}"/>
-    </g:form>
-    <hr/>
+
 
     <table class="table table-striped">
         <thead class="thead-dark">
@@ -99,11 +97,10 @@
 
     <hr/>
     <p>
-        <span id="dateCreated">Date Created: <g:formatDate date="${validationTask.dateCreated}" type="datetime" style="LONG" timeStyle="SHORT"/></span>
+        <span id="dateCreated"> Created: <g:formatDate date="${validationTask.dateCreated}" type="datetime" style="LONG" timeStyle="SHORT"/>,</span>
+        <span id="lastUpdated"> Updated: <g:formatDate date="${validationTask.lastUpdated}" type="datetime" style="LONG" timeStyle="SHORT"/></span>
     </p>
-    <p>
-        <span id="lastUpdated">Date Updated: <g:formatDate date="${validationTask.lastUpdated}" type="datetime" style="LONG" timeStyle="SHORT"/></span>
-    </p>
+
 </article>
 </body>
 </html>

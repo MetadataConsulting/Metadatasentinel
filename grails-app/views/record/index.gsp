@@ -1,5 +1,9 @@
 <%@ page import="uk.co.metadataconsulting.monitor.RecordCorrectnessDropdown" %>
 <%@ page import="uk.co.metadataconsulting.monitor.export.ExportFormat" %>
+<%@ page import="uk.co.metadataconsulting.monitor.ValidationStatus" %>
+<%
+    def recordPortionGormService = grailsApplication.classLoader.loadClass('uk.co.metadataconsulting.monitor.RecordPortionGormService').newInstance()
+%>
 
 <html>
 <head>
@@ -10,25 +14,10 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
     <g:render template="/templates/navbarBrand"/>
-    <g:render template="/templates/logout"/>
-    <div class="collapse navbar-collapse  justify-content-end" id="navbarSupportedContent">
+
     <ul class="navbar-nav mr-auto">
 
-        <li class="nav-item">
-            <g:form controller="recordCollection" action="edit" method="GET" class="form-inline my-2 my-lg-0">
-                <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
-                <input type="submit" class="btn btn-default my-2 my-sm-0" value="${g.message(code: 'recordCollection.edit', default: 'Edit')}"/>
-            </g:form>
-        </li>
 
-        <li class="nav-item">
-            <g:form controller="recordCollection" action="validate" method="POST" class="form-inline my-2 my-lg-0">
-                <g:hiddenField name="recordId" value="${recordId}"/>
-                <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
-                <g:hiddenField name="datasetName" value="${datasetName}"/>
-                <input type="submit" class="btn btn-outline-success my-2 my-sm-0" value="${g.message(code: 'record.validate', default: 'Validate')}"/>
-            </g:form>
-        </li>
 
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="MappingDrop" role="button" data-toggle="dropdown">
@@ -59,6 +48,22 @@
             </div>
         </li>
 
+    <li class="nav-item">
+        <g:form controller="recordCollection" action="edit" method="GET" class="form-inline my-2 my-lg-0">
+            <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
+            <input type="submit" class="btn btn-default my-2 my-sm-0" value="${g.message(code: 'recordCollection.edit', default: 'Edit')}"/>
+        </g:form>
+    </li>
+
+    <li class="nav-item">
+        <g:form controller="recordCollection" action="validate" method="POST" class="form-inline my-2 my-lg-0">
+            <g:hiddenField name="recordId" value="${recordId}"/>
+            <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
+            <g:hiddenField name="datasetName" value="${datasetName}"/>
+            <input type="submit" class="btn btn-outline-success my-2 my-sm-0" value="${g.message(code: 'record.validate', default: 'Validate')}"/>
+        </g:form>
+    </li>
+
         <li class="nav-item">
             <g:form controller="recordCollection" action="delete">
                 <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
@@ -72,10 +77,12 @@
 
 
 
+
+
+
     </ul>
 
-
-</div>
+    <g:render template="/templates/logout"/>
 </nav>
 
 
@@ -130,6 +137,20 @@
                     <g:link controller="record" action="show" params="[recordCollectionId: recordCollectionId, recordId: record.id]">
                         <g:message code="record.row" args="${(paginationQuery?.offset ?: 0) + i + 1}" default="Row {0}"/>
                     </g:link>
+                    <table>
+                    <tr>
+                        <g:each var="recordPortion" in="${recordPortionGormService.findAllByRecordId(record.id)}">
+                            <g:if test="${recordPortion.status == ValidationStatus.INVALID}">
+                                <td><strong>${recordPortion.value}</strong></td>
+                            </g:if>
+                            <g:else>
+                                <td>${recordPortion.value}</td>
+                            </g:else>
+                        </g:each>
+                     </td>
+                    </table>
+
+
                 </td>
                 </tr>
             </g:each>

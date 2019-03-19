@@ -89,4 +89,34 @@ end
         description = expected ? 'is valid test date' : 'is not a valid test date'
     }
 
+
+
+    @Unroll
+    def "#val #description 1"(String val, String expected, String description) {
+        given:
+        String rule = '''
+package metadata;
+
+global java.util.List output;
+global java.lang.String val;
+
+rule "match 1"
+when
+    eval(!Validation.matchesRegex(val, "1"))
+then
+    output.add( "val does not match 1" );
+end
+'''
+        expect:
+        expected == service.validate('match 1', rule, [val: val] )
+
+        where:
+        val         || expected
+        '2'         || 'val does not match 1'
+        '1'         || null
+
+        description = expected ? 'matches format' : 'does not match format'
+    }
+
+
 }

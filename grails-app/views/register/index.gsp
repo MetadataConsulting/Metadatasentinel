@@ -14,8 +14,7 @@
     <div class="col-md-6 col-md-offset-3">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title"><g:message code="springSecurity.oauth.registration.create.legend"
-                                                   default="Create a new account"/></h3>
+                <h3 class="panel-title"><g:message code="springSecurity.oauth.registration.create.legend" default="Create a new account"/></h3>
             </div>
 
             <div class="panel-body">

@@ -8,12 +8,12 @@
 <nav class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
     <g:render template="/templates/navbarBrand"/>
     <g:render template="/templates/logout"/>
-    <g:form controller="record" action="validate" method="POST">
-        <g:hiddenField name="recordId" value="${recordId}"/>
-        <g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>
-        <g:hiddenField name="datasetName" value="${datasetName}"/>
-        <input type="submit" class="btn-primary btn" value="${g.message(code: 'record.validate', default: 'Validate')}"/>
-    </g:form>
+    %{--<g:form controller="record" action="validate" method="POST">--}%
+        %{--<g:hiddenField name="recordId" value="${recordId}"/>--}%
+        %{--<g:hiddenField name="recordCollectionId" value="${recordCollectionId}"/>--}%
+        %{--<g:hiddenField name="datasetName" value="${datasetName}"/>--}%
+        %{--<input type="submit" class="btn-primary btn" value="${g.message(code: 'record.validate', default: 'Validate')}"/>--}%
+    %{--</g:form>--}%
 </nav>
 
 <nav aria-label="breadcrumb">
