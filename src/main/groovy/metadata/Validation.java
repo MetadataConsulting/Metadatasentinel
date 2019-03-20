@@ -13,15 +13,40 @@ import static java.util.Calendar.YEAR;
 
 public class Validation {
 
-    public static int yearsBetween(Date last, Date first) {
-        Calendar a = getCalendar(first);
-        Calendar b = getCalendar(last);
-        int diff = b.get(YEAR) - a.get(YEAR);
-        if (a.get(MONTH) > b.get(MONTH) ||
-                (a.get(MONTH) == b.get(MONTH) && a.get(DATE) > b.get(DATE))) {
-            diff--;
+    /**
+     * Returns the difference in years between "last" and "first" (last-first),
+     * rounded DOWN (if negative, closer to 0) to the year.
+     * If the result is non-zero, then positive and negative are determined thus:
+     * If "last" is actually after "first", the result will be positive;
+     * otherwise negative.
+     *
+     * @param supposedlyLast
+     * @param supposedlyFirst
+     * @return
+     */
+    public static int yearsBetween(Date supposedlyLast, Date supposedlyFirst) {
+        int lastFirstComparison = supposedlyLast.compareTo(supposedlyFirst); // 1 if last > first, 0 if last == first, -1 if last < first
+        Calendar earlier = null;
+        Calendar later = null;
+
+        if (lastFirstComparison > 0) {
+            earlier = getCalendar(supposedlyFirst);
+            later = getCalendar(supposedlyLast);
         }
-        return diff;
+        else {
+            earlier = getCalendar(supposedlyLast);
+            later = getCalendar(supposedlyFirst);
+        }
+
+        int diff = later.get(YEAR) - earlier.get(YEAR);
+        if (diff != 0) {
+            if (earlier.get(MONTH) > later.get(MONTH) ||
+                    (earlier.get(MONTH) == later.get(MONTH) && earlier.get(DATE) > later.get(DATE))) {
+                diff--; // rounding down to the nearest year
+            }
+        }
+
+        return diff * lastFirstComparison; // multiply by comparison to get the right sign (plus or minus)
 
     }
 
