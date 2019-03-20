@@ -28,6 +28,14 @@ class RecordCollectionService implements GrailsConfigurationAware {
 
     int pageSize
 
+    /**
+     * Validate a record collection with respect to:
+     * a headers map and
+     * a mapping from MDX CatalogueElements (identified by GORM URL) to validation rules.
+     * @param recordCollectionId
+     * @param recordPortionMappingList
+     * @param validationRulesMap
+     */
     void validate(Long recordCollectionId, List<RecordPortionMapping> recordPortionMappingList, Map<String, ValidationRules> validationRulesMap) {
         int total = recordGormService.countByRecordCollectionId(recordCollectionId) as int
         for (int offset = 0; offset < total; offset = (offset + pageSize)) {

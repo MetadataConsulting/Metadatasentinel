@@ -5,6 +5,9 @@ import groovy.transform.CompileStatic
 
 @Canonical
 @CompileStatic
+/**
+ * non-GORM version of RecordPortionGormEntity (i.e. a "Cell" in a "Table")
+ */
 class RecordPortion {
     String header
     String name
