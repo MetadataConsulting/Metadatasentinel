@@ -24,18 +24,34 @@ class ValidatorService {
         List<String> values = recordGormUrlsAndValues.values
 
         // Validate against Drools Validation Rules
-        String reason = validateRecordPortionService.executeValidationRulesWithDrools(validationRules, gormUrls, values)
+        String droolsOutput = validateRecordPortionService.executeValidationRulesWithDrools(validationRules, gormUrls, values)
 
         String name = validationRules?.name
         Integer numberOfRulesValidatedAgainst = validationRules?.rules?.size() ?: 0
 
+        String validatingImplOutput = ""
         // Validate against the "ValidatingImpl"
         if ( validationRules?.validating ) {
             if ( !ValueValidator.validateRule(validationRules.validating, value) ) {
-                reason = reason ?: validationRules.validating.toString()
+                validatingImplOutput = validationRules.validating.toString()
             }
             numberOfRulesValidatedAgainst++
         }
+        String reason = ""
+        if (droolsOutput) {
+            if (validatingImplOutput) {
+                reason = "${droolsOutput}, Groovy Rule: [${validatingImplOutput}]"
+            }
+            else {
+                reason = droolsOutput
+            }
+
+        }
+        else if (validatingImplOutput) {
+            reason = validatingImplOutput
+        }
+
+
         ValidationStatus status = ValidationStatus.NOT_VALIDATED
         if ( numberOfRulesValidatedAgainst ) {
             status = reason ? ValidationStatus.INVALID : ValidationStatus.VALID

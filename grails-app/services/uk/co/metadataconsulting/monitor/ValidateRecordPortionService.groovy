@@ -73,10 +73,11 @@ class ValidateRecordPortionService {
      * @return
      */
     String executeValidationRulesWithDrools(ValidationRules validationRules, List<String> gormUrls, List<String> values) {
-        String reason
+
         if ( !validationRules?.rules ) {
-            return reason
+            return ""
         }
+        List<String> droolsOutputs = []
         for ( ValidationRule validationRule : validationRules.rules ) {
 
             // Create a mapping from identifiers (Drools global variables) to values to be validated.
@@ -86,12 +87,12 @@ class ValidateRecordPortionService {
                 m[identifier] = valuesOfGormUrl(validationRule.identifiersToGormUrls[identifier], gormUrls, values)
             }
 
-            reason = dlrValidatorService.validate(validationRule.name, validationRule.rule, m)
-            if ( reason!=null ) {
-                break
-            }
+            droolsOutputs.add dlrValidatorService.validate(validationRule.name, validationRule.rule, m)
+
         }
-        reason
+
+        String concatenatedOutputs = droolsOutputs.join(',\n')
+        return "Validation Errors from Drools: [${concatenatedOutputs}]"
     }
 
     int indexOfGormUrl(List<String> gormUrls, String gormUrl) {
