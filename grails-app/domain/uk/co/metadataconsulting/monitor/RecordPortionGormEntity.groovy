@@ -32,4 +32,15 @@ class RecordPortionGormEntity {
         reason type: 'text'
         sort 'header'
     }
+
+    @Override
+    String toString() {
+        """
+[header: ${header},
+name: ${name},
+value: ${value},
+status: ${status},
+reason: ${reason},
+numberOfRulesValidatedAgainst: ${numberOfRulesValidatedAgainst}]"""
+    }
 }

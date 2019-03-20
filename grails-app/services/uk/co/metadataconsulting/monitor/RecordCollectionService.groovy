@@ -32,6 +32,9 @@ class RecordCollectionService implements GrailsConfigurationAware {
      * Validate a record collection with respect to:
      * a headers map and
      * a mapping from MDX CatalogueElements (identified by GORM URL) to validation rules.
+     *
+     * Done by validating each record individually/separately.
+     *
      * @param recordCollectionId
      * @param recordPortionMappingList
      * @param validationRulesMap

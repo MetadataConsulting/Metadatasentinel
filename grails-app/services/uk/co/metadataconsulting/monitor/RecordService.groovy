@@ -43,11 +43,23 @@ class RecordService {
 
 
     @Transactional
+    /**
+     * Validate a record.
+     *
+     * Done by calling a method on each recordPortion which
+     * A. validates its value individually
+     * B. validates the whole record with validation rules relevant to that recordPortion's MDX CatalogueElement
+     *
+     * @param recordId the record being validated
+     *
+     */
     void validate(Long recordId, List<RecordPortionMapping> recordPortionMappingList, Map<String, ValidationRules> validationRulesMap) {
         DetachedCriteria<RecordGormEntity> query = recordGormService.queryById(recordId)
         query.join('portions')
         RecordGormEntity recordGormEntity = query.get()
+        log.info "ValidationRules Map: ${validationRulesMap.toString()}"
         for ( RecordPortionGormEntity recordPortionGormEntity : recordGormEntity.portions ) {
+            log.info "Validating record portion: ${recordPortionGormEntity.toString()}"
             ValidationResult validationResult = validateRecordPortionService.failureReason(recordPortionGormEntity,
                     recordPortionMappingList,
                     validationRulesMap)
