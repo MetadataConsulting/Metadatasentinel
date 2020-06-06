@@ -30,9 +30,9 @@ class UrlMappings {
 
         "/records/$recordCollectionId"(controller: 'record', action: 'index')
         "/record/index"(controller: 'record', action: 'index')
+        "/records/$recordCollectionId/$recordId"(controller: 'record', action: 'show')
         "/record/show"(controller: 'record', action: 'show')
         "/record/validate"(controller: 'record', action: 'validate')
-        "/records/$recordCollectionId/$recordId"(controller: 'record', action: 'show')
 
         "/login/$action?/$id?(.$format)?"(controller: 'login')
         "/login/$action?/$id?(.$format)?"(controller: 'logout')

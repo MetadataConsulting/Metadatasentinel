@@ -11,9 +11,12 @@ class RecordPortionGormEntity {
     String header
     String name
     String value
+
+    // The following fields (and the name field) get updated by a ValidationResult
     ValidationStatus status = ValidationStatus.NOT_VALIDATED
     String reason
     Integer numberOfRulesValidatedAgainst
+
     Date lastUpdated
 
     static belongsTo = [record: RecordGormEntity]
@@ -31,5 +34,16 @@ class RecordPortionGormEntity {
         table 'recordportion'
         reason type: 'text'
         sort 'header'
+    }
+
+    @Override
+    String toString() {
+        """
+[header: ${header},
+name: ${name},
+value: ${value},
+status: ${status},
+reason: ${reason},
+numberOfRulesValidatedAgainst: ${numberOfRulesValidatedAgainst}]"""
     }
 }

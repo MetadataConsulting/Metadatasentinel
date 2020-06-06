@@ -185,7 +185,7 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
     }
 
     /**
-     * Validate a recordCollection with respect to its mapping which selects rules from the MDX.
+     * Validate a recordCollection with respect to its mapping, which is used to get validationRules from the MDX.
      * @param recordCollectionId
      */
     def validate(Long recordCollectionId) {

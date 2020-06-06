@@ -65,7 +65,7 @@ class DlrValidator {
         }
 
         if (kbuilder.hasErrors()) {
-            //log.error(kbuilder.getErrors().toString());
+            log.error("Errors compiling rules. Rules: " + drlContentStrings.toString() + "\nErrors:" + kbuilder.getErrors().toString());
         }
         if (kBaseConfig == null) {
             kBaseConfig = KnowledgeBaseFactory.newKnowledgeBaseConfiguration();
