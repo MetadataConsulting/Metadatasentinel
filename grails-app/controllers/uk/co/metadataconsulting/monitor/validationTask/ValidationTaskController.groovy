@@ -1,5 +1,6 @@
 package uk.co.metadataconsulting.monitor.validationTask
 
+import groovy.util.logging.Slf4j
 import org.springframework.context.MessageSource
 import uk.co.metadataconsulting.monitor.PaginationQuery
 import uk.co.metadataconsulting.monitor.RecordCollectionGormEntity
@@ -8,6 +9,7 @@ import uk.co.metadataconsulting.monitor.RuleFetcherService
 import uk.co.metadataconsulting.monitor.SaveRecordCollectionService
 import uk.co.metadataconsulting.monitor.ValidateableErrorsMessage
 
+@Slf4j
 class ValidationTaskController implements ValidateableErrorsMessage {
 
     static allowedMethods = [
