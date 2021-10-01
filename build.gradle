@@ -158,9 +158,11 @@ bootRun {
     systemProperty springProfilesActive, System.getProperty(springProfilesActive)
 }
 
-webdriverBinaries {
-    chromedriver "${chromedriverVersion}"
-    geckodriver "${geckodriverVersion}"
+if (System.getProperty('geb.env')) {
+    webdriverBinaries {
+        chromedriver "${chromedriverVersion}"
+        geckodriver "${geckodriverVersion}"
+    }
 }
 
 test {
