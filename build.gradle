@@ -31,9 +31,9 @@ apply plugin: "org.grails.plugins.views-json"
 apply plugin: "com.moowork.node"
 
 repositories {
+    maven { url 'https://jitpack.io' }
     maven { url "https://repo.grails.org/grails/core" }
     jcenter()
-    maven { url 'http://dl.bintray.com/agorapulse/libs' }
 }
 
 node {
@@ -140,7 +140,7 @@ dependencies {
 
     compile "com.github.mpkorstanje:simmetrics-core:$simmetricsVersion"
 
-    compile "org.grails.plugins:aws-sdk-s3:$awsSdkS3Version"
+    compile 'com.github.agorapulse.grails-aws-sdk:aws-sdk-s3:2.4.14'
 }
 
 bootRun {
