@@ -14,6 +14,8 @@ info:
         version: '@info.app.version@'
         grailsVersion: '@info.app.grailsVersion@'
 spring:
+    jmx:
+        unique-names: true
     main:
         banner-mode: "off"
     groovy:
@@ -29,11 +31,9 @@ spring:
                 - 'logback.groovy'
                 - '*.properties'
 
-# Spring Actuator Endpoints are Disabled by Default
-endpoints:
-    enabled: false
-    jmx:
-        enabled: true
+management:
+    endpoints:
+        enabled-by-default: false
 server:
   port: 8090
 
@@ -93,9 +93,10 @@ grails:
                 scriptlets: html
                 taglib: none
                 staticparts: none
-endpoints:
-    jmx:
-        unique-names: true
+management:
+    endpoints:
+        jmx:
+            unique-names: true
 ---
 grails:
     plugin:
