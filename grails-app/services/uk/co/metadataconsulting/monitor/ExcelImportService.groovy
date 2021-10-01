@@ -22,8 +22,6 @@ class ExcelImportService implements TabularDataImportService, Benchmark {
 
     ImportService importService
 
-    SessionFactory sessionFactory
-
     @CompileDynamic
     @Override
     void save(InputStream inputStream,
@@ -31,7 +29,6 @@ class ExcelImportService implements TabularDataImportService, Benchmark {
               RecordCollectionGormEntity recordCollectionEntity) {
 
         Promise p = task {
-            RecordCollectionGormEntity.withNewSession {
                 log.info 'fetching validation rules'
                 MappingMetadata metadata = new MappingMetadata()
                 Closure headerListClosure = { List<String> l ->
@@ -49,23 +46,14 @@ class ExcelImportService implements TabularDataImportService, Benchmark {
                 log.info 'processing input stream'
                 ExcelReader.read(inputStream, 0, true, headerListClosure) { List<String> values ->
                     importService.saveListOfValuesAsRecord(recordCollectionEntity, values, metadata)
-                    cleanUpGorm()
                 }
-            }
-
         }
         p.onComplete {
             log.info 'excel import finished'
         }
         p.onError { Throwable t ->
-            log.error 'error while importing excel', t.message
+            log.error('error while importing excel', t)
         }
-    }
-
-    def cleanUpGorm() {
-        Session session = sessionFactory.currentSession
-        session.flush()
-        session.clear()
     }
 }
 

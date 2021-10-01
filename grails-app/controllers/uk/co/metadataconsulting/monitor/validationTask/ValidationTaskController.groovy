@@ -118,17 +118,14 @@ class ValidationTaskController implements ValidateableErrorsMessage {
         }
 
         log.debug 'Content Type {}', cmd.csvFile.contentType
-        RecordCollectionGormEntity recordCollectionGormEntity = saveRecordCollectionService.save(RecordFileCommand.of(cmd))
-        if (cmd.validationTaskId) {
-            ValidationTask validationTask = validationTaskService.addRecordCollectionToValidationTask(recordCollectionGormEntity, cmd.validationTaskId)
-        }
-        else {
-            ValidationTask validationTask = validationTaskService.newValidationTaskFromRecordCollection(recordCollectionGormEntity)
-        }
-
-
+        RecordFileCommand recordFileCommand = RecordFileCommand.of(cmd)
+        Long recordCollectionId = saveRecordCollectionService.saveWithValidationTask(recordFileCommand, cmd.validationTaskId)
+        saveRecordCollectionService.uploadFileToRecordCollection(recordCollectionId, recordFileCommand)
+        saveRecordCollectionService.importFileContents(recordCollectionId,  recordFileCommand)
         redirect controller: 'recordCollection',
                 action: 'headersMapping',
-                params: [recordCollectionId: recordCollectionGormEntity.id]
+                params: [recordCollectionId: recordCollectionId]
     }
+
+
 }

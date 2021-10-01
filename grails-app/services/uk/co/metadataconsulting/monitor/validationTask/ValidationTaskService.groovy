@@ -16,17 +16,13 @@ class ValidationTaskService {
         )
     }
 
-    ValidationTask newValidationTaskFromRecordCollection(RecordCollectionGormEntity recordCollectionGormEntity) {
-        ValidationTask validationTask = new ValidationTask(name: "${recordCollectionGormEntity.datasetName} Validation Task", validationPasses: [])
-        validationTask.addToValidationPasses(recordCollection: recordCollectionGormEntity)
-        validationTask.save(flush:true)
-        return validationTask
-    }
-
+    @Transactional
     ValidationTask addRecordCollectionToValidationTask(RecordCollectionGormEntity recordCollectionGormEntity, Long validationTaskId) {
         ValidationTask validationTask = validationTaskGormService.getValidationTask(validationTaskId)
-        validationTask.addToValidationPasses(recordCollection: recordCollectionGormEntity)
-        validationTask.save(flush: true)
+        if (validationTask != null) {
+            validationTask.addToValidationPasses(recordCollection: recordCollectionGormEntity)
+            validationTaskGormService.save(validationTask)
+        }
         return validationTask
     }
 }
