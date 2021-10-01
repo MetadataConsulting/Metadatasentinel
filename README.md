@@ -124,3 +124,8 @@ Also you must provide values for:
 Environment Variables - `S3_BUCKET` and `S3_REGION`
 
 An example of a value for `S3_REGION` could be `eu-west-1` for Ireland buckets.
+
+
+# Dependencies 
+
+[Webdriver Binaries Gradle Plugin](https://github.com/erdi/webdriver-binaries-gradle-plugin/blob/master/README.md) [Gradle Portal](https://plugins.gradle.org/plugin/com.github.erdi.webdriver-binaries) - A plugin that downloads and caches WebDriver binaries specific to the OS the build runs on.
