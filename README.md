@@ -124,3 +124,7 @@ Also you must provide values for:
 Environment Variables - `S3_BUCKET` and `S3_REGION`
 
 An example of a value for `S3_REGION` could be `eu-west-1` for Ireland buckets.
+
+## Dependencies
+
+- [Grails AWS SDK S3 Plugin](https://github.com/agorapulse/grails-aws-sdk/tree/master/grails-aws-sdk-s3)
