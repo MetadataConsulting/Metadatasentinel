@@ -109,7 +109,7 @@ class ValidationTaskController implements ValidateableErrorsMessage {
                     dataModelList: dataModelList,
                     datasetName: cmd.datasetName,
                     dataModelId: cmd.dataModelId,
-                    validationTask: validationTaskService.validationTaskProjection(cmd.validationTaskId),
+                    validationTask: cmd.validationTaskId == null ? null : validationTaskService.validationTaskProjection(cmd.validationTaskId),
                     about: cmd.about,
             ]
             return
