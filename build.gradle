@@ -164,6 +164,7 @@ dependencies {
 }
 
 bootRun {
+    systemProperties System.properties
     ignoreExitValue true
     jvmArgs(
             '-Dspring.output.ansi.enabled=always',
