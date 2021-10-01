@@ -37,4 +37,5 @@ root(ERROR, ['STDOUT'])
 logger('uk.co.metadataconsulting.monitor', DEBUG, ['STDOUT'], false)
 logger('metadata', DEBUG, ['STDOUT'], false)
 //logger 'org.springframework.security', TRACE, ['STDOUT'], false
+logger 'grails.plugin.awssdk.s3', TRACE, ['STDOUT'], false
 //logger 'grails.plugin.springsecurity', TRACE, ['STDOUT'], false
