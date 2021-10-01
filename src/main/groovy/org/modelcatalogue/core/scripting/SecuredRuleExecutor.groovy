@@ -105,7 +105,7 @@ class SecuredRuleExecutor<S extends Script> {
         secureASTCustomizer.addExpressionCheckers(new SecureASTCustomizer.ExpressionChecker() {
 
 
-            Set<String> names = new HashSet(binding.variables.keySet())
+            Set<String> names = binding.variables.keySet() as Set<String>
 
             @Override boolean isAuthorized(Expression expression) {
                 if (expression instanceof BinaryExpression && expression.operation.meaning == Types.ASSIGN) {

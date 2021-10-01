@@ -39,7 +39,7 @@ class CsvImportServiceIntegrationSpec extends Specification implements LoginAs {
         expectedNumberOfRows
 
         when:
-        final String datasetName = "DIDS_XMLExample_20"
+        String datasetName = "DIDS_XMLExample_20"
         final RecordCollectionMetadata recordCollectionMetadata = new RecordCollectionMetadataImpl(datasetName: datasetName)
         RecordCollectionGormEntity recordCollectionEntity =  recordCollectionGormService.save(recordCollectionMetadata)
         csvImportService.save(f.newInputStream(), 50, recordCollectionEntity)

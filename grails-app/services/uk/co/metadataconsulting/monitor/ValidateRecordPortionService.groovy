@@ -44,7 +44,7 @@ class ValidateRecordPortionService {
         }
         for ( ValidationRule validationRule : validationRules.rules ) {
 
-            Map m = [:]
+            Map<String, String> m = [:]
             for ( String identifier : validationRule.identifiersToGormUrls.keySet() ) {
                 m[identifier] = valuesOfGormUrl(validationRule.identifiersToGormUrls[identifier], gormUrls, values)
             }
