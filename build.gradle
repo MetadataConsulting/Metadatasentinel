@@ -190,6 +190,12 @@ integrationTest {
     systemProperties System.properties
 }
 
+
+tasks.withType(Test) {
+    useJUnitPlatform()
+}
+
+
 tasks.withType(Test) {
     systemProperties System.properties
     systemProperty "grails.env", 'test'
