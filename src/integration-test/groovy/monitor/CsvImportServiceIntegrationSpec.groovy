@@ -2,6 +2,7 @@ package uk.co.metadataconsulting.monitor
 
 import grails.testing.mixin.integration.Integration
 import org.springframework.security.core.context.SecurityContextHolder
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 import spock.util.concurrent.PollingConditions
 
@@ -14,6 +15,7 @@ class CsvImportServiceIntegrationSpec extends Specification implements LoginAs {
     RecordPortionGormService recordPortionGormService
     def conditions = new PollingConditions(timeout: 30)
 
+    @IgnoreIf({ !env['S3_REGION']})
     def "save processes an CSV file and imports a record collection"() {
         given:
         def authentication = SecurityContextHolder.context.authentication
