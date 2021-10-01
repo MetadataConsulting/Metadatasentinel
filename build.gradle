@@ -4,7 +4,6 @@ buildscript {
     }
     dependencies {
         classpath "org.grails:grails-gradle-plugin:$grailsVersion"
-        classpath "org.grails.plugins:hibernate5:${gormVersion-".RELEASE"}"
         classpath "gradle.plugin.com.github.erdi.webdriver-binaries:webdriver-binaries-gradle-plugin:$webdriverBinariesGradleVersion"
         classpath "org.grails.plugins:hibernate5:7.1.0.RC3"
         classpath "com.bertramlabs.plugins:asset-pipeline-gradle:$assetPipelineVersion"
