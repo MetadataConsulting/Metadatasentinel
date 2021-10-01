@@ -16,6 +16,10 @@ import uk.co.metadataconsulting.monitor.export.RecordCollectionExportView
 import uk.co.metadataconsulting.monitor.modelcatalogue.DataModel
 import uk.co.metadataconsulting.monitor.modelcatalogue.GormUrlName
 import uk.co.metadataconsulting.monitor.modelcatalogue.ValidationRules
+import uk.co.metadataconsulting.monitor.validationTask.ValidationPass
+import uk.co.metadataconsulting.monitor.validationTask.ValidationPassGormService
+import uk.co.metadataconsulting.monitor.validationTask.ValidationTask
+import uk.co.metadataconsulting.monitor.validationTask.ValidationTaskGormService
 
 import javax.servlet.ServletOutputStream
 
@@ -40,6 +44,10 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
     ]
 
     MessageSource messageSource
+
+    ValidationTaskGormService validationTaskGormService
+
+    ValidationPassGormService validationPassGormService
 
     RecordCollectionGormService recordCollectionGormService
 
@@ -253,6 +261,9 @@ class RecordCollectionController implements ValidateableErrorsMessage, GrailsCon
             return
         }
         final String fileKey = recordCollectionEntity.fileKey
+        for (ValidationPass validationPass : validationPassGormService.findAllByRecordCollection(recordCollectionEntity)) {
+            validationTaskGormService.delete(validationPass.validationTask)
+        }
         recordCollectionGormService.delete(recordCollectionId)
         uploadFileService.deleteFile(fileKey)
         flash.message = messageSource.getMessage('recordCollection.deleted', [] as Object[],'Record Collection deleted', request.locale)

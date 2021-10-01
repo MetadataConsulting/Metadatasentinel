@@ -28,6 +28,7 @@ class UploadFileService implements GrailsConfigurationAware {
 
     UploadFileResult uploadFile(Long recordCollectionId, MultipartFile multipartFile) {
         if (!enabled) {
+            log.warn("UploadFile service not enabled")
             return null
         }
         final String path = "${recordCollectionId}_${multipartFile.originalFilename}".toString()

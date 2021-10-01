@@ -22,50 +22,36 @@ class CsvImportService implements TabularDataImportService, Benchmark {
 
     ImportService importService
 
-    SessionFactory sessionFactory
-    
-    @CompileDynamic
-    @Override
     /**
      * Save a CSV file as the Records of a given (should be newly created) RecordCollection. A preliminary "default" mapping is made here.
      */
+    @CompileDynamic
+    @Override
     void save(InputStream inputStream,
               Integer batchSize,
               RecordCollectionGormEntity recordCollectionEntity) {
-
         Promise p = task {
-            RecordCollectionGormEntity.withNewSession {
                 log.info 'fetching validation rules'
                 MappingMetadata metadata = new MappingMetadata()
 
                 log.info 'processing input stream'
                 csvImportProcessorService.processInputStream(inputStream, batchSize,
     { List<String> headersList ->
+                        log.info 'updating headers'
                         metadata.setHeadersList(headersList)
                         recordCollectionGormService.addHeadersList(recordCollectionEntity, headersList)
                 }) { List<List<String>> valuesList ->
                     log.info('inside closure block')
                     importService.saveMatrixOfValuesToRecordCollection(recordCollectionEntity, valuesList, metadata)
-                    cleanUpGorm()
                 }
-
                 recordCollectionService.generateSuggestedMappings(recordCollectionEntity)
-
-            }
         }
         p.onComplete {
-            log.info 'excel import finished'
+            log.info 'csv import finished'
         }
         p.onError { Throwable t ->
-            log.error 'error while importing csv', t.message
+            log.error('error while importing csv', t)
         }
-    }
-
-
-    def cleanUpGorm() {
-        Session session = sessionFactory.currentSession
-        session.flush()
-        session.clear()
     }
 }
 

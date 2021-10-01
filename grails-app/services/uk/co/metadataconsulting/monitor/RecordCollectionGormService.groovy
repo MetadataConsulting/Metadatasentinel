@@ -89,7 +89,7 @@ class RecordCollectionGormService implements GormErrorsMessage {
 
     @Transactional
     void delete(Serializable id) {
-        RecordCollectionGormEntity.get(id).delete()
+        RecordCollectionGormEntity.get(id)?.delete()
     }
 
     @Transactional
