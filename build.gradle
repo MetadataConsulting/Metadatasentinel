@@ -1,6 +1,5 @@
 buildscript {
     repositories {
-        mavenLocal()
         maven {
             url "https://repo.grails.org/grails/core"
         }
@@ -32,7 +31,6 @@ apply plugin: "org.grails.plugins.views-json"
 apply plugin: "com.moowork.node"
 
 repositories {
-    mavenLocal()
     maven { url "https://repo.grails.org/grails/core" }
     jcenter()
     maven { url 'http://dl.bintray.com/agorapulse/libs' }
