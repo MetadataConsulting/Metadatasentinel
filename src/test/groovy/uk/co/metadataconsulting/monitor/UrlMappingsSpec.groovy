@@ -2,16 +2,20 @@ package uk.co.metadataconsulting.monitor
 
 import grails.testing.web.UrlMappingsUnitTest
 import spock.lang.Specification
+import uk.co.metadataconsulting.monitor.validationTask.ValidationTask
+import uk.co.metadataconsulting.monitor.validationTask.ValidationTaskController
 
 class UrlMappingsSpec extends Specification implements UrlMappingsUnitTest<UrlMappings> {
     void setup() {
         mockController(RecordCollectionController)
         mockController(RecordController)
+        mockController(ValidationTaskController)
+
     }
 
     void "test forward mappings"() {
         expect:
-        verifyForwardUrlMapping("/", controller: 'recordCollection', action: 'index')
+        verifyForwardUrlMapping("/", controller: 'validationTask', action: 'index')
         verifyForwardUrlMapping("/recordCollection/export", controller: 'recordCollection', action: 'export')
         verifyForwardUrlMapping("/recordCollection/cloneMapping", controller: 'recordCollection', action: 'cloneMapping')
         verifyForwardUrlMapping("/recordCollection/validate", controller: 'recordCollection', action: 'validate')
