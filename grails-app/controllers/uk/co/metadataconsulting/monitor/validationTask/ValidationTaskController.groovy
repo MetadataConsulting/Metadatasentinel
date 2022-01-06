@@ -1,5 +1,6 @@
 package uk.co.metadataconsulting.monitor.validationTask
 
+import groovy.util.logging.Slf4j
 import org.springframework.context.MessageSource
 import uk.co.metadataconsulting.monitor.PaginationQuery
 import uk.co.metadataconsulting.monitor.RecordCollectionGormEntity
@@ -8,6 +9,7 @@ import uk.co.metadataconsulting.monitor.RuleFetcherService
 import uk.co.metadataconsulting.monitor.SaveRecordCollectionService
 import uk.co.metadataconsulting.monitor.ValidateableErrorsMessage
 
+@Slf4j
 class ValidationTaskController implements ValidateableErrorsMessage {
 
     static allowedMethods = [
@@ -109,24 +111,21 @@ class ValidationTaskController implements ValidateableErrorsMessage {
                     dataModelList: dataModelList,
                     datasetName: cmd.datasetName,
                     dataModelId: cmd.dataModelId,
-                    validationTask: validationTaskService.validationTaskProjection(cmd.validationTaskId),
+                    validationTask: cmd.validationTaskId == null ? null : validationTaskService.validationTaskProjection(cmd.validationTaskId),
                     about: cmd.about,
             ]
             return
         }
 
         log.debug 'Content Type {}', cmd.csvFile.contentType
-        RecordCollectionGormEntity recordCollectionGormEntity = saveRecordCollectionService.save(RecordFileCommand.of(cmd))
-        if (cmd.validationTaskId) {
-            ValidationTask validationTask = validationTaskService.addRecordCollectionToValidationTask(recordCollectionGormEntity, cmd.validationTaskId)
-        }
-        else {
-            ValidationTask validationTask = validationTaskService.newValidationTaskFromRecordCollection(recordCollectionGormEntity)
-        }
-
-
+        RecordFileCommand recordFileCommand = RecordFileCommand.of(cmd)
+        Long recordCollectionId = saveRecordCollectionService.saveWithValidationTask(recordFileCommand, cmd.validationTaskId)
+        saveRecordCollectionService.uploadFileToRecordCollection(recordCollectionId, recordFileCommand)
+        saveRecordCollectionService.importFileContents(recordCollectionId,  recordFileCommand)
         redirect controller: 'recordCollection',
                 action: 'headersMapping',
-                params: [recordCollectionId: recordCollectionGormEntity.id]
+                params: [recordCollectionId: recordCollectionId]
     }
+
+
 }

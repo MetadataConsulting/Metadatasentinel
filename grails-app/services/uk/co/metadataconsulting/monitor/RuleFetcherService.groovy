@@ -95,11 +95,13 @@ class RuleFetcherService implements GrailsConfigurationAware {
         final String url = "${metadataUrl}/api/dashboard/dataModels".toString()
         final String credential = basic()
         HttpUrl.Builder httpBuider = HttpUrl.parse(url).newBuilder()
-        Request request = new Request.Builder()
+        Request.Builder builder = new Request.Builder()
                 .url(httpBuider.build())
-                .header("Authorization", credential)
                 .header("Accept", 'application/json')
-                .build()
+        if (credential) {
+                builder = builder.header("Authorization", credential)
+        }
+        Request request = builder.build()
         DataModels dataModels
         try {
             Response response = client.newCall(request).execute()

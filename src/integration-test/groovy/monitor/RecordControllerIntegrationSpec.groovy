@@ -28,7 +28,7 @@ class RecordControllerIntegrationSpec extends GebSpec implements LoginAs {
         def authentication = SecurityContextHolder.context.authentication
         loginAs('supervisor', 'supervisor')
 
-        final String gormUrl = 'gorm://org.modelcatalogue.core.DataElement:53'
+        String gormUrl = 'gorm://org.modelcatalogue.core.DataElement:53'
         ErsatzServer ersatz = new ErsatzServer()
         String creds = Credentials.basic('supervisor', 'supervisor')
         ersatz.expectations {

@@ -2,25 +2,26 @@ package uk.co.metadataconsulting.monitor.validationTask
 
 import grails.gorm.DetachedCriteria
 import grails.gorm.transactions.ReadOnly
+import grails.gorm.transactions.Transactional
 import groovy.transform.CompileDynamic
 import groovy.transform.CompileStatic
 import groovy.util.logging.Slf4j
+import org.springframework.context.MessageSource
+import uk.co.metadataconsulting.monitor.GormErrorsMessage
+import uk.co.metadataconsulting.monitor.RecordCollectionGormEntity
 
 
 @Slf4j
 @CompileStatic
-class ValidationTaskGormService {
-//    /**
-//     * Cascading delete
-//     * @param validationTaskId
-//     */
-//    void delete(Long validationTaskId) {
-//        ValidationTask validationTask = getValidationTask(validationTaskId)
-//        queryByRecordCollection(validationTask).list().each {it.delete(flush:true)}
-//        validationTask.delete(flush:true)
-//
-//    }
-//
+class ValidationTaskGormService  implements GormErrorsMessage {
+
+    MessageSource messageSource
+    
+    @Transactional
+    void delete(ValidationTask validationTask) {
+        validationTask.delete()
+    }
+
     @ReadOnly
     ValidationTask getValidationTask(Long validationTaskId) {
         return ValidationTask.get(validationTaskId)
@@ -56,4 +57,27 @@ class ValidationTaskGormService {
         ValidationTask.count()
     }
 
+    @Transactional
+    ValidationTask save(ValidationTask entity) {
+        if ( !entity.save(validate:false) ) {
+            log.warn '{}', errorsMsg(entity, messageSource)
+        }
+        entity
+    }
+
+    @Transactional
+    void update(Long id, RecordCollectionGormEntity recordCollectionGormEntity) {
+        ValidationTask validationTask = getValidationTask(id)
+        if (validationTask) {
+            validationTask.addToValidationPasses(recordCollection: recordCollectionGormEntity)
+            save(validationTask)
+        }
+    }
+    @Transactional
+    ValidationTask save(String name,
+                        RecordCollectionGormEntity recordCollectionGormEntity) {
+        ValidationTask validationTask = new ValidationTask(name: name)
+        validationTask.addToValidationPasses(recordCollection: recordCollectionGormEntity)
+        save(validationTask)
+    }
 }
